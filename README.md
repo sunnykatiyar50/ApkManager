@@ -1,7 +1,7 @@
 # ApkManager
 Made totally for Personal use as I didnt find any App matching my Needs.
 
-It can MANAGE APKS. It can RENAME, UPDATE, INSTALL, UNINSTALL, DELETE APK files.
+It is an APK MANAGER. It can RENAME, UPDATE, INSTALL, UNINSTALL, DELETE APK files.
 
 This is for those who like to keep apk files offline. 
 IT provides capability to search all the applications  in provided folder(or subfolders).

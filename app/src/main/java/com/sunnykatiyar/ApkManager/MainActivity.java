@@ -224,33 +224,33 @@ public class MainActivity extends AppCompatActivity
 
 //-----------------------LOADING "SORT BY" FROM SHARED PREFERENCES---------------------------------------
             value_sorting = sharedPref.getString(key_sorting,sort_by_name);
-            Log.i(TAG,"Sorting Setting in Shared Preferences: "+value_sorting);
+        //    Log.i(TAG,"Sorting Setting in Shared Preferences: "+value_sorting);
 
             if(value_sorting.equals(sort_by_name)){
-                Log.i(TAG," inside equating sort_by_name : ");
+               // Log.i(TAG," inside equating sort_by_name : ");
                 sort_by = sort_by_name;
                 menu.findItem(R.id.menuitem_sortbyname).setChecked(true);
                 //sort_by = "Hello name";
             }
             else if(value_sorting.equals(sort_by_date)){
-                Log.i(TAG," inside equating sort_by_date : ");
+                //Log.i(TAG," inside equating sort_by_date : ");
                 sort_by = sort_by_date;
                 menu.findItem(R.id.menuitem_sortbydate).setChecked(true);
                 //sort_by = "Hello date";
 
             }
             else if(value_sorting.equals(sort_by_size)){
-                Log.i(TAG," inside equating sort_by_size : ");
+                //Log.i(TAG," inside equating sort_by_size : ");
                 sort_by = sort_by_size;
                 menu.findItem(R.id.menuitem_sortbysize).setChecked(true);
                 //sort_by = "Hello size";
             }
-            Log.i(TAG," Value of sort_by : " + sort_by);
+          //  Log.i(TAG," Value of sort_by : " + sort_by);
 
 //--------------------------------LOADING "ORDER BY" FROM SHARED PREFERENCES---------------------------------------
 
             value_order_by = sharedPref.getString(key_order_by,order_increasing);
-            Log.i(TAG," Found Ordering Settings in SHARED PREFERENCES: "+ value_order_by);
+            //Log.i(TAG," Found Ordering Settings in SHARED PREFERENCES: "+ value_order_by);
 
             if(value_order_by.equals(order_decreasing)){
                 option_menu.findItem(R.id.menuitem_decreasing).setChecked(true);
@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity
                 option_menu.findItem(R.id.menuitem_increasing).setChecked(true);
                 order_by = order_increasing;
             }
-        Log.i(TAG," Value of order by : " + order_by);
+        //Log.i(TAG," Value of order by : " + order_by);
 
 //----------------------------------------------------------------------------------------------------------------------
             option_menu.findItem(R.id.menuitem_root).setChecked(sharedPref.getBoolean("ROOT",true));
@@ -329,10 +329,9 @@ public class MainActivity extends AppCompatActivity
         if(id == R.id.menuitem_install) {
 
             if (cla != null) {
-                selected_files_list = cla.getSelectedItemsList();
+                this.selected_files_list = cla.getSelectedItemsList();
                 Toast.makeText(context, " No. of selecetd files : " + cla.getSelectedItemsList().size(), Toast.LENGTH_LONG);
             }
-
 
             builder = new AlertDialog.Builder(this);
             builder.setTitle("Confirm Installing "+selected_files_list.size()+" Files");
@@ -456,7 +455,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.menuitem_delete) {
 
             if (cla != null) {
-                selected_files_list = cla.getSelectedItemsList();
+                this.selected_files_list = cla.getSelectedItemsList();
                 Toast.makeText(context, " No. of selecetd files : " + cla.getSelectedItemsList().size(), Toast.LENGTH_LONG);
             }
 
@@ -488,7 +487,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.menuitem_rename) {
 
             if (cla != null) {
-                selected_files_list = cla.getSelectedItemsList();
+                this.selected_files_list = cla.getSelectedItemsList();
             //    Toast.makeText(context, " No. of selecetd files : " + cla.getSelectedItemCount(), Toast.LENGTH_LONG);
             }
 
@@ -521,29 +520,22 @@ public class MainActivity extends AppCompatActivity
 
         //------------------------------------SORTING----------------------------------------
         if(id == R.id.menuitem_sortbyname){
-            //if(item.isChecked()){
                item.setChecked(true);
-                Log.i(TAG,"Clicked sort by name");
                 sort_by = sort_by_name;
                 prefEditor.putString(key_sorting, sort_by).commit();
-            //}
+
         }
 
         if(id == R.id.menuitem_sortbydate){
-            Log.i(TAG,"Clicked sort by date enter");
-            //if(item.isChecked()){
                 item.setChecked(true);
-                Log.i(TAG,"Clicked sort by date");
                 sort_by = sort_by_date;
                 prefEditor.putString(key_sorting, sort_by).commit();
-            //}
+
         }
 
         if(id == R.id.menuitem_sortbysize){
-            Log.i(TAG,"Clicked sort by size enter");
-            //if(item.isChecked()){
                 item.setChecked(true);
-                Log.i(TAG,"Clicked sort by size");
+            //    Log.i(TAG,"Clicked sort by size");
                 sort_by = sort_by_size;
                 prefEditor.putString(key_sorting, sort_by).commit();
             }
@@ -551,21 +543,14 @@ public class MainActivity extends AppCompatActivity
 
         //-----------------------------------INVERSE SORTING-------------------------------------
         if(id == R.id.menuitem_decreasing){
-            Log.i(TAG,"Clicked order decreasing begin");
-            //if(item.isChecked()){
                 item.setChecked(true);
-                Log.i(TAG,"Clicked order decreasing");
                 order_by = order_decreasing;
                 prefEditor.putString(key_order_by, order_by).commit();
 
         }
 
         if(id == R.id.menuitem_increasing){
-            Log.i(TAG,"Clicked order increasing begin");
-
-          //  if(item.isChecked()){
                 item.setChecked(true);
-                Log.i(TAG,"Clicked order increasing");
                 order_by = order_increasing;
                 prefEditor.putString(key_order_by, order_by).commit();
             //}

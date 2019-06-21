@@ -32,7 +32,7 @@ public class RenameFilesFragment extends Fragment {
 
     Button btn_browse;
     EditText file_search_path;
-    Context context = this.getActivity();
+    Context context = getContext();
 
 
     @Override
@@ -40,31 +40,19 @@ public class RenameFilesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_rename_files, container, false);
 
 
-        btn_browse = view.findViewById(R.id.btn_file_path);
+        btn_browse = view.findViewById(R.id.button_file_renamer_path);
+        file_search_path = view.findViewById(R.id.text_file_renamer_path);
         btn_browse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(context, FilePickerActivity.class);
+                Intent i = new Intent(getContext(), FilePickerActivity.class);
                 i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
                 i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
                 i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
-
-                File f = new File(file_search_path.toString());
-
-                if(f.exists() & f.isFile()){
-                    i.putExtra(FilePickerActivity.EXTRA_START_PATH, f.getParent());
-
-                }else if(f.exists() & f.isDirectory()){
-                    i.putExtra(FilePickerActivity.EXTRA_START_PATH, f.getAbsoluteFile());
-                }else{
-                    i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
-                }
-
+                i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
                 startActivityForResult(i, 3);
             }
         });
-
-
         return view;
     }
 

@@ -20,7 +20,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
-        android:id="@+id/btn_file_path"
+        android:id="@+id/button_file_renamer_path"
         android:layout_width="87dp"
         android:layout_height="35dp"
         android:clickable="true"
@@ -32,7 +32,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/text_file_path"
+        android:id="@+id/text_file_renamer_path"
         android:layout_width="317dp"
         android:layout_height="40dp"
 

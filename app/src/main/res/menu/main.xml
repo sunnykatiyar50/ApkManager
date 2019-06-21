@@ -108,7 +108,7 @@
 
 
    <item android:title="Sort By"
-       android:orderInCategory="102"
+       android:orderInCategory="101"
        android:id="@+id/submenu_sort"
        android:icon="@drawable/ic_sort_black_24dp">
 

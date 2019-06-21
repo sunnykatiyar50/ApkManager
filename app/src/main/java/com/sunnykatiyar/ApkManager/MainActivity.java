@@ -142,7 +142,6 @@ public class MainActivity extends AppCompatActivity
 
         value_global_path = sharedPref.getString(key_global_path,"Path Not Set");
         value_local_path.setText(value_global_path);
-
         btn_search_apks.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -285,7 +284,7 @@ public class MainActivity extends AppCompatActivity
                 new LongTask().execute("search",dir_path.toString());
                 cla = new CustomListAdapter(apkFilesList,context);
                 recyclerView.setAdapter(cla);
-               // cla.notifyDataSetChanged();
+                cla.notifyDataSetChanged();
             }
             // IF INVALID FOLDER PATH
             else{
@@ -378,6 +377,8 @@ public class MainActivity extends AppCompatActivity
 
         if(id == R.id.menuitem_select_all){
 
+            item.setChecked(!item.isChecked());
+
             if(apkFilesList.size()>0){
                 //-------------------Selecting each file--------------------
                 for(ListDataItem l : apkFilesList){
@@ -387,7 +388,6 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(context,"First Load Files to Select",Toast.LENGTH_SHORT);
             }
 
-            //----------------------Reloading LIST----------------------------------
             File dir_path = new File(value_local_path.getText().toString());
             if (dir_path.exists() & dir_path.isDirectory()) {
                 new LongTask().execute("search",dir_path.toString());
@@ -398,7 +398,6 @@ public class MainActivity extends AppCompatActivity
             }else{
                 Toast.makeText(context,"Set Correct Path",Toast.LENGTH_SHORT);
             }
-
         }
 
         //----------------------UNINSTALL APPS----------------------------------
@@ -541,7 +540,6 @@ public class MainActivity extends AppCompatActivity
                 prefEditor.putString(key_sorting, sort_by).commit();
             }
 
-
         //-----------------------------------INVERSE SORTING-------------------------------------
         if(id == R.id.menuitem_decreasing){
                 item.setChecked(true);
@@ -670,6 +668,7 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(String s) {
             SortApkList();
            // showSnackBar(s);
+            cla = new CustomListAdapter(apkFilesList,context);
             recyclerView.setAdapter(cla);
             cla.notifyDataSetChanged();
             ShowMsgInTextView();
@@ -917,7 +916,6 @@ public class MainActivity extends AppCompatActivity
                        default : { Collections.sort(apkFilesList,file_name_comparator);    break;}
         }
 
-        cla.notifyDataSetChanged();
     }
 
     public void restoreModifiedTime(){

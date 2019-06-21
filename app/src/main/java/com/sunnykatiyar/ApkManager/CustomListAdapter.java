@@ -153,7 +153,7 @@ public class CustomListAdapter extends RecyclerView.Adapter<CustomViewHolder> {
             sel = getSelectedItemsList().size();
             msg_text = "Total : "+total+"\t Selected : "+sel;
             MainActivity.text_msgs.setText(msg_text);
-
+           // notifyDataSetChanged();
           //  Toast.makeText(context,list.get(i).app_name+ "selection state changed. \n Selected Count :"+sel,Toast.LENGTH_SHORT).show();
         }
         });

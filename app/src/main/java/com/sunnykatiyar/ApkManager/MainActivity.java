@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity
     RecyclerView recyclerView;
     public static PackageManager pm ;
     public static List<ListDataItem> selected_files_list = new ArrayList<>();
-    private boolean rootSelected =false;
-    private boolean rootAccess =false;
+    private boolean rootSelected ;
+    private boolean rootAccess ;
     Snackbar snackbar;
     String value_global_path;
 
@@ -264,6 +264,7 @@ public class MainActivity extends AppCompatActivity
 
 //----------------------------------------------------------------------------------------------------------------------
             option_menu.findItem(R.id.menuitem_root).setChecked(sharedPref.getBoolean("ROOT",true));
+            rootSelected = option_menu.findItem(R.id.menuitem_root).isChecked();
 //--------------------------------------------------------------------------------------------------------------------
         return true;
     }
@@ -631,10 +632,11 @@ public class MainActivity extends AppCompatActivity
             }
 
             if(objects[0] instanceof File){
-                Log.i(TAG,objects[0].getClass().toString());
-                text_msgs.setText("Loading ** ");
-                text_msgs.setText("Loading @@@@ ");
-                text_msgs.setText("Loading ####### ");
+             //   Log.i(TAG,objects[0].getClass().toString());
+                text_msgs.setText("Loading : "+((File)objects[0]).getName());
+//                text_msgs.setText("Loading ** ");
+//                text_msgs.setText("Loading @@@@ ");
+//                text_msgs.setText("Loading ####### ");
             }
             super.onProgressUpdate(objects);
         }

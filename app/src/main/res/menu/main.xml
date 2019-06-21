@@ -12,7 +12,7 @@
 
     <item
         android:id="@+id/menuitem_search"
-        android:showAsAction="collapseActionView"
+        android:showAsAction="always"
         android:orderInCategory="98"
         tools:ignore="AppCompatResource"
         android:title="Load Files" />

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="Normal_Black">#BD0E0D0D</color>
+
+    <color name="Updatable">#EE4B4B</color>
+    <color name="InstalledOnly">#13D620</color>
+    <color name="Not_Installed">#AD6780</color>
+</resources>

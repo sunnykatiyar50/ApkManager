@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home_activity"
+            android:icon="@drawable/ic_android_black_24dp"
+            android:title="APK Manager" />
+
+        <item
+            android:id="@+id/rename_apk_settings"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Apk Rename Format" />
+
+        <item
+            android:id="@+id/nav_file_renamer"
+            android:icon="@drawable/ic_note_add_black_24dp"
+            android:title="Files Renamer" />
+
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Files Renaming Format" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+        </menu>
+
+        <item
+            android:id="@+id/nav_help"
+            android:orderInCategory="100"
+            android:title="Help !"
+            android:icon="@drawable/ic_help_black_24dp"
+            />
+
+        <item
+            android:id="@+id/nav_about"
+            android:orderInCategory="100"
+            android:icon="@drawable/ic_info_black_24dp"
+            android:title="About"
+            />
+    </item>
+
+</menu>

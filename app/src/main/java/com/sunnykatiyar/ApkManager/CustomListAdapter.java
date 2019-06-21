@@ -164,14 +164,28 @@ public class CustomListAdapter extends RecyclerView.Adapter<CustomViewHolder> {
 
         selected_items_list = new ArrayList<>();
 
-        for(ListDataItem list_item : list){
-            if(list_item.select_box_state == true)
-            {
-                selected_items_list.add(list_item);
+        if(list!=null){
+            for(ListDataItem list_item : list){
+                if(list_item.select_box_state == true)
+                {
+                    selected_items_list.add(list_item);
+                }
             }
         }
 
         return selected_items_list;
+    }
+
+
+    public void SelectUpdatable(){
+        for(ListDataItem list_item : list){
+            if(list_item.isInstalled == true){
+                if(Integer.parseInt(list_item.apk_version_code) > Integer.parseInt(list_item.app_version_code))
+                {
+                    list_item.select_box_state = true;
+                }
+            }
+        }
     }
 
 //    public int getSelectedItemCount(){

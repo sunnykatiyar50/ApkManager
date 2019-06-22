@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RenameFilesFragment"
-    tools:showIn="@layout/activity_rename_files">
+    tools:context=".RenameFilesFragment" >
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/r_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/text_msgs"
+        app:layout_constraintBottom_toTopOf="@+id/files_text_msg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_search_folder"
+        app:layout_constraintTop_toBottomOf="@+id/text_file_renamer_path"
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
@@ -35,17 +35,16 @@
         android:id="@+id/text_file_renamer_path"
         android:layout_width="317dp"
         android:layout_height="40dp"
-
         android:ems="10"
         android:hint="Select a folder to search.."
         android:inputType="textPersonName"
-        app:layout_constraintEnd_toStartOf="@+id/btn_local_path"
+        app:layout_constraintEnd_toStartOf="@+id/button_file_renamer_path"
         app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text_msgs"
+        android:id="@+id/files_text_msg"
         android:layout_width="0dp"
         android:layout_height="24dp"
         android:autoSizeMaxTextSize="14dp"
@@ -61,7 +60,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-
 
 </android.support.constraint.ConstraintLayout>

@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences.Editor prefEditor;
 
     DividerItemDecoration mDividerItemDecoration;
-    NavigationView navigationView;
+    public static NavigationView navigationView;
     AlertDialog.Builder builder;
 
     final String PREF_NAME = "com.sunnykatiyar.ApkManager.RENAME";
@@ -121,8 +121,7 @@ public class MainActivity extends AppCompatActivity
         this.text_msgs= findViewById(R.id.text_msgs);
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.getMenu().getItem(0).setChecked(true);
-
+        navigationView.getMenu().findItem(R.id.nav_home_activity).setChecked(true);
 
         recyclerView = findViewById(R.id.r_view);
         LinearLayoutManager llm = new LinearLayoutManager(context);
@@ -523,14 +522,14 @@ public class MainActivity extends AppCompatActivity
                item.setChecked(true);
                 sort_by = sort_by_name;
                 prefEditor.putString(key_sorting, sort_by).commit();
-
+                SortApkList();
         }
 
         if(id == R.id.menuitem_sortbydate){
                 item.setChecked(true);
                 sort_by = sort_by_date;
                 prefEditor.putString(key_sorting, sort_by).commit();
-
+                SortApkList();
         }
 
         if(id == R.id.menuitem_sortbysize){
@@ -538,21 +537,22 @@ public class MainActivity extends AppCompatActivity
             //    Log.i(TAG,"Clicked sort by size");
                 sort_by = sort_by_size;
                 prefEditor.putString(key_sorting, sort_by).commit();
-            }
+                SortApkList();
+        }
 
         //-----------------------------------INVERSE SORTING-------------------------------------
         if(id == R.id.menuitem_decreasing){
                 item.setChecked(true);
                 order_by = order_decreasing;
                 prefEditor.putString(key_order_by, order_by).commit();
-
+               SortApkList();
         }
 
         if(id == R.id.menuitem_increasing){
                 item.setChecked(true);
                 order_by = order_increasing;
                 prefEditor.putString(key_order_by, order_by).commit();
-            //}
+                  SortApkList();
         }
 
         if(id == R.id.menuitem_select_update){
@@ -572,24 +572,25 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.rename_apk_settings) {
+        if (id == R.id.nav_rename_apk_settings) {
             Intent i = new Intent(this,RenameApkSettingActivity.class);
             startActivity(i);
-            navigationView.getMenu().getItem(1).setChecked(true);
-
+            navigationView.getMenu().findItem(R.id.nav_rename_apk_settings).setChecked(true);
+            item.setChecked(false);
+            //pass false to uncheck
         } else if (id == R.id.nav_home_activity) {
             Intent i = new Intent(this,MainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
-            navigationView.getMenu().getItem(0).setChecked(true);
+            navigationView.getMenu().findItem(R.id.nav_home_activity).setChecked(true);
+            item.setChecked(false);
 
         } else if (id == R.id.nav_file_renamer) {
             Intent i = new Intent(this,RenameFiles.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
-
-            navigationView.getMenu().getItem(2).setChecked(true);
-
+            item.setChecked(false);
+            navigationView.getMenu().findItem(R.id.nav_file_renamer).setChecked(true);
 
         } else if (id == R.id.nav_manage) {
 
@@ -632,9 +633,6 @@ public class MainActivity extends AppCompatActivity
             if(objects[0] instanceof File){
              //   Log.i(TAG,objects[0].getClass().toString());
                 text_msgs.setText("Loading : "+((File)objects[0]).getName());
-//                text_msgs.setText("Loading ** ");
-//                text_msgs.setText("Loading @@@@ ");
-//                text_msgs.setText("Loading ####### ");
             }
             super.onProgressUpdate(objects);
         }
@@ -657,6 +655,7 @@ public class MainActivity extends AppCompatActivity
                 return "Root Uninstall Operation completed." ;
             }else if(objects[0].equals("delete")){
                 DeleteApks((List)objects[1] );
+                return "Apk Deletion Operation completed." ;
             }else if(objects[0].equals("rename")) {
                 RenameApks((List) objects[1]);
                 return "Renaming completed." ;
@@ -666,12 +665,10 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(String s) {
+            Log.i(TAG,"in OnPostExecute :");
             SortApkList();
            // showSnackBar(s);
-            cla = new CustomListAdapter(apkFilesList,context);
-            recyclerView.setAdapter(cla);
-            cla.notifyDataSetChanged();
-            ShowMsgInTextView();
+          //  ShowMsgInTextView();
             super.onPostExecute(s);
         }
 
@@ -863,12 +860,10 @@ public class MainActivity extends AppCompatActivity
                 Log.i(TAG,"Set a proper Name Format First");
                 publishProgress("Set a proper Name Format First");
             }
-
         }
 
         protected String getName(ListDataItem ld, int i){
             switch(i){
-
                 case 0:{  return "";              }
                 case 1:{  return ld.app_name;     }
                 case 2:{  return ld.apk_version_name;    }
@@ -881,13 +876,16 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public void ShowMsgInTextView(String str){
+        String msg_text = "Total : "+apkFilesList.size()+"\t Selected : "+cla.getSelectedItemsList().size()+"\n"+str;
+        text_msgs.setText(msg_text);
+    }
     public void ShowMsgInTextView(){
         String msg_text = "Total : "+apkFilesList.size()+"\t Selected : "+cla.getSelectedItemsList().size();
         text_msgs.setText(msg_text);
     }
 
     public void SortApkList(){
-
         Comparator<ListDataItem> file_name_comparator = (ListDataItem l1, ListDataItem l2)-> l1.file_name.compareTo(l2.file_name);
         Comparator<ListDataItem> file_size_comparator = (ListDataItem l1, ListDataItem l2)-> Long.compare(l1.file.length(),l2.file.length());
         Comparator<ListDataItem> modified_date_comparator = (ListDataItem l1, ListDataItem l2)-> Long.compare(l1.file.lastModified(),l2.file.lastModified());
@@ -915,6 +913,10 @@ public class MainActivity extends AppCompatActivity
 
                        default : { Collections.sort(apkFilesList,file_name_comparator);    break;}
         }
+     //   cla = new CustomListAdapter(apkFilesList,context);
+       recyclerView.setAdapter(cla);
+        cla.notifyDataSetChanged();
+        ShowMsgInTextView();
 
     }
 

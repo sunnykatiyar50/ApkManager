@@ -28,6 +28,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sunnykatiyar.ApkManager.MainActivity.navigationView;
+
 public class RenameApkSettingActivity extends AppCompatActivity  implements
         AdapterView.OnItemSelectedListener{
 
@@ -90,6 +92,7 @@ public class RenameApkSettingActivity extends AppCompatActivity  implements
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        navigationView.getMenu().findItem(R.id.nav_rename_apk_settings).setChecked(true);
 
         sharedPref = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
         prefEditor = sharedPref.edit();

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.nononsenseapps.filepicker.FilePickerActivity;
 import com.nononsenseapps.filepicker.Utils;
@@ -26,22 +27,21 @@ import static android.app.Activity.RESULT_OK;
  */
 public class RenameFilesFragment extends Fragment {
 
-
     public RenameFilesFragment() {
     }
 
     Button btn_browse;
     EditText file_search_path;
     Context context = getContext();
-
+    TextView files_text_masg;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rename_files, container, false);
-
-
         btn_browse = view.findViewById(R.id.button_file_renamer_path);
+        files_text_masg = view.findViewById(R.id.files_text_msg);
         file_search_path = view.findViewById(R.id.text_file_renamer_path);
+
         btn_browse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

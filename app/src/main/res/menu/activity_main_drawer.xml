@@ -10,7 +10,7 @@
             android:title="APK Manager" />
 
         <item
-            android:id="@+id/rename_apk_settings"
+            android:id="@+id/nav_rename_apk_settings"
             android:icon="@drawable/ic_menu_send"
             android:title="Apk Rename Format" />
 

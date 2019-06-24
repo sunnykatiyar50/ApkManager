@@ -1,4 +1,4 @@
-package com.sunnykatiyar.ApkManager;
+package com.sunnykatiyar.AppManager;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -13,7 +13,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
-public class ListDataItem {
+public class ApkListDataItem {
 
 //    Uri file_uri;
 //    String file_path;
@@ -36,19 +36,19 @@ public class ListDataItem {
     boolean select_box_state ;
 
     String pkg_name ;
-    private final String TAG = "ListDataItem :";
+    private final String TAG = "ApkListDataItem :";
     String last_install_time;
     String last_modified_time;
     long initial_modified_time;
     long file_creation_time;
-    PackageManager pm = MainActivity.pm;
+    PackageManager pm = ApkListActivity.pm;
 
     private static final DecimalFormat format = new DecimalFormat("#.##");
     private static final long MB = 1024 * 1024;
     private static final long KB = 1024;
     private static final long GB = 1024 * 1024 * 1024;
 
-    public ListDataItem(File f1, Context context){
+    public ApkListDataItem(File f1, Context context){
 
         super();
 

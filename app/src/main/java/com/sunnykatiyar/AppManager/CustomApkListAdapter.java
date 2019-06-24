@@ -1,4 +1,4 @@
-package com.sunnykatiyar.ApkManager;
+package com.sunnykatiyar.AppManager;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -9,22 +9,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomListAdapter extends RecyclerView.Adapter<CustomViewHolder> {
+public class CustomApkListAdapter extends RecyclerView.Adapter<CustomApkListViewHolder> {
 
-    List<ListDataItem> list ;
+    List<ApkListDataItem> list ;
     Context context;
-    ListDataItem temp;
+    ApkListDataItem temp;
     int selected_count;
     private String TAG = " Custom List Adapter : ";
-    List<ListDataItem> selected_items_list;
+    List<ApkListDataItem> selected_items_list;
     String msg_text;
 
-    public CustomListAdapter(List<ListDataItem> apks_list, Context c) {
+    public CustomApkListAdapter(List<ApkListDataItem> apks_list, Context c) {
         super();
         this.list=apks_list;
         this.context=c;
@@ -34,27 +33,21 @@ public class CustomListAdapter extends RecyclerView.Adapter<CustomViewHolder> {
 
     @NonNull
     @Override
-    public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public CustomApkListViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         Context context = viewGroup.getContext();
         LayoutInflater in = LayoutInflater.from(context);
-        View view = in.inflate(R.layout.listitem_layout,viewGroup,false);
-        CustomViewHolder cst = new CustomViewHolder(view);
+        View view = in.inflate(R.layout.apk_listitem_layout,viewGroup,false);
+        CustomApkListViewHolder cst = new CustomApkListViewHolder(view);
       //Log.i(TAG , "On create view Holder");
         return cst;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final CustomViewHolder cst, final int i) {
-
+    public void onBindViewHolder(@NonNull final CustomApkListViewHolder cst, final int i) {
        temp = list.get(i);
-//     Log.i(TAG , " : "+list.get(i).file_name);
-//        Log.i(TAG , "Updatable : "+list.get(i).isUpdatable);
-//        Log.i(TAG , "Installed : "+list.get(i).isInstalled);
-//        Log.i(TAG , "CheckBoxState : "+list.get(i).select_box_state);
         int position = i;
          String ver_apk;
          String ver_app;
-
 
     if(list.get(i).apk_pkg_info != null){
 
@@ -139,10 +132,10 @@ public class CustomListAdapter extends RecyclerView.Adapter<CustomViewHolder> {
                 list.get(i).select_box_state=true;
                 //buttonView.setChecked(true);
 //                 if(sel==total){
-//                    MainActivity.option_menu.getItem(R.id.menuitem_select_all).setChecked(true);
+//                    ApkListActivity.option_menu.getItem(R.id.menuitem_select_all).setChecked(true);
 //                }
 //                else{
-//                     MainActivity.option_menu.getItem(R.id.menuitem_select_all).setChecked(true);                }
+//                     ApkListActivity.option_menu.getItem(R.id.menuitem_select_all).setChecked(true);                }
             }
             else
             {
@@ -152,7 +145,7 @@ public class CustomListAdapter extends RecyclerView.Adapter<CustomViewHolder> {
 
             sel = getSelectedItemsList().size();
             msg_text = "Total : "+total+"\t Selected : "+sel;
-            MainActivity.text_msgs.setText(msg_text);
+            ApkListActivity.text_msgs.setText(msg_text);
            // notifyDataSetChanged();
           //  Toast.makeText(context,list.get(i).app_name+ "selection state changed. \n Selected Count :"+sel,Toast.LENGTH_SHORT).show();
         }
@@ -160,12 +153,12 @@ public class CustomListAdapter extends RecyclerView.Adapter<CustomViewHolder> {
 
 }
 
-    public List<ListDataItem> getSelectedItemsList(){
+    public List<ApkListDataItem> getSelectedItemsList(){
 
         selected_items_list = new ArrayList<>();
 
         if(list!=null){
-            for(ListDataItem list_item : list){
+            for(ApkListDataItem list_item : list){
                 if(list_item.select_box_state == true)
                 {
                     selected_items_list.add(list_item);
@@ -178,7 +171,7 @@ public class CustomListAdapter extends RecyclerView.Adapter<CustomViewHolder> {
 
 
     public void SelectUpdatable(){
-        for(ListDataItem list_item : list){
+        for(ApkListDataItem list_item : list){
             if(list_item.isInstalled == true){
                 if(Integer.parseInt(list_item.apk_version_code) > Integer.parseInt(list_item.app_version_code))
                 {

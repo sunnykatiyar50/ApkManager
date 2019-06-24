@@ -4,14 +4,19 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+
         <item
-            android:id="@+id/nav_home_activity"
+            android:id="@+id/nav_applist_activity"
+            android:icon="@drawable/ic_apps_black_24dp"
+            android:title="Apps Explorer" />
+        <item
+            android:id="@+id/nav_apklist_activity"
             android:icon="@drawable/ic_android_black_24dp"
             android:title="APK Manager" />
 
         <item
-            android:id="@+id/nav_rename_apk_settings"
-            android:icon="@drawable/ic_menu_send"
+            android:id="@+id/nav_apk_rename_format"
+            android:icon="@drawable/ic_sort_by_alpha_black_24dp"
             android:title="Apk Rename Format" />
 
         <item
@@ -20,9 +25,15 @@
             android:title="Files Renamer" />
 
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
+            android:id="@+id/nav_file_rename_format"
+            android:icon="@drawable/ic_sort_by_alpha_black_24dp"
             android:title="Files Renaming Format" />
+
+        <item
+            android:id="@+id/nav_app_settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="App Settings" />
+
     </group>
 
     <item android:title="Communicate">

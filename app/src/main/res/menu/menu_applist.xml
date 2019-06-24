@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<menu   xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context="com.shanekatear.appexplorer.MainActivity">
+
+    <item
+        android:id="@+id/search_item"
+        android:title="Search"
+        android:icon="@drawable/ic_action_search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/reload"
+        android:orderInCategory="100"
+        android:title="Reload Apps"
+        app:showAsAction="never" />
+
+
+    <item android:title="Sort By"
+        android:orderInCategory="101"
+        android:id="@+id/submenu_sort"
+        android:icon="@drawable/ic_sort_black_24dp">
+
+        <menu>
+
+            <group android:checkableBehavior="single"
+                android:id="@+id/menugroup_sort"
+                android:menuCategory="secondary">
+                <item
+                    android:id="@+id/menuitem_sortbyname"
+                    android:orderInCategory="100"
+                    android:checked="true"
+                    android:title="Sort By Name"
+                    android:icon="@drawable/ic_sort_by_alpha_black_24dp"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/menuitem_sortby_install_time"
+                    android:orderInCategory="101"
+                    android:title="Sort By Time"
+                    android:icon="@drawable/ic_date_range_black_24dp"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/menuitem_sortby_update_time"
+                    android:orderInCategory="101"
+                    android:title="Sort By Time"
+                    android:icon="@drawable/ic_date_range_black_24dp"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/menuitem_sortbysize"
+                    android:orderInCategory="101"
+                    android:title="Sort By Size"
+                    android:icon="@drawable/ic_sort_black_24dp"
+                    app:showAsAction="never" />
+            </group>
+
+
+            <group android:checkableBehavior="single"
+                android:id="@+id/menugroup_order"
+                android:menuCategory="secondary">
+                <item
+                    android:id="@+id/menuitem_increasing"
+                    android:orderInCategory="101"
+
+                    android:title="Increasing Order"
+                    android:icon="@drawable/ic_vertical_align_top_black_24dp"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/menuitem_decreasing"
+                    android:orderInCategory="101"
+                    android:title="Decreasing Order "
+                    android:icon="@drawable/ic_vertical_align_bottom_black_24dp"
+                    app:showAsAction="never" />
+
+            </group>
+
+        </menu>
+
+    </item>
+</menu>

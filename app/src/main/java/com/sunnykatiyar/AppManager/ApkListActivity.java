@@ -1,6 +1,5 @@
-package com.sunnykatiyar.ApkManager;
+package com.sunnykatiyar.AppManager;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,7 +27,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +40,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
+import static android.content.Intent.EXTRA_PACKAGE_NAME;
+
+public class ApkListActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MAIN ACTIVITY : ";
@@ -51,18 +51,20 @@ public class MainActivity extends AppCompatActivity
     public static  TextView text_msgs ;
 
     public static MenuItem menuitem_select_all;
-    public Context context = MainActivity.this;
+    public Context context = ApkListActivity.this;
     EditText value_local_path;
     List<File> list_files ;
-    CustomListAdapter cla;
-    List<ListDataItem> apkFilesList ;
+    CustomApkListAdapter cla;
+    List<ApkListDataItem> apkFilesList ;
     RecyclerView recyclerView;
     public static PackageManager pm ;
-    public static List<ListDataItem> selected_files_list = new ArrayList<>();
+    public static List<ApkListDataItem> selected_files_list = new ArrayList<>();
     private boolean rootSelected ;
     private boolean rootAccess ;
     Snackbar snackbar;
     String value_global_path;
+    final static String key_search_subfolders = "SEARCH_SUBFOLDERS";
+    String value_search_subfolders;
 
     SharedPreferences sharedPref;
     SharedPreferences.Editor prefEditor;
@@ -71,17 +73,17 @@ public class MainActivity extends AppCompatActivity
     public static NavigationView navigationView;
     AlertDialog.Builder builder;
 
-    final String PREF_NAME = "com.sunnykatiyar.ApkManager.RENAME";
+    final String PREF_NAME = "com.sunnykatiyar.AppManager.RENAME";
     final String key_global_path = "GLOBAL_PATH";
 
-    final String name_part_1 = RenameApkSettingActivity.name_part_1;
-    final String name_part_2 = RenameApkSettingActivity.name_part_2;
-    final String name_part_3 = RenameApkSettingActivity.name_part_3;
-    final String name_part_4 = RenameApkSettingActivity.name_part_4;
-    final String name_part_5 = RenameApkSettingActivity.name_part_5;
-    final String name_part_6 = RenameApkSettingActivity.name_part_6;
-    final String name_part_7 = RenameApkSettingActivity.name_part_7;
-    final String name_part_8 = RenameApkSettingActivity.name_part_8;
+    final String name_part_1 = ApkRenameActivity.name_part_1;
+    final String name_part_2 = ApkRenameActivity.name_part_2;
+    final String name_part_3 = ApkRenameActivity.name_part_3;
+    final String name_part_4 = ApkRenameActivity.name_part_4;
+    final String name_part_5 = ApkRenameActivity.name_part_5;
+    final String name_part_6 = ApkRenameActivity.name_part_6;
+    final String name_part_7 = ApkRenameActivity.name_part_7;
+    final String name_part_8 = ApkRenameActivity.name_part_8;
 
     final String key_sorting = "SORT BY";
     String value_sorting;
@@ -94,10 +96,12 @@ public class MainActivity extends AppCompatActivity
 
     final String order_decreasing = "ORDER_INCREASING";
     final String order_increasing = "ORDER_DECREASING";
-    final String name_format_data_saved = RenameApkSettingActivity.name_format_data_saved;
+
 
     public String sort_by ;
     public String order_by;
+    final String name_format_data_saved = ApkRenameActivity.name_format_data_saved;
+
 
     static {
         Shell.Config.setFlags(Shell.FLAG_REDIRECT_STDERR);
@@ -121,7 +125,7 @@ public class MainActivity extends AppCompatActivity
         this.text_msgs= findViewById(R.id.text_msgs);
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.getMenu().findItem(R.id.nav_home_activity).setChecked(true);
+        navigationView.getMenu().findItem(R.id.nav_apklist_activity).setChecked(true);
 
         recyclerView = findViewById(R.id.r_view);
         LinearLayoutManager llm = new LinearLayoutManager(context);
@@ -136,13 +140,26 @@ public class MainActivity extends AppCompatActivity
 
         pm = getPackageManager();
 
-        btn_search_apks = findViewById(R.id.btn_local_path);
+        btn_search_apks = findViewById(R.id.btn_browse_local_path);
         value_local_path = findViewById(R.id.edit_search_folder);
 
         value_global_path = sharedPref.getString(key_global_path,"Path Not Set");
         value_local_path.setText(value_global_path);
-        btn_search_apks.setOnClickListener(new View.OnClickListener() {
 
+        File dir_path = new File(value_local_path.getText().toString());
+
+        if(dir_path.exists() & dir_path.isDirectory()){
+            sort_by = sharedPref.getString(value_sorting,sort_by_name);
+            new LongTask().execute("search",dir_path.toString());
+        }else{
+            Toast.makeText(this,"Set a Valid Folder To Load Files.",Toast.LENGTH_SHORT);
+        }
+
+        cla = new CustomApkListAdapter(apkFilesList,context);
+        recyclerView.setAdapter(cla);
+        cla.notifyDataSetChanged();
+
+        btn_search_apks.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -203,15 +220,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu1) {
+        Log.i(TAG," onCreateOptionsMenu : ");
 
-        getMenuInflater().inflate(R.menu.main, menu1);
-      //  Log.i(TAG," onCreateOptionsMenu : ");
+        getMenuInflater().inflate(R.menu.menu_apk_list, menu1);
         this.option_menu = menu1;
 
-            // Associate searchable configuration with the SearchView
+        //     Associate searchable configuration with the SearchView
 //        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//        SearchView searchView =  (SearchView) menu1.findItem(R.id.search).getActionView();
+//        android.support.v7.widget.SearchView searchView =  (SearchView) menu1.findItem(R.id.search).getActionView();
 //        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
         return true;
     }
 
@@ -221,8 +239,8 @@ public class MainActivity extends AppCompatActivity
         Log.i(TAG," onPrepareOptionsMenu : ");
 
 //-----------------------LOADING "SORT BY" FROM SHARED PREFERENCES---------------------------------------
-            value_sorting = sharedPref.getString(key_sorting,sort_by_name);
-        //    Log.i(TAG,"Sorting Setting in Shared Preferences: "+value_sorting);
+             value_sorting = sharedPref.getString(key_sorting,sort_by_name);
+             Log.i(TAG,"Sorting Setting in Shared Preferences: "+value_sorting);
 
             if(value_sorting.equals(sort_by_name)){
                // Log.i(TAG," inside equating sort_by_name : ");
@@ -264,6 +282,7 @@ public class MainActivity extends AppCompatActivity
             option_menu.findItem(R.id.menuitem_root).setChecked(sharedPref.getBoolean("ROOT",true));
             rootSelected = option_menu.findItem(R.id.menuitem_root).isChecked();
 //--------------------------------------------------------------------------------------------------------------------
+
         return true;
     }
 
@@ -277,18 +296,10 @@ public class MainActivity extends AppCompatActivity
         if(id == R.id.menuitem_search) {
 
             File dir_path = new File(value_local_path.getText().toString());
-
-            //CHECK FOR CORRECT PATH
-            if (dir_path.exists() & dir_path.isDirectory()) {
-                new LongTask().execute("search",dir_path.toString());
-                cla = new CustomListAdapter(apkFilesList,context);
-                recyclerView.setAdapter(cla);
-                cla.notifyDataSetChanged();
-            }
-            // IF INVALID FOLDER PATH
-            else{
-                Toast.makeText(context,"Set Correct Path",Toast.LENGTH_SHORT);
-            }
+            new LongTask().execute("search",dir_path.toString());
+            cla = new CustomApkListAdapter(apkFilesList,context);
+            recyclerView.setAdapter(cla);
+            cla.notifyDataSetChanged();
         }
 
         //-----------------------RELOAD------------------------------------------------
@@ -302,6 +313,7 @@ public class MainActivity extends AppCompatActivity
 
         if(id==R.id.menuitem_subdir){
                 item.setChecked(!item.isChecked());
+                prefEditor.putBoolean(key_search_subfolders,item.isChecked()).commit();
         }
 
         //---------------SELECT ROOT----------------------------------------------
@@ -380,7 +392,7 @@ public class MainActivity extends AppCompatActivity
 
             if(apkFilesList.size()>0){
                 //-------------------Selecting each file--------------------
-                for(ListDataItem l : apkFilesList){
+                for(ApkListDataItem l : apkFilesList){
                     l.select_box_state = item.isChecked();
                 }
             }else{
@@ -390,7 +402,7 @@ public class MainActivity extends AppCompatActivity
             File dir_path = new File(value_local_path.getText().toString());
             if (dir_path.exists() & dir_path.isDirectory()) {
                 new LongTask().execute("search",dir_path.toString());
-                cla = new CustomListAdapter(apkFilesList,context);
+                cla = new CustomApkListAdapter(apkFilesList,context);
                 recyclerView.setAdapter(cla);
                 cla.notifyDataSetChanged();
 
@@ -572,17 +584,17 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_rename_apk_settings) {
-            Intent i = new Intent(this,RenameApkSettingActivity.class);
+        if (id == R.id.nav_apk_rename_format) {
+            Intent i = new Intent(this, ApkRenameActivity.class);
             startActivity(i);
-            navigationView.getMenu().findItem(R.id.nav_rename_apk_settings).setChecked(true);
+         //   navigationView.getMenu().findItem(R.id.nav_rename_apk_settings).setChecked(true);
             item.setChecked(false);
             //pass false to uncheck
-        } else if (id == R.id.nav_home_activity) {
-            Intent i = new Intent(this,MainActivity.class);
+        } else if (id == R.id.nav_apklist_activity) {
+            Intent i = new Intent(this, ApkListActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
-            navigationView.getMenu().findItem(R.id.nav_home_activity).setChecked(true);
+          //  navigationView.getMenu().findItem(R.id.nav_home_activity).setChecked(true);
             item.setChecked(false);
 
         } else if (id == R.id.nav_file_renamer) {
@@ -590,16 +602,22 @@ public class MainActivity extends AppCompatActivity
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
             item.setChecked(false);
+           // navigationView.getMenu().findItem(R.id.nav_file_renamer).setChecked(true);
+
+        } else if (id == R.id.nav_applist_activity) {
+            Intent i = new Intent(this,AppListActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+            item.setChecked(false);
             navigationView.getMenu().findItem(R.id.nav_file_renamer).setChecked(true);
-
-        } else if (id == R.id.nav_manage) {
-
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
 
         }else  if (id == R.id.nav_about) {
-            Toast.makeText(context, "Don't be so curious about me. I am in the making.. ", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplication(),"About Selected", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this,About.class));
+//            Toast.makeText(context, "Don't be so curious about me. I am in the making.. ", Toast.LENGTH_LONG).show();
         }else if (id == R.id.nav_help) {
             Toast.makeText(context, " If you can't help yourself.. Nobody can.", Toast.LENGTH_LONG).show();
         }
@@ -677,28 +695,37 @@ public class MainActivity extends AppCompatActivity
             list_files = new ArrayList<>();
             apkFilesList = new ArrayList<>();
 
+            //CHECK FOR CORRECT PATH
+            if (dir_path.exists() & dir_path.isDirectory()) {
                 // CHECK IF TO SEARCH IN SUBDIRECTORY
-                if(option_menu.findItem(R.id.menuitem_subdir).isChecked()) {
+                if(sharedPref.getBoolean(key_search_subfolders,true)) {
                     Log.i(TAG,"Search in Subfolder : True");
                     getAllSubDirFiles(dir_path);
                 }
 
                 // CHECK IF TO NOT SEARCH IN SUBDIRECTORY
-                else if(!option_menu.findItem(R.id.menuitem_subdir).isChecked()) {
+                else if(!sharedPref.getBoolean(key_search_subfolders,true)) {
                     Log.i(TAG,"Search in Subfolder : False");
                     getDirFiles(dir_path);
                     Log.i(TAG,list_files.size()+" files found.");
                     publishProgress("Path is set to : " + dir_path.getAbsolutePath());
                 }
+            }
+            // IF INVALID FOLDER PATH
+            else{
+                //Toast.makeText(context,"Set Correct Path",Toast.LENGTH_SHORT);
+                publishProgress("Set Correct Path");
+            }
+
         }
 
         public void getAllSubDirFiles(File file1){
-        ListDataItem ldm ;
+        ApkListDataItem ldm ;
             for(File f1 : file1.listFiles()){
             //   Log.i(TAG,"File : "+f1.getName());
                 if(f1.isFile() & f1.getName().endsWith(".apk")){
 
-                    ldm = new ListDataItem(f1,context);
+                    ldm = new ApkListDataItem(f1,context);
 
                     if(ldm.apk_pkg_info!=null){
                         apkFilesList.add(ldm);
@@ -717,14 +744,14 @@ public class MainActivity extends AppCompatActivity
 
             for(File f1 : file1.listFiles()){
                 if(f1.isFile() & f1.getName().endsWith(".apk")){
-                    apkFilesList.add(new ListDataItem(f1,context));
+                    apkFilesList.add(new ApkListDataItem(f1,context));
                     publishProgress(f1);
                 }
             }
             //return apkFilesList;
         }
 
-        public void RootInstall(List<ListDataItem> files_list){
+        public void RootInstall(List<ApkListDataItem> files_list){
             long apk_size;
             String command;
             List<String> std_err = new ArrayList<>();
@@ -735,7 +762,7 @@ public class MainActivity extends AppCompatActivity
          //   Toast.makeText(context, "No. of files to install : " + selected_files_list.size(), Toast.LENGTH_LONG).show();
             publishProgress("No. of files to install : " + selected_files_list.size());
 
-            for (ListDataItem file : files_list) {
+            for (ApkListDataItem file : files_list) {
                 try{
                     apk_size = file.file.length();
                     command = "cat \"" + file.file.getPath() + "\"|pm install -S " + apk_size;
@@ -743,7 +770,7 @@ public class MainActivity extends AppCompatActivity
                   //  Log.i(TAG, " EXECUTING :"+ command);
                     Log.i(TAG, " ROOT installing " + file.file_name + " : " + std_out.get(0));
                     publishProgress("Installation Output : "+std_out.get(0));
-                   // Toast.makeText(MainActivity.this, "Installation Successfull" + ps.toString(), Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(ApkListActivity.this, "Installation Successfull" + ps.toString(), Toast.LENGTH_SHORT).show();
                 }catch (Exception ex) {
                     if(!std_err.isEmpty()){
                       //  Log.e(TAG, " ROOT INSTALL ERROR of " + file.file_name + " \nError : " + std_err.get(0));
@@ -755,7 +782,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        public void RootUninstall(List<ListDataItem> files_list){
+        public void RootUninstall(List<ApkListDataItem> files_list){
             String command;
             List<String> std_err = new ArrayList<>();
             List<String> std_out = new ArrayList<>();
@@ -764,7 +791,7 @@ public class MainActivity extends AppCompatActivity
             Log.i(TAG, " No. of files to UNINSTALL  " + selected_files_list.size());
             publishProgress("No. of files to uninstall : " + selected_files_list.size());
 
-            for (ListDataItem file : files_list) {
+            for (ApkListDataItem file : files_list) {
                   if(file.isInstalled){
                           try{
                               command = "pm uninstall " + file.pkg_name;
@@ -785,7 +812,28 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        public void NoRootInstall(List<ListDataItem> files_list){
+        public void Uninstall(List<ApkListDataItem> files_list){
+            String command;
+            List<String> std_err = new ArrayList<>();
+            List<String> std_out = new ArrayList<>();
+            Intent i;
+            Log.i(TAG, "Root Access " + rootAccess);
+            Log.i(TAG, " No. of files to UNINSTALL  " + selected_files_list.size());
+            publishProgress("No. of files to uninstall : " + selected_files_list.size());
+
+            for (ApkListDataItem file : files_list) {
+                if(file.isInstalled){
+                        Toast.makeText(context, "Confirm to uninstall " + file.app_name, Toast.LENGTH_SHORT).show();
+                        i = new Intent(Intent.ACTION_DELETE);
+                        //i.setData(Uri.parse(p.packageName));
+                        i.putExtra(EXTRA_PACKAGE_NAME, file.pkg_name);
+                        context.startActivity(i);
+                        Log.i(TAG, " Uninstalling " + file.file_name + " : " + std_out.get(0));
+                    }
+                }
+            }
+
+        public void NoRootInstall(List<ApkListDataItem> files_list){
 
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setType("application/vnd.android.package-archive");
@@ -794,24 +842,24 @@ public class MainActivity extends AppCompatActivity
 
             Log.i(TAG, "Root Access " + rootAccess);
 
-            for (ListDataItem file : files_list)
+            for (ApkListDataItem file : files_list)
             {
 //                i.setData(file.file_uri);
 //                context.startActivity(i);
             }
         }
 
-        public void DeleteApks(List<ListDataItem> files_list){
+        public void DeleteApks(List<ApkListDataItem> files_list){
 
             boolean isDeleted;
-            for (ListDataItem file : files_list)
+            for (ApkListDataItem file : files_list)
             {
                 isDeleted = file.file.delete();
                 Log.i(TAG,"Deletion of "+file.file_name+" : "+isDeleted);
             }
         }
 
-        public void RenameApks(List<ListDataItem> files_list){
+        public void RenameApks(List<ApkListDataItem> files_list){
             Log.i(TAG,"Renaming Files Count :"+files_list.size());
 
             if(sharedPref.contains(name_format_data_saved)){
@@ -844,7 +892,7 @@ public class MainActivity extends AppCompatActivity
                 File f2;
                 String parent;
                 boolean result ;
-                for (ListDataItem f : files_list)
+                for (ApkListDataItem f : files_list)
                 {
                     f1 = new File(f.file.getAbsolutePath());
                     Log.i(TAG," f1 path : "+f.file.getAbsolutePath());
@@ -862,7 +910,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        protected String getName(ListDataItem ld, int i){
+        protected String getName(ApkListDataItem ld, int i){
             switch(i){
                 case 0:{  return "";              }
                 case 1:{  return ld.app_name;     }
@@ -873,23 +921,23 @@ public class MainActivity extends AppCompatActivity
               default : { return "";             }
             }
         }
-
     }
 
     public void ShowMsgInTextView(String str){
         String msg_text = "Total : "+apkFilesList.size()+"\t Selected : "+cla.getSelectedItemsList().size()+"\n"+str;
         text_msgs.setText(msg_text);
     }
+
     public void ShowMsgInTextView(){
         String msg_text = "Total : "+apkFilesList.size()+"\t Selected : "+cla.getSelectedItemsList().size();
         text_msgs.setText(msg_text);
     }
 
     public void SortApkList(){
-        Comparator<ListDataItem> file_name_comparator = (ListDataItem l1, ListDataItem l2)-> l1.file_name.compareTo(l2.file_name);
-        Comparator<ListDataItem> file_size_comparator = (ListDataItem l1, ListDataItem l2)-> Long.compare(l1.file.length(),l2.file.length());
-        Comparator<ListDataItem> modified_date_comparator = (ListDataItem l1, ListDataItem l2)-> Long.compare(l1.file.lastModified(),l2.file.lastModified());
-        Comparator<ListDataItem> creation_date_comparator = (ListDataItem l1, ListDataItem l2)-> Long.compare(l1.file_creation_time,l2.file_creation_time);
+        Comparator<ApkListDataItem> file_name_comparator = (ApkListDataItem l1, ApkListDataItem l2)-> l1.file_name.compareTo(l2.file_name);
+        Comparator<ApkListDataItem> file_size_comparator = (ApkListDataItem l1, ApkListDataItem l2)-> Long.compare(l1.file.length(),l2.file.length());
+        Comparator<ApkListDataItem> modified_date_comparator = (ApkListDataItem l1, ApkListDataItem l2)-> Long.compare(l1.file.lastModified(),l2.file.lastModified());
+        Comparator<ApkListDataItem> creation_date_comparator = (ApkListDataItem l1, ApkListDataItem l2)-> Long.compare(l1.file_creation_time,l2.file_creation_time);
 
         Log.i(TAG," In Sorting Method : sort by = "+ sort_by);
 
@@ -913,7 +961,8 @@ public class MainActivity extends AppCompatActivity
 
                        default : { Collections.sort(apkFilesList,file_name_comparator);    break;}
         }
-     //   cla = new CustomListAdapter(apkFilesList,context);
+
+        cla = new CustomApkListAdapter(apkFilesList,context);
        recyclerView.setAdapter(cla);
         cla.notifyDataSetChanged();
         ShowMsgInTextView();
@@ -921,7 +970,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void restoreModifiedTime(){
-        for(ListDataItem file:selected_files_list){
+        for(ApkListDataItem file:selected_files_list){
             file.file.setLastModified(file.initial_modified_time);
         }
     }

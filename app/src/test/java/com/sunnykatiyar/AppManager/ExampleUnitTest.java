@@ -1,4 +1,4 @@
-package com.sunnykatiyar.ApkManager;
+package com.sunnykatiyar.AppManager;
 
 import org.junit.Test;
 

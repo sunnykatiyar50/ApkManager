@@ -1,0 +1,65 @@
+<menu   xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context="com.shanekatear.appexplorer.AppDetails_Activity"
+        app:popupTheme="@style/FilePickerTheme">
+
+
+    <item
+        android:id="@+id/launch_item"
+        android:orderInCategory="100"
+        android:title="@string/launch_app"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/uninstall_item"
+        android:orderInCategory="100"
+        android:title="@string/uninstall_app"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/sys_appinfo_item"
+        android:orderInCategory="100"
+        android:title="@string/open_sys_appInfo"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/playstore_item"
+        android:orderInCategory="100"
+        android:title="@string/open_inPlaystore"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/extractApk_item"
+        android:orderInCategory="100"
+        android:title="@string/extract_apk"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/copymenu_item"
+        android:orderInCategory="100"
+        android:title="@string/copy_submenu"
+        app:showAsAction="never">
+
+        <menu android:id="@+id/copy_submenu" >
+            <item
+                android:id="@+id/share_link_item"
+                android:orderInCategory="100"
+                android:title="@string/share_link"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/copy_link_item"
+                android:orderInCategory="100"
+                android:title="@string/copy_link"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/copy_pkgname_item"
+                android:orderInCategory="100"
+                android:title="@string/copy_pkgName"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/copy_appname_item"
+                android:orderInCategory="100"
+                android:title="@string/copy_appName"
+                app:showAsAction="never" />
+        </menu>
+
+    </item>
+
+</menu>

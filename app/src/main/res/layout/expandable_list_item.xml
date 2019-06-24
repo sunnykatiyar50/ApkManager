@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="false"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/item_value"
+        android:layout_width="412dp"
+        android:layout_height="39dp"
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeMinTextSize="12sp"
+        android:autoSizeTextType="uniform"
+        android:background="@color/dark_grey"
+        android:clickable="false"
+        android:focusable="false"
+        android:hapticFeedbackEnabled="true"
+        android:lines="2"
+        android:maxLines="3"
+        android:minLines="1"
+        android:padding="@dimen/padding_least"
+        android:text="This is a ListItem "
+        android:textAlignment="gravity"
+        android:textColor="#06AA0E"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

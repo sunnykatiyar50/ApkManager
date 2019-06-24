@@ -14,20 +14,21 @@
     android:layout_margin="@dimen/margin_medium" >
 
     <TextView
-        android:id="@+id/textView1"
-        android:layout_width="430dp"
-        android:layout_height="37dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:id="@+id/label_from_folder"
+        android:layout_width="407dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="60dp"
+        android:background="#004D40"
         android:padding="@dimen/padding_large"
         android:text="Settings for Renaming Apk Files"
         android:textAlignment="center"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="#F7B905"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
 
     <TextView
         android:id="@+id/textView2"
@@ -244,7 +245,7 @@
         android:layout_width="135dp"
         android:layout_height="52dp"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="32dp"
         android:text="Clear"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9" />
@@ -261,30 +262,29 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_global_path" />
+        app:layout_constraintTop_toBottomOf="@+id/text_path_to" />
 
     <EditText
-        android:id="@+id/edit_global_path"
-        android:layout_width="298dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:id="@+id/text_path_to"
+        android:layout_width="312dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Set a default path here"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView1" />
+        app:layout_constraintTop_toBottomOf="@+id/label_from_folder" />
 
     <Button
         android:id="@+id/button_global_path"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
         android:text="Browse"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView1" />
+        app:layout_constraintTop_toBottomOf="@+id/label_from_folder" />
 
 
 </android.support.constraint.ConstraintLayout>

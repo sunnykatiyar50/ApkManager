@@ -1,4 +1,4 @@
-package com.sunnykatiyar.ApkManager;
+package com.sunnykatiyar.AppManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -28,12 +28,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sunnykatiyar.ApkManager.MainActivity.navigationView;
+import static com.sunnykatiyar.AppManager.ApkListActivity.navigationView;
 
-public class RenameApkSettingActivity extends AppCompatActivity  implements
+public class ApkRenameActivity extends AppCompatActivity  implements
         AdapterView.OnItemSelectedListener{
 
-    Context context = RenameApkSettingActivity.this;
+    Context context = ApkRenameActivity.this;
     public static Spinner spinner1;
     public static Spinner spinner3;
     public static Spinner spinner5;
@@ -60,7 +60,7 @@ public class RenameApkSettingActivity extends AppCompatActivity  implements
     public static SharedPreferences sharedPref;
     public static SharedPreferences.Editor prefEditor;
 
-    public final static  String PREF_NAME = "com.sunnykatiyar.ApkManager.RENAME";
+    public final static  String PREF_NAME = "com.sunnykatiyar.AppManager.RENAME";
     public final static String key_global_path ="GLOBAL_PATH";
     public final static  String name_part_1 = "NAME_PART_1";
     public final static  String name_part_2 = "NAME_PART_2";
@@ -92,7 +92,7 @@ public class RenameApkSettingActivity extends AppCompatActivity  implements
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        navigationView.getMenu().findItem(R.id.nav_rename_apk_settings).setChecked(true);
+        navigationView.getMenu().findItem(R.id.nav_apk_rename_format).setChecked(true);
 
         sharedPref = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
         prefEditor = sharedPref.edit();
@@ -125,7 +125,7 @@ public class RenameApkSettingActivity extends AppCompatActivity  implements
         button_save = findViewById(R.id.buttton_save);
         button_clear = findViewById(R.id.buttton_clear);
         name_format = findViewById(R.id.text_format);
-        global_path=findViewById(R.id.edit_global_path);
+        global_path=findViewById(R.id.text_path_to);
         button_get_path = findViewById(R.id.button_global_path);
 
         setNewSpinnerData();

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/app_icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="2dp"
+        android:padding="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/app_name"
+        android:layout_width="230dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="2dp"
+        android:layout_toRightOf="@id/app_icon"
+        android:layout_weight="0.8"
+        android:padding="2dp"
+        android:text="App name Here"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintStart_toEndOf="@+id/app_icon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/version_num"
+        android:layout_width="108dp"
+        android:layout_height="22dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_weight="0.2"
+        android:padding="1dp"
+        android:text="version"
+        android:textAlignment="viewEnd"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/app_name"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/pkg_name"
+        android:layout_width="342dp"
+        android:layout_height="20dp"
+        android:layout_margin="@dimen/size2"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_toRightOf="@id/app_icon"
+        android:padding="2dp"
+        android:text="Package name Here"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintStart_toEndOf="@+id/app_icon"
+        app:layout_constraintTop_toBottomOf="@+id/app_name" />
+
+    <TextView
+        android:id="@+id/label_install_time"
+        android:layout_width="128dp"
+        android:layout_height="19dp"
+        android:text="Install Time"
+        app:layout_constraintStart_toStartOf="@+id/pkg_name"
+        app:layout_constraintTop_toBottomOf="@+id/pkg_name" />
+
+    <TextView
+        android:id="@+id/label_app_size"
+        android:layout_width="85dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="2dp"
+        android:text="@string/apk_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pkg_name" />
+
+    <TextView
+        android:id="@+id/label_extra"
+        android:layout_width="131dp"
+        android:layout_height="19dp"
+        android:text="extra info here"
+        app:layout_constraintEnd_toStartOf="@+id/label_app_size"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/label_install_time"
+        app:layout_constraintTop_toBottomOf="@+id/pkg_name" />
+
+</android.support.constraint.ConstraintLayout>

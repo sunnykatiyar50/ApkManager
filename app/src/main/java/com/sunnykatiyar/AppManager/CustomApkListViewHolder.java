@@ -1,4 +1,4 @@
-package com.sunnykatiyar.ApkManager;
+package com.sunnykatiyar.AppManager;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -7,7 +7,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class CustomViewHolder extends RecyclerView.ViewHolder {
+public class CustomApkListViewHolder extends RecyclerView.ViewHolder {
 
     TextView app_name;
     TextView file_name;
@@ -21,7 +21,7 @@ public class CustomViewHolder extends RecyclerView.ViewHolder {
 
     CheckBox select_box;
 
-    public CustomViewHolder(@NonNull View itemView) {
+    public CustomApkListViewHolder(@NonNull View itemView) {
         super(itemView);
         this.text_time = itemView.findViewById(R.id.text_time);
         this.file_name = itemView.findViewById(R.id.text_apk_name);

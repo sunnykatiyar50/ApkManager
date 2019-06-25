@@ -2,8 +2,8 @@ package com.sunnykatiyar.AppManager;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -35,7 +35,7 @@ public class RenameFiles extends AppCompatActivity {
         fragment = new RenameFilesFragment();
 
         if (fragment != null) {
-            ft = getFragmentManager().beginTransaction();
+            ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.content_frame, fragment);
             ft.commit();
             Log.i(TAG,"Fragment set :");

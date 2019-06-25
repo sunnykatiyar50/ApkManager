@@ -6,11 +6,11 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/nav_applist_activity"
+            android:id="@+id/nav_applist"
             android:icon="@drawable/ic_apps_black_24dp"
             android:title="Apps Explorer" />
         <item
-            android:id="@+id/nav_apklist_activity"
+            android:id="@+id/nav_apklist"
             android:icon="@drawable/ic_android_black_24dp"
             android:title="APK Manager" />
 

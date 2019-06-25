@@ -2,7 +2,6 @@ package com.sunnykatiyar.AppManager;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.Fragment;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ClipboardManager;
@@ -12,15 +11,19 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,15 +34,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
+import static com.sunnykatiyar.AppManager.AppListActivity.appListFragment;
+import static com.sunnykatiyar.AppManager.AppListActivity.fm;
+import static com.sunnykatiyar.AppManager.AppListActivity.ft;
 import static com.sunnykatiyar.AppManager.AppListActivity.notimgr;
-import static com.sunnykatiyar.AppManager.AppListActivity.order_by;
-import static com.sunnykatiyar.AppManager.AppListActivity.order_decreasing;
-import static com.sunnykatiyar.AppManager.AppListActivity.search_query;
-import static com.sunnykatiyar.AppManager.AppListActivity.sort_by;
-import static com.sunnykatiyar.AppManager.AppListActivity.sort_by_install_time;
-import static com.sunnykatiyar.AppManager.AppListActivity.sort_by_size;
-import static com.sunnykatiyar.AppManager.AppListActivity.sort_by_update_time;
-
+import static com.sunnykatiyar.AppManager.AppListActivity.prefEditorAppList;
+import static com.sunnykatiyar.AppManager.AppListActivity.sharedPrefAppList;
+import static com.sunnykatiyar.AppManager.AppListActivity.toolbar_main;
 
 public class AppListFragment extends Fragment {
 
@@ -50,19 +51,32 @@ public class AppListFragment extends Fragment {
     public static List<PackageInfo> launchable_apps_list;
     public static List<PackageInfo> applist;
     public static RecyclerView app_listview;
-//    public static PackageInfo clicked_pkg;
-//    public static String clicked_pkg_label;
     public static Long initFragmentTime;
     public static ActivityManager activityManager;
     public static ClipboardManager clipboardManager;
     public static CustomAppListAdapter adapter;
-    public AdapterView.AdapterContextMenuInfo contextMenuInfo;
-    AppMenu contextmenu;
-    public int item_index;
     MyAsyncTask myAsyncTask;
     DividerItemDecoration mDividerItemDecoration;
     final static String TAG ="APPLIST_FRAGMENT : ";
     public static TextView label_msgbox;
+    public static SearchView searchView;
+    public static MenuItem search_menuItem;
+
+    static final String sort_by_name = "SORT_BY_NAME";
+    static final String sort_by_update_time = "SORT_BY_UPDATE_TIME";
+    static final String sort_by_install_time = "SORT_BY_INSTALL_TIME";
+    static final String sort_by_size = "SORT_BY_SIZE";
+
+    static final String order_decreasing = "ORDER_INCREASING";
+    static final String order_increasing = "ORDER_DECREASING";
+
+    public static String sort_by ;
+    public static String order_by;
+    public static String search_query="";
+    public static final String key_sorting = "SORT BY";
+    public static final String key_order_by = "INVERSE SORTING";
+    String value_sorting;
+    String  value_order_by;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -86,7 +100,7 @@ public class AppListFragment extends Fragment {
         }
 
         Log.i(TAG,"Launching Fragment : query = "+search_query);
-        myAsyncTask = new MyAsyncTask(getActivity(), AppListActivity.search_query);
+        myAsyncTask = new MyAsyncTask(getActivity(), search_query);
         //launchable_apps_list = new ArrayList<>();
         myAsyncTask.execute();
 
@@ -103,7 +117,7 @@ public class AppListFragment extends Fragment {
         adapter = new CustomAppListAdapter(mainpm, launchable_apps_list, getActivity());
 //        app_listview.setAdapter(adapter);
 //        adapter.notifyDataSetChanged();
-
+        setHasOptionsMenu(true);
         return v;
     }
 
@@ -154,6 +168,196 @@ public class AppListFragment extends Fragment {
 //        return true;
 //    }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_applist, menu);
+        search_menuItem = menu.findItem(R.id.search_item);
+        search_menuItem.setVisible(false);
+
+        searchView = (SearchView) search_menuItem.getActionView();
+        searchView.setIconifiedByDefault(true);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                search_query = query;
+                ft = fm.beginTransaction();
+                //  ft.remove(appListFragment).commit();
+                appListFragment = new AppListFragment();
+                ft.replace(R.id.fragment_container, appListFragment,query).commit();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                Log.e("in AppListActivity : ", " in QueryTextChangeListener ");
+                // adapter.getFilter().filter(newText);
+//                search_query = query;
+//                ft = fm.beginTransaction();
+//                //  ft.remove(appListFragment).commit();
+//                appListFragment = new AppListFragment();
+//                ft.replace(R.id.fragment_container, appListFragment,query).commit();
+                return false;
+            }});
+
+        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                Log.e("in AppListActivity : ", " in setOnclickListener ");
+                if(b) toolbar_main.setTitle("");
+            }
+
+        });
+
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                Log.e("in AppListActivity : ", " in setOnCloseListener ");
+                adapter.notifyDataSetChanged();
+                toolbar_main.setTitle(R.string.app_name);
+                return false;
+            }
+        });
+
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+
+        Log.i(TAG," onPrepareOptionsMenu : ");
+
+//-----------------------LOADING "SORT BY" FROM SHARED PREFERENCES---------------------------------------
+        value_sorting = sharedPrefAppList.getString(key_sorting,sort_by_name);
+        Log.i(TAG,"Sorting Setting in Shared Preferences: "+value_sorting);
+
+        if(value_sorting.equals(sort_by_name)){
+            Log.i(TAG," inside equating sort_by_name : ");
+            sort_by = sort_by_name;
+            menu.findItem(R.id.menuitem_sortbyname).setChecked(true);
+        }
+        else if(value_sorting.equals(sort_by_update_time)){
+            Log.i(TAG," inside equating sort_by_date : ");
+            sort_by = sort_by_update_time;
+            menu.findItem(R.id.menuitem_sortby_update_time).setChecked(true);
+        }else if(value_sorting.equals(sort_by_install_time)){
+            Log.i(TAG," inside equating sort_by_date : ");
+            sort_by = sort_by_update_time;
+            menu.findItem(R.id.menuitem_sortby_install_time).setChecked(true);
+        }
+        else if(value_sorting.equals(sort_by_size)){
+            Log.i(TAG," inside equating sort_by_size : ");
+            sort_by = sort_by_size;
+            menu.findItem(R.id.menuitem_sortbysize).setChecked(true);
+        }
+        Log.i(TAG," Value of sort_by : " + sort_by);
+
+//--------------------------------LOADING "ORDER BY" FROM SHARED PREFERENCES---------------------------------------
+
+        value_order_by = sharedPrefAppList.getString(key_order_by,order_increasing);
+        Log.i(TAG," Found Ordering Settings in SHARED PREFERENCES: "+ value_order_by);
+
+        if(value_order_by.equals(order_decreasing)){
+            menu.findItem(R.id.menuitem_decreasing).setChecked(true);
+            order_by = order_decreasing;
+        }
+        else if(value_order_by.equals(order_increasing)){
+            menu.findItem(R.id.menuitem_increasing).setChecked(true);
+            order_by = order_increasing;
+        }
+        Log.i(TAG," Value of order by : " + order_by);
+
+//----------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        switch(id)
+        {
+            case R.id.search_item:{
+                Log.e("in AppListActivity : ", "Search Menu Button Clicked");
+                break;            }
+            case R.id.reload:{
+                ft = fm.beginTransaction();
+                ft.replace(R.id.fragment_container, appListFragment);
+                ft.commit();
+                break;         }
+
+//             case R.id.settings:{
+//                Toast.makeText(getApplication(),"OpeningSettings", Toast.LENGTH_SHORT).show();
+//                 ft = fm.beginTransaction();
+//                 ft.replace(R.id.fragment_container, renameFilesFragment );
+//                 ft.commit();
+//                 break;
+//             }
+
+            case R.id.menuitem_sortbyname : {
+                item.setChecked(true);
+                sort_by = sort_by_name;
+                prefEditorAppList.putString(key_sorting, sort_by).commit();
+                appListFragment.SortAppList();
+                break;
+            }
+
+            case R.id.menuitem_sortby_install_time: {
+                item.setChecked(true);
+                Log.i(TAG,"Clicked sort by size");
+                sort_by = sort_by_update_time;
+                prefEditorAppList.putString(key_sorting, sort_by).commit();
+                appListFragment.SortAppList();
+                break;
+            }
+
+            case R.id.menuitem_sortby_update_time: {
+                item.setChecked(true);
+                Log.i(TAG,"Clicked sort by size");
+                sort_by = sort_by_update_time;
+                prefEditorAppList.putString(key_sorting, sort_by).commit();
+                appListFragment.SortAppList();
+                break;
+            }
+
+            case R.id.menuitem_sortbysize:{
+                item.setChecked(true);
+                Log.i(TAG,"Clicked sort by size");
+                sort_by = sort_by_size;
+                prefEditorAppList.putString(key_sorting, sort_by).commit();
+                appListFragment.SortAppList();
+                break;
+            }
+
+            //-----------------------------------INVERSE SORTING-------------------------------------
+            case R.id.menuitem_decreasing:{
+                item.setChecked(true);
+                order_by = order_decreasing;
+                prefEditorAppList.putString(key_order_by, order_by).commit();
+                appListFragment.SortAppList();
+                break;
+            }
+
+            case R.id.menuitem_increasing:{
+                item.setChecked(true);
+                order_by = order_increasing;
+                prefEditorAppList.putString(key_order_by, order_by).commit();
+                appListFragment.SortAppList();
+                break;
+            }
+        }
+        return true;
+    }
+
+
+
     class MyAsyncTask extends AsyncTask<Void, String , String> {
 
         Activity activity;
@@ -188,9 +392,6 @@ public class AppListFragment extends Fragment {
         @Override
         protected void onProgressUpdate(String... strings) {
             setLabelTextMsg(strings[0]);
-            //   Log.e("in onProgressUpdate :",((System.currentTimeMillis()-initFragmentTime)/1000)+"searchAsyncTask");
-            //   progress_percent.setText(values[0] / 4 + "/" + applist.size());
-            //   progressBar.setProgress(values[0] / 4);
         }
 
         @Override
@@ -198,20 +399,13 @@ public class AppListFragment extends Fragment {
             progress_percent.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
             SortAppList();
-            AppListActivity.search_menuItem.setVisible(true);
+            search_menuItem.setVisible(true);
 
             //   NOTIFICATION Implementation------------------------
 
-            Notification.Builder myNotiBuilder = (Notification.Builder) new Notification.Builder(activity)
-                    .setSmallIcon(R.drawable.ic_action_sort_1)
-                    .setContentTitle("App Explorer")
-                    .setContentText("AppList Fetching Complete");
             Intent i = new Intent(activity,AppListActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent p = PendingIntent.getActivity(activity,0,i,PendingIntent.FLAG_UPDATE_CURRENT);
-            myNotiBuilder.setContentIntent(p);
-
-            notimgr.notify(000101,myNotiBuilder.build());
 
             Log.e("in MyAsyncTask :", "in onPostExecute : "+launchable_apps_list.size()+" apps in "+((System.currentTimeMillis() - initFragmentTime) / 1000) + "s");
             Toast.makeText(activity, launchable_apps_list.size() + " Apps Loaded in " + ((System.currentTimeMillis() - initFragmentTime) / 1000) + "s", Toast.LENGTH_LONG).show();
@@ -249,7 +443,7 @@ public class AppListFragment extends Fragment {
         Log.i(TAG, " In Sorting Method : sort by = " + sort_by);
 
         switch (sort_by) {
-            case AppListActivity.sort_by_name: {
+            case sort_by_name: {
                 Collections.sort(launchable_apps_list, app_name_comparator);
                 if (order_by == order_decreasing) {
                     Collections.reverse(launchable_apps_list);

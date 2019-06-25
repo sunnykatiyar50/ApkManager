@@ -4,95 +4,103 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!--<item android:id="@+id/search"-->
-        <!--android:title="@string/search_title"-->
-        <!--android:icon="@drawable/ic_search_black_24dp"-->
-        <!--android:showAsAction="collapseActionView|ifRoom"-->
-        <!--android:actionViewClass="android.widget.SearchView"-->
-        <!--tools:ignore="AppCompatResource"/>-->
+    <!--android:title="@string/search_title"-->
+    <!--android:icon="@drawable/ic_search_black_24dp"-->
+    <!--android:showAsAction="collapseActionView|ifRoom"-->
+    <!--android:actionViewClass="android.widget.SearchView"-->
+    <!--tools:ignore="AppCompatResource"/>-->
 
     <item
         android:id="@+id/menuitem_search"
-        android:showAsAction="always"
         android:orderInCategory="98"
-        tools:ignore="AppCompatResource"
-        android:title="Load Files" />
+        android:showAsAction="always"
+        android:title="Load Files"
+        tools:ignore="AppCompatResource" />
 
     <item
         android:id="@+id/menuitem_reset_path"
+        android:icon="@drawable/ic_refresh_black_24dp"
         android:orderInCategory="99"
         android:title="Get Global Path"
-        android:visible="true"
-        android:icon="@drawable/ic_refresh_black_24dp"
-        />
+        android:visible="true" />
 
     <item
         android:id="@+id/menuitem_subdir"
         android:checkable="true"
         android:checked="true"
+        android:icon="@drawable/ic_create_new_folder_black_24dp"
         android:orderInCategory="100"
         android:title="Search Subfolders "
-        android:icon="@drawable/ic_create_new_folder_black_24dp"
         app:showAsAction="never" />
 
-    <item android:title="File Operations"
-        android:orderInCategory="100"
+    <item
         android:id="@+id/submenu_file_peration"
-        android:icon="@drawable/ic_sort_black_24dp">
+        android:icon="@drawable/ic_sort_black_24dp"
+        android:orderInCategory="100"
+        android:title="File Operations">
 
         <menu>
 
-    <item
-        android:id="@+id/menuitem_install"
-        android:orderInCategory="100"
-        android:title="Install / Update "
-        android:icon="@drawable/ic_system_update_alt_black_24dp"
-        app:showAsAction="never" />
+            <item
+                android:id="@+id/menuitem_install"
+                android:icon="@drawable/ic_system_update_alt_black_24dp"
+                android:orderInCategory="100"
+                android:title="Install / Update "
+                app:showAsAction="never" />
 
-    <item
-        android:id="@+id/menuitem_rename"
-        android:orderInCategory="100"
-        android:title="Rename (APKs only)"
-        android:icon="@drawable/ic_note_add_black_24dp"
-        app:showAsAction="never" />
+            <item
+                android:id="@+id/menuitem_rename"
+                android:icon="@drawable/ic_note_add_black_24dp"
+                android:orderInCategory="100"
+                android:title="Rename (APKs only)"
+                app:showAsAction="never" />
 
-    <item
-        android:id="@+id/menuitem_uninstall"
-        android:orderInCategory="100"
-        android:icon="@drawable/ic_android_black_24dp"
-        android:title="Uninstall (Apps Only)"
-        app:showAsAction="never" />
+            <item
+                android:id="@+id/menuitem_move_files"
+                android:icon="@drawable/ic_content_copy_black_24dp"
+                android:orderInCategory="100"
+                android:title="Move To Folder"
+                app:showAsAction="never" />
 
-    <item
-        android:id="@+id/menuitem_delete"
-        android:orderInCategory="100"
-        android:title="Delete (APKs Only) "
-        android:icon="@drawable/ic_delete_black_24dp"
-        app:showAsAction="never" />
+            <item
+                android:id="@+id/menuitem_uninstall"
+                android:icon="@drawable/ic_android_black_24dp"
+                android:orderInCategory="100"
+                android:title="Uninstall (Apps Only)"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menuitem_delete"
+                android:icon="@drawable/ic_delete_black_24dp"
+                android:orderInCategory="100"
+                android:title="Delete (APKs Only) "
+                app:showAsAction="never" />
         </menu>
 
     </item>
 
 
-    <item android:title="Selection"
-        android:orderInCategory="102"
+    <item
         android:id="@+id/submenu_selection"
-        android:icon="@drawable/ic_sort_black_24dp">
+        android:icon="@drawable/ic_sort_black_24dp"
+        android:orderInCategory="102"
+        android:title="Selection">
 
         <menu>
 
             <item
                 android:id="@+id/menuitem_select_all"
                 android:checkable="true"
+                android:icon="@drawable/ic_check_circle_black_24dp"
                 android:orderInCategory="100"
                 android:title="Select All"
-                android:icon="@drawable/ic_check_circle_black_24dp"
                 app:showAsAction="never" />
-        <item
-        android:id="@+id/menuitem_select_update"
-        android:orderInCategory="100"
-        android:title="Select Updatable"
-        android:icon="@drawable/ic_system_update_alt_black_24dp"
-        app:showAsAction="never" />
+            <item
+                android:id="@+id/menuitem_select_update"
+                android:icon="@drawable/ic_system_update_alt_black_24dp"
+                android:orderInCategory="100"
+                android:title="Select Updatable"
+                app:showAsAction="never" />
         </menu>
 
     </item>
@@ -100,70 +108,73 @@
 
     <item
         android:id="@+id/menuitem_root"
-        android:orderInCategory="110"
         android:checkable="true"
         android:icon="@drawable/ic_build_black_24dp"
+        android:orderInCategory="110"
         android:title="Use Root"
         app:showAsAction="never" />
 
 
-   <item android:title="Sort By"
-       android:orderInCategory="101"
-       android:id="@+id/submenu_sort"
-       android:icon="@drawable/ic_sort_black_24dp">
+    <item
+        android:id="@+id/submenu_sort"
+        android:icon="@drawable/ic_sort_black_24dp"
+        android:orderInCategory="101"
+        android:title="Sort By">
 
-       <menu>
+        <menu>
 
-           <group android:checkableBehavior="single"
-               android:id="@+id/menugroup_sort"
-               android:menuCategory="secondary">
-               <item
-                   android:id="@+id/menuitem_sortbyname"
-                   android:orderInCategory="100"
-                   android:checked="true"
-                   android:title="Sort By Name"
-                   android:icon="@drawable/ic_sort_by_alpha_black_24dp"
-                   app:showAsAction="never" />
+            <group
+                android:id="@+id/menugroup_sort"
+                android:checkableBehavior="single"
+                android:menuCategory="secondary">
+                <item
+                    android:id="@+id/menuitem_sortbyname"
+                    android:checked="true"
+                    android:icon="@drawable/ic_sort_by_alpha_black_24dp"
+                    android:orderInCategory="100"
+                    android:title="Sort By Name"
+                    app:showAsAction="never" />
 
-               <item
-                   android:id="@+id/menuitem_sortbydate"
-                   android:orderInCategory="101"
-                   android:title="Sort By Time"
-                   android:icon="@drawable/ic_date_range_black_24dp"
-                   app:showAsAction="never" />
+                <item
+                    android:id="@+id/menuitem_sortbydate"
+                    android:icon="@drawable/ic_date_range_black_24dp"
+                    android:orderInCategory="101"
+                    android:title="Sort By Time"
+                    app:showAsAction="never" />
 
-               <item
-                   android:id="@+id/menuitem_sortbysize"
-                   android:orderInCategory="101"
-                   android:title="Sort By Size"
-                   android:icon="@drawable/ic_sort_black_24dp"
-                   app:showAsAction="never" />
-           </group>
+                <item
+                    android:id="@+id/menuitem_sortbysize"
+                    android:icon="@drawable/ic_sort_black_24dp"
+                    android:orderInCategory="101"
+                    android:title="Sort By Size"
+                    app:showAsAction="never" />
+            </group>
 
 
-           <group android:checkableBehavior="single"
-               android:id="@+id/menugroup_order"
-               android:menuCategory="secondary">
-               <item
-                   android:id="@+id/menuitem_increasing"
-                   android:orderInCategory="101"
+            <group
+                android:id="@+id/menugroup_order"
+                android:checkableBehavior="single"
+                android:menuCategory="secondary">
+                <item
+                    android:id="@+id/menuitem_increasing"
+                    android:icon="@drawable/ic_vertical_align_top_black_24dp"
 
-                   android:title="Increasing Order"
-                   android:icon="@drawable/ic_vertical_align_top_black_24dp"
-                   app:showAsAction="never" />
+                    android:orderInCategory="101"
+                    android:title="Increasing Order"
+                    app:showAsAction="never" />
 
-               <item
-                   android:id="@+id/menuitem_decreasing"
-                   android:orderInCategory="101"
-                   android:title="Decreasing Order "
-                   android:icon="@drawable/ic_vertical_align_bottom_black_24dp"
-                   app:showAsAction="never" />
+                <item
+                    android:id="@+id/menuitem_decreasing"
+                    android:icon="@drawable/ic_vertical_align_bottom_black_24dp"
+                    android:orderInCategory="101"
+                    android:title="Decreasing Order "
+                    app:showAsAction="never" />
 
-           </group>
+            </group>
 
-       </menu>
+        </menu>
 
-   </item>
+    </item>
 
 
 </menu>

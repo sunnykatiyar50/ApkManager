@@ -23,16 +23,16 @@ import java.util.List;
 
 import static android.content.Intent.EXTRA_PACKAGE_NAME;
 import static android.content.Intent.createChooser;
-import static com.sunnykatiyar.AppManager.ApkRenameActivity.name_part_1;
-import static com.sunnykatiyar.AppManager.ApkRenameActivity.name_part_2;
-import static com.sunnykatiyar.AppManager.ApkRenameActivity.name_part_3;
-import static com.sunnykatiyar.AppManager.ApkRenameActivity.name_part_4;
-import static com.sunnykatiyar.AppManager.ApkRenameActivity.name_part_5;
-import static com.sunnykatiyar.AppManager.ApkRenameActivity.name_part_6;
-import static com.sunnykatiyar.AppManager.ApkRenameActivity.name_part_7;
-import static com.sunnykatiyar.AppManager.ApkRenameActivity.name_part_8;
 import static com.sunnykatiyar.AppManager.AppListFragment.clipboardManager;
 import static com.sunnykatiyar.AppManager.AppListFragment.mainpm;
+import static com.sunnykatiyar.AppManager.RenameApkFragment.name_part_1;
+import static com.sunnykatiyar.AppManager.RenameApkFragment.name_part_2;
+import static com.sunnykatiyar.AppManager.RenameApkFragment.name_part_3;
+import static com.sunnykatiyar.AppManager.RenameApkFragment.name_part_4;
+import static com.sunnykatiyar.AppManager.RenameApkFragment.name_part_5;
+import static com.sunnykatiyar.AppManager.RenameApkFragment.name_part_6;
+import static com.sunnykatiyar.AppManager.RenameApkFragment.name_part_7;
+import static com.sunnykatiyar.AppManager.RenameApkFragment.name_part_8;
 
 
 /**
@@ -54,8 +54,8 @@ public class AppMenu {
     final public String open_market="Open in PlayStore";
     final public String uninstall_app="Uninstall App";
 
-    public final static  String PREF_NAME = ApkRenameActivity.PREF_NAME;
-    public final static String key_global_path = ApkRenameActivity.key_global_path;
+    public final static  String PREF_NAME = RenameApkFragment.PREF_NAME;
+    public final static String key_global_path = RenameApkFragment.key_global_path;
 
     SharedPreferences sharedPref ;
     Snackbar snackbar;
@@ -84,7 +84,7 @@ public class AppMenu {
         menu_context=context;
         sharedPref = context.getSharedPreferences(PREF_NAME,Context.MODE_PRIVATE);
         root_selected = sharedPref.getBoolean("ROOT",false);
-        dest_folder_name = sharedPref.getString(ApkRenameActivity.key_global_path,"Path Not Set");
+        dest_folder_name = sharedPref.getString(RenameApkFragment.key_global_path,"Path Not Set");
         Log.i(TAG," Constructor : ");
     }
 

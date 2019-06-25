@@ -37,12 +37,15 @@ public class ApkListDataItem {
 
     String pkg_name ;
     private final String TAG = "ApkListDataItem :";
-    String last_install_time;
-    String last_modified_time;
-    long initial_modified_time;
+    long app_install_time;
+    long app_update_time;
     long file_creation_time;
-    PackageManager pm = ApkListActivity.pm;
+    String str_file_creation_time;
+    String str_app_update_time;
+    long file_modified_time;
+    PackageManager pm = ApkListFragment.pm;
 
+    private final String str_no_install = "App Not Installed";
     private static final DecimalFormat format = new DecimalFormat("#.##");
     private static final long MB = 1024 * 1024;
     private static final long KB = 1024;
@@ -51,13 +54,14 @@ public class ApkListDataItem {
     public ApkListDataItem(File f1, Context context){
 
         super();
-
         this.file = f1;
+        this.file_name = file.getName();
 
         try{
             BasicFileAttributes attr = Files.readAttributes(f1.toPath(), BasicFileAttributes.class);
             this.file_creation_time = attr.creationTime().toMillis();
-            Log.i(TAG,"File Creation Time of \""+file_name+"\" is "+getTime(this.file_creation_time));
+            this.file_modified_time = attr.lastModifiedTime().toMillis();
+            Log.i(TAG,"File Creation Time of \""+file_name+"\" is "+file_creation_time);
         }catch(Exception ex){
             Log.i(TAG,"Error getting File Creation Time of - "+file_name);
         }
@@ -66,17 +70,15 @@ public class ApkListDataItem {
         {
             this.apk_pkg_info = pm.getPackageArchiveInfo(file.getAbsolutePath(),0);
             this.pkg_name = apk_pkg_info.packageName;
-            this.initial_modified_time = this.file.lastModified();
             this.apk_version_name = apk_pkg_info.versionName;
             this.apk_version_code = String.valueOf(apk_pkg_info.versionCode);
             this.app_info = apk_pkg_info.applicationInfo ;
-            this.last_modified_time = getTime(file.lastModified());
+
 //-------------------------------------------------------------------------
             this.app_info.sourceDir       = file.getAbsolutePath();
             this.app_info.publicSourceDir = file.getAbsolutePath();
 ///---------------------------------------------------------------------
             this.app_name = (String) this.app_info.loadLabel(pm);
-            this.file_name = file.getName();
             this.file_size = getSize(file);
             this.isInstalled = false;
             this.isUpdatable = false;
@@ -88,7 +90,8 @@ public class ApkListDataItem {
 
         try{
             app_pkg_info = pm.getPackageInfo(pkg_name,0);
-            this.last_install_time = getTime(app_pkg_info.lastUpdateTime);
+            this.app_install_time = app_pkg_info.firstInstallTime;
+            this.app_update_time = app_pkg_info.lastUpdateTime;
             app_version_code = String.valueOf(app_pkg_info.versionCode);
             app_version_name = app_pkg_info.versionName;
 
@@ -114,6 +117,10 @@ public class ApkListDataItem {
             app_version_code = "";
             app_version_name = "Not Available ";
         }
+
+        this.str_file_creation_time = getTime(this.file_creation_time);
+        this.str_app_update_time = getTime(this.app_update_time);
+
     }
 
     public String getSize(File file) {

@@ -1,18 +1,17 @@
 package com.sunnykatiyar.AppManager;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,21 +27,26 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sunnykatiyar.AppManager.ApkListActivity.navigationView;
+import static android.app.Activity.RESULT_OK;
+import static com.sunnykatiyar.AppManager.AppListActivity.sharedPref;
 
-public class ApkRenameActivity extends AppCompatActivity  implements
+
+public class RenameApkFragment extends Fragment implements
         AdapterView.OnItemSelectedListener{
 
-    Context context = ApkRenameActivity.this;
-    public static Spinner spinner1;
-    public static Spinner spinner3;
-    public static Spinner spinner5;
-    public static Spinner spinner7;
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
 
-    public static EditText edit2;
-    public static EditText edit4;
-    public static EditText edit6;
-    public static EditText edit8;
+    private String mParam1;
+    private String mParam2;
+    Spinner spinner1;
+    Spinner spinner3;
+    Spinner spinner5;
+    Spinner spinner7;
+    EditText edit2;
+    EditText edit4;
+    EditText edit6;
+    EditText edit8;
 
     public static List<String> spinner_items ;
     private final String TAG = "RENAME_APK_SETTINGS ";
@@ -57,13 +61,10 @@ public class ApkRenameActivity extends AppCompatActivity  implements
     ArrayAdapter<String> spin_adapter5;
     ArrayAdapter<String> spin_adapter7;
 
-    public static SharedPreferences sharedPref;
-    public static SharedPreferences.Editor prefEditor;
-
     public final static  String PREF_NAME = "com.sunnykatiyar.AppManager.RENAME";
     public final static String key_global_path ="GLOBAL_PATH";
-    public final static  String name_part_1 = "NAME_PART_1";
-    public final static  String name_part_2 = "NAME_PART_2";
+    public final static String name_part_1 = "NAME_PART_1";
+    public final static String name_part_2 = "NAME_PART_2";
     public final static String name_part_3 = "NAME_PART_3";
     public final static String name_part_4 = "NAME_PART_4";
     public final static String name_part_5 = "NAME_PART_5";
@@ -80,62 +81,56 @@ public class ApkRenameActivity extends AppCompatActivity  implements
 
     public final static String spinner_items_set= "SPINNER_ITEMS_SET";
     public final static String name_format_data_saved = "FORMAT_DATA_SAVED";
+    public RenameApkFragment() {
+        // Required empty public constructor
+    }
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.rename_apk_setting);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        navigationView.getMenu().findItem(R.id.nav_apk_rename_format).setChecked(true);
+    }
 
-        sharedPref = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
-        prefEditor = sharedPref.edit();
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View v = inflater.inflate(R.layout.fragment_apk_rename_settings, container, false);
+
         spinner_items = new ArrayList<>();
 
-//        spinner1 = new Spinner(this);
-//        spinner3= new Spinner(this);
-//        spinner5= new Spinner(this);
-//        spinner7= new Spinner(this);
-
-//        edit2 = new EditText(this);
-//        edit4 = new EditText(this);;
-//        edit6 = new EditText(this);;
-//        edit8 = new EditText(this);;
-
-         spinner1 = findViewById(R.id.spinner1);
-         edit2 = findViewById(R.id.editText2);
-         spinner3 = findViewById(R.id.spinner3);
-         edit4 = findViewById(R.id.editText4);
-         spinner5 = findViewById(R.id.spinner5);
-         edit6 = findViewById(R.id.editText6);
-         spinner7 = findViewById(R.id.spinner7);
-         edit8 = findViewById(R.id.editText8);
+        spinner1 = v.findViewById(R.id.spinner1);
+        edit2 = v.findViewById(R.id.editText2);
+        spinner3 = v.findViewById(R.id.spinner3);
+        edit4 = v.findViewById(R.id.editText4);
+        spinner5 = v.findViewById(R.id.spinner5);
+        edit6 = v.findViewById(R.id.editText6);
+        spinner7 = v.findViewById(R.id.spinner7);
+        edit8 = v.findViewById(R.id.editText8);
 
         spinner1.setOnItemSelectedListener(this);
         spinner3.setOnItemSelectedListener(this);
         spinner5.setOnItemSelectedListener(this);
         spinner7.setOnItemSelectedListener(this);
 
-        button_save = findViewById(R.id.buttton_save);
-        button_clear = findViewById(R.id.buttton_clear);
-        name_format = findViewById(R.id.text_format);
-        global_path=findViewById(R.id.text_path_to);
-        button_get_path = findViewById(R.id.button_global_path);
+        button_save = v.findViewById(R.id.buttton_save);
+        button_clear = v.findViewById(R.id.buttton_clear);
+        name_format = v.findViewById(R.id.text_format);
+        global_path = v.findViewById(R.id.text_path_to);
+        button_get_path = v.findViewById(R.id.button_global_path);
 
         setNewSpinnerData();
-        
+
         retrieveSpinnerData();
-        
+
         button_get_path.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(context, FilePickerActivity.class);
+                Intent i = new Intent(getContext(), FilePickerActivity.class);
                 i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
                 i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
                 i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
@@ -158,7 +153,7 @@ public class ApkRenameActivity extends AppCompatActivity  implements
         button_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    saveFormat();
+                saveFormat();
             }
         });
 
@@ -168,10 +163,12 @@ public class ApkRenameActivity extends AppCompatActivity  implements
                 clearFormat();
             }
         });
+
+        return v;
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
 
         if(requestCode==2){
             if(resultCode == RESULT_OK)
@@ -179,24 +176,14 @@ public class ApkRenameActivity extends AppCompatActivity  implements
                 List<Uri> files = Utils.getSelectedFilesFromResult(intent);
                 File file = Utils.getFileForUri(files.get(0));
                 global_path.setText(file.getPath());
-                prefEditor.putString(key_global_path,global_path.getText().toString());
-                prefEditor.commit();
+                AppListActivity.prefEditor.putString(key_global_path,global_path.getText().toString());
+                AppListActivity.prefEditor.commit();
             }
         }
     }
-
-    @Override
-    public void onBackPressed() {
-            super.onBackPressed();
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -219,25 +206,25 @@ public class ApkRenameActivity extends AppCompatActivity  implements
             case R.id.spinner1 :{
                 parent.setSelection(position);
                 Log.i(TAG,"OnClick : "+parent.getItemAtPosition(position).toString());
-                Toast.makeText(context,parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT);
             }
 
             case R.id.spinner3 :{
                 spinner3.setSelection(position);
                 Log.i(TAG,"OnClick : "+parent.getItemAtPosition(position).toString());
-                Toast.makeText(context,parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT);
             }
 
             case R.id.spinner5 :{
                 parent.setSelection(position);
                 Log.i(TAG,"OnClick : "+parent.getItemAtPosition(position).toString());
-                Toast.makeText(context,parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT);
             }
 
             case R.id.spinner7 :{
                 spinner7.setSelection(position);
                 Log.i(TAG,"OnClick : "+parent.getItemAtPosition(position).toString());
-                Toast.makeText(context,parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT);
             }
         }
     }
@@ -256,16 +243,16 @@ public class ApkRenameActivity extends AppCompatActivity  implements
         spinner_items.add(file_size);
         spinner_items.add(pkg_name);
 
-        spin_adapter1 = new ArrayAdapter<>(context,android.R.layout.simple_spinner_item,spinner_items);
+        spin_adapter1 = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,spinner_items);
         spin_adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        spin_adapter3 = new ArrayAdapter<>(context,android.R.layout.simple_spinner_item,spinner_items);
+        spin_adapter3 = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,spinner_items);
         spin_adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        spin_adapter5 = new ArrayAdapter<>(context,android.R.layout.simple_spinner_item,spinner_items);
+        spin_adapter5 = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,spinner_items);
         spin_adapter5.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        spin_adapter7 = new ArrayAdapter<>(context,android.R.layout.simple_spinner_item,spinner_items);
+        spin_adapter7 = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,spinner_items);
         spin_adapter7.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinner1.setAdapter(spin_adapter1);
@@ -273,29 +260,22 @@ public class ApkRenameActivity extends AppCompatActivity  implements
         spinner5.setAdapter(spin_adapter5);
         spinner7.setAdapter(spin_adapter7);
 
-//        prefEditor.putInt("__EMPTY__",0);
-//        prefEditor.putInt("APP_NAME",1);
-//        prefEditor.putInt("VERSION_NAME",2);
-//        prefEditor.putInt("VERSION_CODE",3);
-//        prefEditor.putInt("FILE_SIZE",4);
-//        prefEditor.putInt("PACKAGE_NAME",5);
-
-        prefEditor.putBoolean(spinner_items_set,true);
+        AppListActivity.prefEditor.putBoolean(spinner_items_set,true);
         Log.i(TAG,"Spinners Data is Set ... ");
-        prefEditor.commit();
+        AppListActivity.prefEditor.commit();
     }
 
     public void clearFormat(){
-        prefEditor.remove(name_part_1);
-        prefEditor.remove(name_part_2);
-        prefEditor.remove(name_part_3);
-        prefEditor.remove(name_part_4);
-        prefEditor.remove(name_part_5);
-        prefEditor.remove(name_part_6);
-        prefEditor.remove(name_part_7);
-        prefEditor.remove(name_part_8);
-        prefEditor.remove(name_format_data_saved);
-        prefEditor.commit();
+        AppListActivity.prefEditor.remove(name_part_1);
+        AppListActivity.prefEditor.remove(name_part_2);
+        AppListActivity.prefEditor.remove(name_part_3);
+        AppListActivity.prefEditor.remove(name_part_4);
+        AppListActivity.prefEditor.remove(name_part_5);
+        AppListActivity.prefEditor.remove(name_part_6);
+        AppListActivity.prefEditor.remove(name_part_7);
+        AppListActivity.prefEditor.remove(name_part_8);
+        AppListActivity.prefEditor.remove(name_format_data_saved);
+        AppListActivity.prefEditor.commit();
 
         Log.i(TAG,"Cleared Name Format Data");
 
@@ -304,16 +284,16 @@ public class ApkRenameActivity extends AppCompatActivity  implements
     }
 
     public void saveFormat(){
-        prefEditor.putInt(name_part_1,spinner1.getSelectedItemPosition());
-        prefEditor.putString(name_part_2,edit2.getText().toString());
-        prefEditor.putInt(name_part_3,spinner3.getSelectedItemPosition());
-        prefEditor.putString(name_part_4,edit4.getText().toString());
-        prefEditor.putInt(name_part_5,spinner5.getSelectedItemPosition());
-        prefEditor.putString(name_part_6,edit6.getText().toString());
-        prefEditor.putInt(name_part_7,spinner7.getSelectedItemPosition());
-        prefEditor.putString(name_part_8,edit8.getText().toString());
-        prefEditor.putBoolean(name_format_data_saved,true);
-        prefEditor.commit();
+        AppListActivity.prefEditor.putInt(name_part_1,spinner1.getSelectedItemPosition());
+        AppListActivity.prefEditor.putString(name_part_2,edit2.getText().toString());
+        AppListActivity.prefEditor.putInt(name_part_3,spinner3.getSelectedItemPosition());
+        AppListActivity.prefEditor.putString(name_part_4,edit4.getText().toString());
+        AppListActivity.prefEditor.putInt(name_part_5,spinner5.getSelectedItemPosition());
+        AppListActivity.prefEditor.putString(name_part_6,edit6.getText().toString());
+        AppListActivity.prefEditor.putInt(name_part_7,spinner7.getSelectedItemPosition());
+        AppListActivity.prefEditor.putString(name_part_8,edit8.getText().toString());
+        AppListActivity.prefEditor.putBoolean(name_format_data_saved,true);
+        AppListActivity.prefEditor.commit();
 
         setNameFormatLabel();
 
@@ -333,9 +313,9 @@ public class ApkRenameActivity extends AppCompatActivity  implements
 
         name_format.setText(name_format_string);
     }
-    
+
     public void retrieveSpinnerData(){
-        
+
         if(sharedPref.contains(name_format_data_saved)){
             Log.i(TAG,"Getting Data from SharedPreferences ... ");
 
@@ -363,4 +343,5 @@ public class ApkRenameActivity extends AppCompatActivity  implements
             Log.i(TAG,"NO FORMAT DATA SAVED IN SHARED_PREFERENCES");
         }
     }
+
 }

@@ -259,6 +259,7 @@ public class ApkListFragment extends Fragment {
 //----------------------------------------------------------------------------------------------------------------------
         option_menu.findItem(R.id.menuitem_root).setChecked(MainActivity.sharedPrefApkManager.getBoolean("ROOT", true));
         rootSelected = option_menu.findItem(R.id.menuitem_root).isChecked();
+        rootAccess = Shell.rootAccess();
 //--------------------------------------------------------------------------------------------------------------------
     }
 
@@ -1074,6 +1075,7 @@ public class ApkListFragment extends Fragment {
                     try{
                         Shell.sh(command).exec();
                         publishProgress("label","Moved " + aldi.file_name + " to " + value_parent_folder+" Successfully",false);
+                        apkFilesList.remove(aldi);
                         count_moved++;
                     }catch(Exception ex){
                         Log.i(TAG,"Error Moving : "+ex);
@@ -1099,53 +1101,6 @@ public class ApkListFragment extends Fragment {
                                     "\nMOVING FAILED :" + count_not_moved+
                                     "\tCANNOT MOVE :" + count_cannot_move,false);
         }
-
-//        public void ReplaceApks(List<ApkListDataItem> list) {
-//            String value_parent_folder;
-//            int count_moved = 0;
-//            int count_not_moved = 0;
-//            int count_cannot_move = 0;
-//
-//            boolean status;
-//
-//            for (ApkListDataItem aldi : list) {
-//                value_parent_folder = sharedPrefRepository.getString(aldi.pkg_name, path_not_set);
-//
-//                if (value_parent_folder.equals(path_not_set)) {
-//                    count_cannot_move++;
-//                } else {
-//                    publishProgress("label_string"," Moving :" + aldi.file_name + "\nTo :" + value_parent_folder+"/");
-//                    String command = "mv \""+aldi.file.getAbsolutePath()+"\" \""+value_parent_folder + "/" + aldi.file_name+"\"";
-//
-//                    try{
-//                        Shell.sh(command).exec();
-//                        publishProgress("toast","Moved " + aldi.file_name + " to " + value_parent_folder+" Successfully");
-//                        count_moved++;
-//                    }catch(Exception ex){
-//                        Log.i(TAG,"Error Moving : "+ex);
-//                        publishProgress("toast","Failed Moving " + aldi.file_name + " to " + value_parent_folder);
-//                        count_not_moved++;
-//                    }
-//                    // status = copyFileTo(new File(aldi.file.getAbsolutePath()), new File(value_parent_folder + "/" + aldi.file_name));
-////                    if (status) {
-////                        publishProgress("toast","Done Moved " + aldi.file_name + " to " + value_parent_folder);
-////                        count_moved++;
-////                    }
-////                    else{
-////                        publishProgress("toast","Failed Moving " + aldi.file_name + " to " + value_parent_folder);
-////                        count_not_moved++;
-////                    }
-//                }
-//            }
-//
-//            Log.i(TAG, "MOVING SUCCESSFUL FOR :" + count_moved);
-//            Log.i(TAG, "CANNOT MOVE :" + count_cannot_move);
-//            Log.i(TAG, "MOVING FAILED :" + count_not_moved);
-//            publishProgress("label_string","MOVING SUCCESSFUL :" + count_moved +
-//                    "\nMOVING FAILED :" + count_not_moved+
-//                    "\tCANNOT MOVE :" + count_cannot_move);
-//        }
-//
 
         ApkListDataItem ldm;
         int count = 0;
@@ -1230,16 +1185,35 @@ public class ApkListFragment extends Fragment {
         public void DeleteApks(List<ApkListDataItem> files_list) {
 
             boolean isDeleted;
-             int count_deleted=0;
-            for (ApkListDataItem file : files_list) {
-                isDeleted = file.file.delete();
-                if(isDeleted){
-                    count_deleted++;
+            int count_deleted=0;
+            String command;
+
+            if(!rootSelected){
+                for (ApkListDataItem file : files_list) {
+                    isDeleted = file.file.delete();
+                    apkFilesList.remove(file);
+                    if(isDeleted){
+                        count_deleted++;
+                    }
+                    Log.i(TAG, "Deletion of " + file.file_name + " : " + isDeleted);
+                    publishProgress("label","Deletion of " + file.file_name + " : " + isDeleted,false);
                 }
-                Log.i(TAG, "Deletion of " + file.file_name + " : " + isDeleted);
-                publishProgress("label","Deletion of " + file.file_name + " : " + isDeleted,false);
             }
-            publishProgress("label","Total Selected to Delete "+files_list.size()+"Deleted Successfully "+count_deleted,false);
+            else{
+                for (ApkListDataItem file : files_list) {
+                    try{
+                        command = "rm -f \""+file.file.getAbsolutePath()+"\"";
+                        Shell.sh(command).exec();
+                        count_deleted++;
+                        Log.i(TAG, "Deleted Successfully " + file.file_name + " : " );
+                        apkFilesList.remove(file);
+                    }catch(Exception ex){
+
+                    }
+                }
+            }
+
+            publishProgress("label","Total Selected to Delete "+files_list.size()+"\tDeleted Successfully "+count_deleted,false);
         }
 
         public void RenameApks(List<ApkListDataItem> files_list) {

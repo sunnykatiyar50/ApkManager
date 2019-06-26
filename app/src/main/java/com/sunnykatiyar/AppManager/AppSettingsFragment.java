@@ -60,6 +60,7 @@ public class AppSettingsFragment extends Fragment {
         ediRepositoryPath.setText(value_repository_folder);
         root_selected = view.findViewById(R.id.switch_root_access);
         ediRepositoryPath.setOnClickListener(onclickSetRepositoryPath);
+        root_selected.setChecked(MainActivity.sharedPrefAppSettings.getBoolean(key_root_access,false));
 
         buttonSavePath.setOnClickListener(v -> {
             File f = new File(ediRepositoryPath.getText().toString());

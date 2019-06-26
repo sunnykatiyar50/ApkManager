@@ -13,7 +13,8 @@
         android:layout_width="363dp"
         android:layout_height="50dp"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="1dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
         android:autoSizeMaxTextSize="14dp"
         android:autoSizeMinTextSize="12dp"
         android:autoSizeTextType="uniform"
@@ -26,13 +27,15 @@
         android:textColor="@color/colorAccent"
         android:textSize="12sp"
         android:tooltipText="File Path"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_extra" />
+        app:layout_constraintTop_toBottomOf="@+id/text_file_size"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/text_file_size"
-        android:layout_width="98dp"
-        android:layout_height="22dp"
+        android:layout_width="90dp"
+        android:layout_height="23dp"
         android:layout_marginTop="2dp"
         android:ellipsize="end"
         android:maxLines="1"
@@ -41,59 +44,61 @@
         android:textAlignment="textEnd"
         android:textSize="14sp"
         android:tooltipText="File Size"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/text_time"
+        app:layout_constraintTop_toBottomOf="@+id/text_pkg_name" />
 
     <CheckBox
         android:id="@+id/file_select_box"
         android:layout_width="36dp"
         android:layout_height="39dp"
         android:layout_alignParentEnd="true"
+        android:layout_marginTop="8dp"
         android:tooltipText="Click To Select"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.666"
         app:layout_constraintStart_toEndOf="@+id/text_apk_name"
-        app:layout_constraintTop_toBottomOf="@+id/text_app_version" />
+        app:layout_constraintTop_toBottomOf="@+id/text_apk_version" />
 
     <TextView
         android:id="@+id/text_app_name"
-        android:layout_width="250dp"
+        android:layout_width="237dp"
         android:layout_height="22dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="2dp"
         android:text="App Name Here"
         android:textAlignment="textStart"
-        android:textSize="16sp"
+        android:textSize="18sp"
+        android:textStyle="bold"
         android:tooltipText="App Name"
         app:layout_constraintStart_toEndOf="@+id/app_icon"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_app_version"
-        android:layout_width="139dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="2dp"
+        android:layout_width="138dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="2dp"
         android:text="App version"
         android:textAlignment="textEnd"
         android:textSize="14dp"
         android:tooltipText="App Version"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/text_extra"
-        app:layout_constraintTop_toBottomOf="@+id/text_apk_version" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/text_file_size"
+        app:layout_constraintTop_toBottomOf="@+id/text_extra" />
 
     <TextView
         android:id="@+id/text_apk_version"
         android:layout_width="136dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="2dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="4dp"
         android:text="APK version"
         android:textAlignment="viewEnd"
         android:textSize="14dp"
         android:tooltipText="APK Version"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_file_size" />
+        app:layout_constraintTop_toBottomOf="@+id/text_app_version" />
 
     <ImageView
         android:id="@+id/app_icon"
@@ -109,7 +114,7 @@
     <TextView
         android:id="@+id/text_pkg_name"
         android:layout_width="210dp"
-        android:layout_height="19dp"
+        android:layout_height="22dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="2dp"
         android:text="Package Name Here..."
@@ -120,20 +125,24 @@
 
     <TextView
         android:id="@+id/text_extra"
-        android:layout_width="100dp"
-        android:layout_height="26dp"
-        android:layout_marginStart="2dp"
+        android:layout_width="109dp"
+        android:layout_height="22dp"
         android:layout_marginTop="2dp"
+        android:fontFamily="sans-serif-condensed"
         android:text="status here"
-        android:textAlignment="center"
+        android:textAlignment="viewEnd"
+        android:textSize="16sp"
+        android:textStyle="bold"
         android:tooltipText="App Status"
-        app:layout_constraintStart_toEndOf="@+id/text_time"
-        app:layout_constraintTop_toBottomOf="@+id/text_pkg_name" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.304"
+        app:layout_constraintStart_toEndOf="@+id/text_app_name"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_time"
-        android:layout_width="109dp"
-        android:layout_height="26dp"
+        android:layout_width="121dp"
+        android:layout_height="22dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="2dp"
         android:autoSizeMaxTextSize="14dp"

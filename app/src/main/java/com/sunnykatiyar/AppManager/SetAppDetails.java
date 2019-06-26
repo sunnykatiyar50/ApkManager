@@ -120,7 +120,7 @@ public class SetAppDetails {
         installTime.add(new SimpleDateFormat().format(pkg.firstInstallTime));
         expandable_list.put("Installed on ",installTime);
 
-        //--------------------ADD Last Update Time------------------------------------
+        //--------------------ADD LAST_UPDATE_TIME------------------------------------
         lastUpdate_Time.add(new SimpleDateFormat().format(pkg.lastUpdateTime));
         expandable_list.put("Last Updated On",lastUpdate_Time);
 
@@ -195,17 +195,17 @@ public class SetAppDetails {
 
         // ----------------------------------GET FEATURES-----------------------------------------------
         try {
-        //    pkg1=appInfo_pm.getPackageInfo(pkg.packageName,PackageManager.FEA);
-            FeatureInfo[] provider_array = pkg.reqFeatures;
-            if(provider_array!=null){
-                for (int temp = 0; temp<provider_array.length; temp++) {
-                    providers_list.add(provider_array[temp].name);
+            FeatureInfo[] feat = pkg.reqFeatures;
+            if(feat!=null){
+                for (int temp = 0; temp<feat.length; temp++) {
+                    requested_features.add(feat[temp].name);
                 }}
-            else providers_list.add("No Featues Requested");
+            else requested_features.add("No Featues Requested");
         } catch (Exception e) {
-            providers_list.add("Unable To Access");
+            requested_features.add("Unable To Access");
         }
-        expandable_list.put("Providers", providers_list);
+        expandable_list.put("Requested Features", requested_features);
+
 
         // ----------------------------------GET PROVIDERS-----------------------------------------------
         try {

@@ -65,7 +65,7 @@ public class AppMenu {
     String applabel;
     Intent i;
     Context menu_context;
-    String dest_folder_name;
+    private String dest_folder_name;
     boolean root_selected;
     File source_apk;
     File dest_apk;
@@ -169,11 +169,12 @@ public class AppMenu {
             }
         }
 
-    public void copyToClipboard(String Title, String clip) {
+    private void copyToClipboard(String Title, String clip) {
         ClipData clipData = ClipData.newPlainText(Title, clip);
         clipboardManager.setPrimaryClip(clipData);
     }
-    public void set_dest_apk(){
+
+    private void set_dest_apk(){
         Log.i(TAG,"in get_apk_name");
 
         int part1 = sharedPref.getInt(name_part_1,1);
@@ -204,12 +205,12 @@ public class AppMenu {
 
     }
 
-    public void set_source_apk(){
+    private void set_source_apk(){
         apk_source_path = p.applicationInfo.sourceDir;
         this.source_apk = new File(apk_source_path);
     }
 
-    protected String getName(int i){
+    private String getName(int i){
         switch(i){
             case 0:{  return "";              }
             case 1:{  return applabel;     }
@@ -221,7 +222,7 @@ public class AppMenu {
         }
     }
 
-    public class ExtractApkTask extends AsyncTask<Void,String,String>{
+    class ExtractApkTask extends AsyncTask<Void,String,String>{
 
         public ExtractApkTask() {
             super();
@@ -313,7 +314,7 @@ public class AppMenu {
             return exportDone;
         }
 
-        public boolean copyFileTo(File originFile, File destinationFile) {
+        private boolean copyFileTo(File originFile, File destinationFile) {
             try {
                 return copyFileTo(new FileInputStream(originFile), destinationFile);
             } catch (FileNotFoundException e) {

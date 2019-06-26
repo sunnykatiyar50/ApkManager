@@ -37,7 +37,6 @@ import static android.content.Context.CLIPBOARD_SERVICE;
 import static com.sunnykatiyar.AppManager.AppListActivity.appListFragment;
 import static com.sunnykatiyar.AppManager.AppListActivity.fm;
 import static com.sunnykatiyar.AppManager.AppListActivity.ft;
-import static com.sunnykatiyar.AppManager.AppListActivity.notimgr;
 import static com.sunnykatiyar.AppManager.AppListActivity.prefEditorAppList;
 import static com.sunnykatiyar.AppManager.AppListActivity.sharedPrefAppList;
 import static com.sunnykatiyar.AppManager.AppListActivity.toolbar_main;
@@ -77,6 +76,7 @@ public class AppListFragment extends Fragment {
     public static final String key_order_by = "INVERSE SORTING";
     String value_sorting;
     String  value_order_by;
+    boolean label_reset = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -101,7 +101,7 @@ public class AppListFragment extends Fragment {
 
         Log.i(TAG,"Launching Fragment : query = "+search_query);
         myAsyncTask = new MyAsyncTask(getActivity(), search_query);
-        //launchable_apps_list = new ArrayList<>();
+        launchable_apps_list = new ArrayList<>();
         myAsyncTask.execute();
 
         LinearLayoutManager llm = new LinearLayoutManager(appContext);
@@ -116,7 +116,7 @@ public class AppListFragment extends Fragment {
 
         adapter = new CustomAppListAdapter(mainpm, launchable_apps_list, getActivity());
 //        app_listview.setAdapter(adapter);
-//        adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
         setHasOptionsMenu(true);
         return v;
     }
@@ -256,7 +256,7 @@ public class AppListFragment extends Fragment {
             sort_by = sort_by_size;
             menu.findItem(R.id.menuitem_sortbysize).setChecked(true);
         }
-        Log.i(TAG," Value of sort_by : " + sort_by);
+        Log.i(TAG," Value of sort_apks_by : " + sort_by);
 
 //--------------------------------LOADING "ORDER BY" FROM SHARED PREFERENCES---------------------------------------
 
@@ -412,6 +412,8 @@ public class AppListFragment extends Fragment {
         }
 
         public void LoadAppList(String str){
+            applist = new ArrayList<>();
+            launchable_apps_list = new ArrayList<>();
 
             applist = mainpm.getInstalledPackages(0);
             int i=0;
@@ -431,7 +433,7 @@ public class AppListFragment extends Fragment {
     }
 
     public void setLabelTextMsg(String str){
-        label_msgbox.setText(str);
+            label_msgbox.setText(str);
     }
 
     public void SortAppList() {
@@ -491,6 +493,9 @@ public class AppListFragment extends Fragment {
         setLabelTextMsg("Total Apps : "+launchable_apps_list.size());
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 }
 

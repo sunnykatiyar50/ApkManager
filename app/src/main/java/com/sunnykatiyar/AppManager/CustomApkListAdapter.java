@@ -1,5 +1,7 @@
 package com.sunnykatiyar.AppManager;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
@@ -22,6 +24,7 @@ public class CustomApkListAdapter extends RecyclerView.Adapter<CustomApkListView
     List<ApkListDataItem> selected_items_list;
     String msg_text;
     private final String str_no_install = "App Not Installed";
+    ClipboardManager clipboardManager;
 
     public CustomApkListAdapter(List<ApkListDataItem> apks_list,Context c) {
         super();
@@ -115,12 +118,45 @@ public class CustomApkListAdapter extends RecyclerView.Adapter<CustomApkListView
             }
         });
 
-        cst.file_name.setTooltipText("File Path : "+temp.file.getPath());
+//      cst.file_name.setTooltipText("File Path : "+temp.file.getPath());
         cst.file_size.setTooltipText("File Size : " +temp.file_size);
         cst.text_pkg_name.setTooltipText("Package Name : " +temp.pkg_name);
         cst.apk_version.setTooltipText("Apk Version : " +temp.apk_version_name);
         cst.app_version.setTooltipText("App Version : " +temp.app_version_name);
-        cst.text_time.setTooltipText("Last Update Time : "+temp.app_install_time);
+        cst.text_time.setTooltipText("Last Update Time : "+temp.str_app_update_time);
+
+
+        cst.file_name.setOnContextClickListener(new View.OnContextClickListener() {
+            @Override
+            public boolean onContextClick(View v) {
+                clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboardManager.setPrimaryClip(ClipData.newPlainText("FilePath",temp.file.getAbsolutePath()));
+                cst.file_name.setTooltipText("File Path : "+temp.file.getAbsolutePath());
+                return false;
+            }
+        });
+
+        cst.app_name.setOnContextClickListener(new View.OnContextClickListener() {
+            @Override
+            public boolean onContextClick(View v) {
+                clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboardManager.setPrimaryClip(ClipData.newPlainText("AppName",temp.app_name));
+                cst.app_name.setTooltipText(temp.app_name);
+                return false;
+            }
+        });
+
+        cst.text_pkg_name.setOnContextClickListener(new View.OnContextClickListener() {
+            @Override
+            public boolean onContextClick(View v) {
+                clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboardManager.setPrimaryClip(ClipData.newPlainText("PackageName",temp.pkg_name));
+                cst.app_name.setTooltipText(temp.pkg_name);
+                return false;
+            }
+        });
+
+
     }
 
     cst.select_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -141,7 +177,7 @@ public class CustomApkListAdapter extends RecyclerView.Adapter<CustomApkListView
             sel = getSelectedItemsList().size();
             msg_text = "Total : "+total+"\t Selected : "+sel;
             ApkListFragment.text_msgs.setText(msg_text);
-            notifyDataSetChanged();
+           // ApkListFragment.cla.notifyDataSetChanged();
           //  Toast.makeText(context,list.get(i).app_name+ "selection state changed. \n Selected Count :"+sel,Toast.LENGTH_SHORT).show();
         }
         });

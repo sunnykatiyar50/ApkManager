@@ -30,7 +30,7 @@ public class ApkListDataItem {
     String app_version_code;
     String apk_version_name;
     String apk_version_code;
-  //  Drawable icon;
+  //Drawable icon;
     boolean isInstalled ;
     boolean isUpdatable ;
     boolean select_box_state ;
@@ -61,7 +61,7 @@ public class ApkListDataItem {
             BasicFileAttributes attr = Files.readAttributes(f1.toPath(), BasicFileAttributes.class);
             this.file_creation_time = attr.creationTime().toMillis();
             this.file_modified_time = attr.lastModifiedTime().toMillis();
-            Log.i(TAG,"File Creation Time of \""+file_name+"\" is "+file_creation_time);
+          //  Log.i(TAG,"File Creation Time of \""+file_name+"\" is "+file_creation_time);
         }catch(Exception ex){
             Log.i(TAG,"Error getting File Creation Time of - "+file_name);
         }
@@ -73,7 +73,6 @@ public class ApkListDataItem {
             this.apk_version_name = apk_pkg_info.versionName;
             this.apk_version_code = String.valueOf(apk_pkg_info.versionCode);
             this.app_info = apk_pkg_info.applicationInfo ;
-
 //-------------------------------------------------------------------------
             this.app_info.sourceDir       = file.getAbsolutePath();
             this.app_info.publicSourceDir = file.getAbsolutePath();

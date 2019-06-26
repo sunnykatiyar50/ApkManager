@@ -34,10 +34,10 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/submenu_file_peration"
+        android:id="@+id/submenu_file_operation"
         android:icon="@drawable/ic_sort_black_24dp"
         android:orderInCategory="100"
-        android:title="File Operations">
+        android:title="Actions">
 
         <menu>
 
@@ -59,7 +59,14 @@
                 android:id="@+id/menuitem_move_files"
                 android:icon="@drawable/ic_content_copy_black_24dp"
                 android:orderInCategory="100"
-                android:title="Move To Folder"
+                android:title="Move To Repo"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menuitem_move_replace"
+                android:icon="@drawable/ic_content_copy_black_24dp"
+                android:orderInCategory="100"
+                android:title="Move to Replace in Repo"
                 app:showAsAction="never" />
 
             <item
@@ -70,11 +77,19 @@
                 app:showAsAction="never" />
 
             <item
+                android:id="@+id/menuitem_make_repository"
+                android:icon="@drawable/ic_refresh_black_24dp"
+                android:orderInCategory="100"
+                android:title="Build Repository"
+                app:showAsAction="never" />
+
+            <item
                 android:id="@+id/menuitem_delete"
                 android:icon="@drawable/ic_delete_black_24dp"
                 android:orderInCategory="100"
                 android:title="Delete (APKs Only) "
                 app:showAsAction="never" />
+
         </menu>
 
     </item>
@@ -101,10 +116,64 @@
                 android:orderInCategory="100"
                 android:title="Select Updatable"
                 app:showAsAction="never" />
+
         </menu>
 
     </item>
 
+    <item
+        android:id="@+id/duplicate_selection"
+        android:icon="@drawable/ic_sort_black_24dp"
+        android:orderInCategory="102"
+        android:title="Duplicate Checker">
+
+        <menu>
+
+            <item
+                android:id="@+id/menuitem__duplicate_old_version"
+                android:checkable="true"
+                android:icon="@drawable/ic_check_circle_black_24dp"
+                android:orderInCategory="100"
+                android:title="Previous Version"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menuitem__duplicate_new_version"
+                android:checkable="true"
+                android:icon="@drawable/ic_check_circle_black_24dp"
+                android:orderInCategory="100"
+                android:title="Newer Version"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menuitem_duplicate_time_old"
+                android:icon="@drawable/ic_date_range_black_24dp"
+                android:orderInCategory="100"
+                android:title="Older Files"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menuitem_duplicate_time_new"
+                android:icon="@drawable/ic_date_range_black_24dp"
+                android:orderInCategory="100"
+                android:title="Newer"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menuitem_duplicate_size_smaller"
+                android:icon="@drawable/ic_system_update_alt_black_24dp"
+                android:orderInCategory="100"
+                android:title="Smaller Size"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menuitem_duplicate_size_larger"
+                android:icon="@drawable/ic_system_update_alt_black_24dp"
+                android:orderInCategory="100"
+                android:title="Greater Size"
+                app:showAsAction="never" />
+
+        </menu>
+
+    </item>
 
     <item
         android:id="@+id/menuitem_root"

@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ApkListActivity"
-    tools:showIn="@layout/app_bar_main">
+    tools:context=".ApkListFragment"
+    >
 
     <!--   <Button
        android:id="@+id/btn_Select_files"
@@ -34,8 +34,8 @@
 
     <Button
         android:id="@+id/btn_browse_local_path"
-        android:layout_width="87dp"
-        android:layout_height="35dp"
+        android:layout_width="78dp"
+        android:layout_height="44dp"
         android:clickable="true"
         android:enabled="true"
         android:text="Browse"
@@ -46,12 +46,20 @@
 
     <EditText
         android:id="@+id/edit_search_folder"
-        android:layout_width="317dp"
-        android:layout_height="40dp"
+        android:layout_width="307dp"
+        android:layout_height="52dp"
 
+        android:autoSizeMaxTextSize="16sp"
+        android:autoSizeMinTextSize="12sp"
+        android:autoSizeTextType="uniform"
         android:ems="10"
         android:hint="Select a folder to search.."
         android:inputType="textPersonName"
+        android:lines="2"
+        android:maxLines="3"
+        android:minLines="2"
+        android:textAlignment="viewStart"
+        android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/btn_browse_local_path"
         app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,10 +72,10 @@
         android:autoSizeMaxTextSize="14dp"
         android:autoSizeMinTextSize="10dp"
         android:autoSizeTextType="uniform"
-        android:background="#B22B2626"
-        android:text="Messages here"
+        android:background="#D8161515"
+        android:text="Realtime Messages will appear here"
         android:textAlignment="center"
-        android:textColor="#E65100"
+        android:textColor="#FFB300"
         android:textSize="12sp"
         android:textStyle="bold"
         android:visibility="visible"

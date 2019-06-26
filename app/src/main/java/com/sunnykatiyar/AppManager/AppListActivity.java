@@ -33,13 +33,17 @@ public class AppListActivity extends AppCompatActivity implements NavigationView
     public static SharedPreferences sharedPrefAppList;
     public static SharedPreferences.Editor prefEditorAppList;
 
-    final String PREF_NAME_SETTINGS = "com.sunnykatiyar.AppManager.APP_SETTINGS";
-    public static SharedPreferences sharedPrefSettings;
-    public static SharedPreferences.Editor prefEditSettings;
+    final String PREF_NAME_APP_SETTINGS = "com.sunnykatiyar.AppManager.APP_SETTINGS";
+    public static SharedPreferences sharedPrefAppSettings;
+    public static SharedPreferences.Editor prefEditAppSettings;
 
-    final String PREF_NAME = "com.sunnykatiyar.AppManager.RENAME";
-    public static SharedPreferences sharedPref;
-    public static SharedPreferences.Editor prefEditor;
+    final String PREF_NAME_APKMANAGER = "com.sunnykatiyar.AppManager.RENAME";
+    public static SharedPreferences sharedPrefApkManager;
+    public static SharedPreferences.Editor prefEditorApkManager;
+
+    final String PREF_NAME_REPOSITORY = "com.sunnykatiyar.AppManager.MOVETOFOLDERS";
+    public static SharedPreferences sharedPrefRepository;
+    public static SharedPreferences.Editor prefEditRepository;
 
     NavigationView navigationView;
 
@@ -71,7 +75,6 @@ public class AppListActivity extends AppCompatActivity implements NavigationView
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().findItem(R.id.nav_applist).setChecked(true);
 
-
         appListFragment = new AppListFragment();
         appSettingsFragment = new AppSettingsFragment();
         renameFilesFragment = new RenameFilesFragment();
@@ -84,11 +87,14 @@ public class AppListActivity extends AppCompatActivity implements NavigationView
         sharedPrefAppList = getSharedPreferences(PREF_NAME_APPLIST,MODE_PRIVATE);
         prefEditorAppList = sharedPrefAppList.edit();
 
-        sharedPrefSettings = getSharedPreferences(PREF_NAME_SETTINGS,MODE_PRIVATE);
-        prefEditSettings = sharedPrefSettings.edit();
+        sharedPrefAppSettings = getSharedPreferences(PREF_NAME_APP_SETTINGS,MODE_PRIVATE);
+        prefEditAppSettings = sharedPrefAppSettings.edit();
 
-        sharedPref = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
-        prefEditor =sharedPref.edit();
+        sharedPrefApkManager = getSharedPreferences(PREF_NAME_APKMANAGER,MODE_PRIVATE);
+        prefEditorApkManager = sharedPrefApkManager.edit();
+
+        sharedPrefRepository = getSharedPreferences(PREF_NAME_REPOSITORY,MODE_PRIVATE);
+        prefEditRepository = sharedPrefRepository.edit();
 
         Log.e(TAG,"in onCreate : Before transaction ");
             ft = fm.beginTransaction();
@@ -167,7 +173,12 @@ public class AppListActivity extends AppCompatActivity implements NavigationView
 
     @Override
     protected void onResume() {
-        appListFragment = new AppListFragment();
+      //  appListFragment = new AppListFragment();
+//        Log.e(TAG,"in onResume : Before transaction ");
+//        ft = fm.beginTransaction();
+//        ft.replace(R.id.fragment_container, appListFragment);
+//        ft.commit();
+//        Log.e(TAG,"in onResume : transaction committed ");
         super.onResume();
     }
 

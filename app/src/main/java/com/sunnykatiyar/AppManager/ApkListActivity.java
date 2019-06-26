@@ -46,7 +46,7 @@
 //        implements NavigationView.OnNavigationItemSelectedListener {
 //
 //    private static final String TAG = "MAIN ACTIVITY : ";
-//    Button btn_search_apks;
+//    Button btn_local_path;
 //    public static Menu option_menu;
 //    public static  TextView text_msgs ;
 //
@@ -69,11 +69,11 @@
 //    public static NavigationView navigationView;
 //    AlertDialog.Builder builder;
 //
-//    final String PREF_NAME = "com.sunnykatiyar.AppManager.RENAME";
+//    final String PREF_NAME_APKMANAGER = "com.sunnykatiyar.AppManager.RENAME";
 //    final String key_global_path = "GLOBAL_PATH";
 //    final static String key_search_subfolders = "SEARCH_SUBFOLDERS";
-//    SharedPreferences sharedPref;
-//    SharedPreferences.Editor prefEditor;
+//    SharedPreferences sharedPrefApkManager;
+//    SharedPreferences.Editor prefEditorApkManager;
 //
 //    String value_global_path;
 //    String value_search_subfolders;
@@ -91,7 +91,7 @@
 //    final String key_order_by = "INVERSE SORTING";
 //    String value_order_by;
 //
-//    final String sort_by_name = "SORT_BY_NAME";
+//    final String sort_apks_by_name = "SORT_BY_NAME";
 //    final String sort_by_date = "SORT_BY_DATE";
 //    final String sort_by_size = "SORT_BY_SIZE";
 //
@@ -99,8 +99,8 @@
 //    final String order_increasing = "ORDER_DECREASING";
 //
 //
-//    public String sort_by ;
-//    public String order_by;
+//    public String sort_apks_by ;
+//    public String order_apks_by;
 //    final String name_format_data_saved = RenameApksActivity.name_format_data_saved;
 //
 //
@@ -136,21 +136,21 @@
 //        mDividerItemDecoration = new DividerItemDecoration(context,llm.getOrientation());
 //        recyclerView.addItemDecoration(mDividerItemDecoration);
 //
-//        sharedPref = getSharedPreferences(PREF_NAME,MODE_PRIVATE);
-//        prefEditor = sharedPref.edit();
+//        sharedPrefApkManager = getSharedPreferences(PREF_NAME_APKMANAGER,MODE_PRIVATE);
+//        prefEditorApkManager = sharedPrefApkManager.edit();
 //
 //        pm = getPackageManager();
 //
-//        btn_search_apks = findViewById(R.id.btn_browse_local_path);
+//        btn_local_path = findViewById(R.id.btn_browse_local_path);
 //        value_local_path = findViewById(R.id.edit_search_folder);
 //
-//        value_global_path = sharedPref.getString(key_global_path,"Path Not Set");
+//        value_global_path = sharedPrefApkManager.getString(key_global_path,"Path Not Set");
 //        value_local_path.setText(value_global_path);
 //
 //        File dir_path = new File(value_local_path.getText().toString());
 //
 //        if(dir_path.exists() & dir_path.isDirectory()){
-//            sort_by = sharedPref.getString(value_sorting,sort_by_name);
+//            sort_apks_by = sharedPrefApkManager.getString(value_sorting,sort_apks_by_name);
 //            new LongTask().execute("search",dir_path.toString());
 //        }else{
 //            Toast.makeText(this,"Set a Valid Folder To Load Files.",Toast.LENGTH_SHORT);
@@ -160,7 +160,7 @@
 //        recyclerView.setAdapter(cla);
 //        cla.notifyDataSetChanged();
 //
-//        btn_search_apks.setOnClickListener(new View.OnClickListener() {
+//        btn_local_path.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
 //
@@ -198,7 +198,7 @@
 //                                List<Uri> files = Utils.getSelectedFilesFromResult(data);
 //                                File file = Utils.getFileForUri(files.get(0));
 //                                value_local_path.setText(file.getPath());
-//                                btn_search_apks.setEnabled(true);
+//                                btn_local_path.setEnabled(true);
 //
 //                            }
 //        }
@@ -240,47 +240,47 @@
 //        Log.i(TAG," onPrepareOptionsMenu : ");
 //
 ////-----------------------LOADING "SORT BY" FROM SHARED PREFERENCES---------------------------------------
-//             value_sorting = sharedPref.getString(key_sorting,sort_by_name);
+//             value_sorting = sharedPrefApkManager.getString(key_sorting,sort_apks_by_name);
 //             Log.i(TAG,"Sorting Setting in Shared Preferences: "+value_sorting);
 //
-//            if(value_sorting.equals(sort_by_name)){
-//               // Log.i(TAG," inside equating sort_by_name : ");
-//                sort_by = sort_by_name;
+//            if(value_sorting.equals(sort_apks_by_name)){
+//               // Log.i(TAG," inside equating sort_apks_by_name : ");
+//                sort_apks_by = sort_apks_by_name;
 //                menu.findItem(R.id.menuitem_sortbyname).setChecked(true);
-//                //sort_by = "Hello name";
+//                //sort_apks_by = "Hello name";
 //            }
 //            else if(value_sorting.equals(sort_by_date)){
 //                //Log.i(TAG," inside equating sort_by_date : ");
-//                sort_by = sort_by_date;
+//                sort_apks_by = sort_by_date;
 //                menu.findItem(R.id.menuitem_sortbydate).setChecked(true);
-//                //sort_by = "Hello date";
+//                //sort_apks_by = "Hello date";
 //
 //            }
 //            else if(value_sorting.equals(sort_by_size)){
 //                //Log.i(TAG," inside equating sort_by_size : ");
-//                sort_by = sort_by_size;
+//                sort_apks_by = sort_by_size;
 //                menu.findItem(R.id.menuitem_sortbysize).setChecked(true);
-//                //sort_by = "Hello size";
+//                //sort_apks_by = "Hello size";
 //            }
-//          //  Log.i(TAG," Value of sort_by : " + sort_by);
+//          //  Log.i(TAG," Value of sort_apks_by : " + sort_apks_by);
 //
 ////--------------------------------LOADING "ORDER BY" FROM SHARED PREFERENCES---------------------------------------
 //
-//            value_order_by = sharedPref.getString(key_order_by,order_increasing);
+//            value_order_by = sharedPrefApkManager.getString(key_order_by,order_increasing);
 //            //Log.i(TAG," Found Ordering Settings in SHARED PREFERENCES: "+ value_order_by);
 //
 //            if(value_order_by.equals(order_decreasing)){
 //                option_menu.findItem(R.id.menuitem_decreasing).setChecked(true);
-//                order_by = order_decreasing;
+//                order_apks_by = order_decreasing;
 //            }
 //            else if(value_order_by.equals(order_increasing)){
 //                option_menu.findItem(R.id.menuitem_increasing).setChecked(true);
-//                order_by = order_increasing;
+//                order_apks_by = order_increasing;
 //            }
-//        //Log.i(TAG," Value of order by : " + order_by);
+//        //Log.i(TAG," Value of order by : " + order_apks_by);
 //
 ////----------------------------------------------------------------------------------------------------------------------
-//            option_menu.findItem(R.id.menuitem_root).setChecked(sharedPref.getBoolean("ROOT",true));
+//            option_menu.findItem(R.id.menuitem_root).setChecked(sharedPrefApkManager.getBoolean("ROOT",true));
 //            rootSelected = option_menu.findItem(R.id.menuitem_root).isChecked();
 ////--------------------------------------------------------------------------------------------------------------------
 //
@@ -306,15 +306,15 @@
 //        //-----------------------RELOAD------------------------------------------------
 //        if(id == R.id.menuitem_reset_path){
 //
-//            if(sharedPref.contains(key_global_path)){
-//                value_global_path = sharedPref.getString(key_global_path,"Path Not Set");
+//            if(sharedPrefApkManager.contains(key_global_path)){
+//                value_global_path = sharedPrefApkManager.getString(key_global_path,"Path Not Set");
 //                value_local_path.setText(value_global_path);
 //            }
 //        }
 //
 //        if(id==R.id.menuitem_subdir){
 //                item.setChecked(!item.isChecked());
-//                prefEditor.putBoolean(key_search_subfolders,item.isChecked()).commit();
+//                prefEditorApkManager.putBoolean(key_search_subfolders,item.isChecked()).commit();
 //        }
 //
 //        //---------------SELECT ROOT----------------------------------------------
@@ -333,8 +333,8 @@
 //                Log.e(TAG, "ROOT SELECTED :" + rootSelected);
 //                Log.e(TAG, "ROOT ACCESS :" + rootAccess);
 //            }
-//            prefEditor.putBoolean("ROOT",item.isChecked());
-//            prefEditor.commit();
+//            prefEditorApkManager.putBoolean("ROOT",item.isChecked());
+//            prefEditorApkManager.commit();
 //        }
 //
 //        //------------------INSTALL/UPDATE APPS--------------------------------
@@ -533,38 +533,38 @@
 //        //------------------------------------SORTING----------------------------------------
 //        if(id == R.id.menuitem_sortbyname){
 //               item.setChecked(true);
-//                sort_by = sort_by_name;
-//                prefEditor.putString(key_sorting, sort_by).commit();
+//                sort_apks_by = sort_apks_by_name;
+//                prefEditorApkManager.putString(key_sorting, sort_apks_by).commit();
 //                SortApkList();
 //        }
 //
 //        if(id == R.id.menuitem_sortbydate){
 //                item.setChecked(true);
-//                sort_by = sort_by_date;
-//                prefEditor.putString(key_sorting, sort_by).commit();
+//                sort_apks_by = sort_by_date;
+//                prefEditorApkManager.putString(key_sorting, sort_apks_by).commit();
 //                SortApkList();
 //        }
 //
 //        if(id == R.id.menuitem_sortbysize){
 //                item.setChecked(true);
 //            //    Log.i(TAG,"Clicked sort by size");
-//                sort_by = sort_by_size;
-//                prefEditor.putString(key_sorting, sort_by).commit();
+//                sort_apks_by = sort_by_size;
+//                prefEditorApkManager.putString(key_sorting, sort_apks_by).commit();
 //                SortApkList();
 //        }
 //
 //        //-----------------------------------INVERSE SORTING-------------------------------------
 //        if(id == R.id.menuitem_decreasing){
 //                item.setChecked(true);
-//                order_by = order_decreasing;
-//                prefEditor.putString(key_order_by, order_by).commit();
+//                order_apks_by = order_decreasing;
+//                prefEditorApkManager.putString(key_order_by, order_apks_by).commit();
 //               SortApkList();
 //        }
 //
 //        if(id == R.id.menuitem_increasing){
 //                item.setChecked(true);
-//                order_by = order_increasing;
-//                prefEditor.putString(key_order_by, order_by).commit();
+//                order_apks_by = order_increasing;
+//                prefEditorApkManager.putString(key_order_by, order_apks_by).commit();
 //                  SortApkList();
 //        }
 //
@@ -699,13 +699,13 @@
 //            //CHECK FOR CORRECT PATH
 //            if (dir_path.exists() & dir_path.isDirectory()) {
 //                // CHECK IF TO SEARCH IN SUBDIRECTORY
-//                if(sharedPref.getBoolean(key_search_subfolders,true)) {
+//                if(sharedPrefApkManager.getBoolean(key_search_subfolders,true)) {
 //                    Log.i(TAG,"Search in Subfolder : True");
 //                    getAllSubDirFiles(dir_path);
 //                }
 //
 //                // CHECK IF TO NOT SEARCH IN SUBDIRECTORY
-//                else if(!sharedPref.getBoolean(key_search_subfolders,true)) {
+//                else if(!sharedPrefApkManager.getBoolean(key_search_subfolders,true)) {
 //                    Log.i(TAG,"Search in Subfolder : False");
 //                    getDirFiles(dir_path);
 //                    Log.i(TAG,list_files.size()+" files found.");
@@ -863,30 +863,30 @@
 //        public void RenameApks(List<ApkListDataItem> files_list){
 //            Log.i(TAG,"Renaming Files Count :"+files_list.size());
 //
-//            if(sharedPref.contains(name_format_data_saved)){
+//            if(sharedPrefApkManager.contains(name_format_data_saved)){
 //
-//                int part1 = sharedPref.getInt(name_part_1,1);
+//                int part1 = sharedPrefApkManager.getInt(name_part_1,1);
 //                Log.i(TAG,"Part 1 :"+ part1);
 //
-//                String part2 = sharedPref.getString(name_part_2,"_v");
+//                String part2 = sharedPrefApkManager.getString(name_part_2,"_v");
 //                Log.i(TAG,"Part 2 :"+part2);
 //
-//                int part3 =sharedPref.getInt(name_part_3,2);
+//                int part3 =sharedPrefApkManager.getInt(name_part_3,2);
 //                Log.i(TAG,"Part 3 :"+ part3);
 //
-//                String part4 = sharedPref.getString(name_part_4,"_");
+//                String part4 = sharedPrefApkManager.getString(name_part_4,"_");
 //                Log.i(TAG,"Part 4 :"+part4);
 //
-//                int part5 =sharedPref.getInt(name_part_5,3);
+//                int part5 =sharedPrefApkManager.getInt(name_part_5,3);
 //                Log.i(TAG,"Part 5 :"+ part5);
 //
-//                String part6 = sharedPref.getString(name_part_6,"");
+//                String part6 = sharedPrefApkManager.getString(name_part_6,"");
 //                Log.i(TAG,"Part 6 :"+part6);
 //
-//                int part7 =sharedPref.getInt(name_part_7,0);
+//                int part7 =sharedPrefApkManager.getInt(name_part_7,0);
 //                Log.i(TAG,"Part 7 :"+ part7);
 //
-//                String part8 = sharedPref.getString(name_part_8,"");
+//                String part8 = sharedPrefApkManager.getString(name_part_8,"");
 //                Log.i(TAG,"Part 8 :"+part8);
 //
 //                File f1;
@@ -940,23 +940,23 @@
 //        Comparator<ApkListDataItem> modified_date_comparator = (ApkListDataItem l1, ApkListDataItem l2)-> Long.compare(l1.file.lastModified(),l2.file.lastModified());
 //        Comparator<ApkListDataItem> creation_date_comparator = (ApkListDataItem l1, ApkListDataItem l2)-> Long.compare(l1.file_creation_time,l2.file_creation_time);
 //
-//        Log.i(TAG," In Sorting Method : sort by = "+ sort_by);
+//        Log.i(TAG," In Sorting Method : sort by = "+ sort_apks_by);
 //
-//        switch(sort_by){
-//            case sort_by_name :{ Collections.sort(apkFilesList,file_name_comparator);
-//                                    if(order_by == order_decreasing){
+//        switch(sort_apks_by){
+//            case sort_apks_by_name :{ Collections.sort(apkFilesList,file_name_comparator);
+//                                    if(order_apks_by == order_decreasing){
 //                                        Collections.reverse(apkFilesList);  }
-//                                    Log.i(TAG,"in sort_by_name");
+//                                    Log.i(TAG,"in sort_apks_by_name");
 //                                    break;}
 //
 //            case sort_by_date : {   Collections.sort(apkFilesList,creation_date_comparator);
-//                                    if(order_by == order_decreasing){
+//                                    if(order_apks_by == order_decreasing){
 //                                        Collections.reverse(apkFilesList);
 //                                    }
 //                                   Log.i(TAG,"in sort_by_date");   break;}
 //
 //             case sort_by_size : {  Collections.sort(apkFilesList,file_size_comparator);
-//                                    if(order_by == order_decreasing){
+//                                    if(order_apks_by == order_decreasing){
 //                                        Collections.reverse(apkFilesList);}
 //                                    Log.i(TAG,"in sort_by_size");  break;}
 //

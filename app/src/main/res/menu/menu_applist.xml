@@ -41,14 +41,14 @@
                 <item
                     android:id="@+id/menuitem_sortby_install_time"
                     android:orderInCategory="101"
-                    android:title="Sort By Time"
+                    android:title="Sort By Install Time"
                     android:icon="@drawable/ic_date_range_black_24dp"
                     app:showAsAction="never" />
 
                 <item
                     android:id="@+id/menuitem_sortby_update_time"
                     android:orderInCategory="101"
-                    android:title="Sort By Time"
+                    android:title="Sort By Update Time"
                     android:icon="@drawable/ic_date_range_black_24dp"
                     app:showAsAction="never" />
 

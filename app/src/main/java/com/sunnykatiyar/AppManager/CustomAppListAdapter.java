@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -61,9 +62,9 @@ public class CustomAppListAdapter extends RecyclerView.Adapter<CustomAppListView
     @Override
     public void onBindViewHolder(@NonNull CustomAppListViewHolder vholder, int i) {
 
-        PackageInfo pkginfo =  this.myAppList.get(i);
+        PackageInfo pkginfo = this.myAppList.get(i);
         vholder.pkgname.setText(pkginfo.packageName);
-        vholder.version.setText("v"+pkginfo.versionName);
+        vholder.version.setText("v" + pkginfo.versionName);
         vholder.appname.setText(pm.getApplicationLabel(pkginfo.applicationInfo).toString());
         vholder.applogo.setImageDrawable(pm.getApplicationIcon(pkginfo.applicationInfo));
         vholder.install_date.setText(getTime(pkginfo.lastUpdateTime));
@@ -76,10 +77,10 @@ public class CustomAppListAdapter extends RecyclerView.Adapter<CustomAppListView
             public void onClick(View v) {
                 clicked_pkg = myAppList.get(i);
                 clicked_pkg_label = mainpm.getApplicationLabel(clicked_pkg.applicationInfo).toString();
-                Log.i(TAG,"Item clicked :"+clicked_pkg_label);
+                Log.i(TAG, "Item clicked :" + clicked_pkg_label);
 
                 Toast.makeText(appContext, clicked_pkg_label, Toast.LENGTH_SHORT).show();
-                Intent appInfo = new Intent(activity,AppDetailsActivity.class);
+                Intent appInfo = new Intent(activity, AppDetailsActivity.class);
                 activity.startActivity(appInfo);
             }
         });
@@ -87,30 +88,41 @@ public class CustomAppListAdapter extends RecyclerView.Adapter<CustomAppListView
         vholder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                activity.getMenuInflater().inflate(R.menu.menu_app_details,menu);
-                PackageInfo p = myAppList.get(i); ;
-                Log.i(TAG," ITEM CREATE: "+v.getId());
+                // super.onCreateContextMenu(menu, v, menuInfo);
+                MenuInflater inflater = activity.getMenuInflater();
+                inflater.inflate(R.menu.menu_app_details, menu);
+                PackageInfo p = myAppList.get(i);
+                ;
+                Log.i(TAG, " ITEM CREATE: " + v.getId());
 //                Log.i(TAG," ITEM : "+);
             }
         });
 
         vholder.itemView.setOnContextClickListener(new View.OnContextClickListener() {
+
             @Override
             public boolean onContextClick(View v) {
                 Toast.makeText(appContext, clicked_pkg_label, Toast.LENGTH_SHORT).show();
 
-                Log.e("Context Menu","onItemSelected");
-                PackageInfo p = myAppList.get(i); ;
+                Log.e("Context Menu", "onItemSelected");
+                PackageInfo p = myAppList.get(i);
+                ;
                 Context menu_context = getContext();
 
                 String applabel = p.applicationInfo.loadLabel(mainpm).toString();
-                Log.i(TAG," ITEM CLICK: "+v.getId());
-                appMenu = new AppMenu(v.getId(),applabel,p,menu_context);
+                Log.i(TAG, " ITEM CLICK: " + v.getId());
+                appMenu = new AppMenu(v.getId(), applabel, p, menu_context);
                 appMenu.PerAppMenu();
                 return false;
             }
         });
+
+
+
     }
+
+
+
 
     public String getTime(long time){
         DateFormat dateFormat = new SimpleDateFormat("hh:mm a dd-MM-yy");

@@ -1,7 +1,6 @@
 package com.sunnykatiyar.AppManager;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
-import static com.sunnykatiyar.AppManager.AppListActivity.sharedPref;
+import static com.sunnykatiyar.AppManager.AppListActivity.sharedPrefApkManager;
 
 
 public class RenameApkFragment extends Fragment implements
@@ -120,7 +119,7 @@ public class RenameApkFragment extends Fragment implements
         button_save = v.findViewById(R.id.buttton_save);
         button_clear = v.findViewById(R.id.buttton_clear);
         name_format = v.findViewById(R.id.text_format);
-        global_path = v.findViewById(R.id.text_path_to);
+        global_path = v.findViewById(R.id.text_path_repository);
         button_get_path = v.findViewById(R.id.button_global_path);
 
         setNewSpinnerData();
@@ -147,7 +146,7 @@ public class RenameApkFragment extends Fragment implements
             }
         });
 
-        global_path.setText(sharedPref.getString(key_global_path,"Path Not Set"));
+        global_path.setText(sharedPrefApkManager.getString(key_global_path,"Path Not Set"));
         setNameFormatLabel();
 
         button_save.setOnClickListener(new View.OnClickListener() {
@@ -176,8 +175,8 @@ public class RenameApkFragment extends Fragment implements
                 List<Uri> files = Utils.getSelectedFilesFromResult(intent);
                 File file = Utils.getFileForUri(files.get(0));
                 global_path.setText(file.getPath());
-                AppListActivity.prefEditor.putString(key_global_path,global_path.getText().toString());
-                AppListActivity.prefEditor.commit();
+                AppListActivity.prefEditorApkManager.putString(key_global_path,global_path.getText().toString());
+                AppListActivity.prefEditorApkManager.commit();
             }
         }
     }
@@ -206,25 +205,25 @@ public class RenameApkFragment extends Fragment implements
             case R.id.spinner1 :{
                 parent.setSelection(position);
                 Log.i(TAG,"OnClick : "+parent.getItemAtPosition(position).toString());
-                Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT).show();
             }
 
             case R.id.spinner3 :{
                 spinner3.setSelection(position);
                 Log.i(TAG,"OnClick : "+parent.getItemAtPosition(position).toString());
-                Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT).show();
             }
 
             case R.id.spinner5 :{
                 parent.setSelection(position);
                 Log.i(TAG,"OnClick : "+parent.getItemAtPosition(position).toString());
-                Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT).show();
             }
 
             case R.id.spinner7 :{
                 spinner7.setSelection(position);
                 Log.i(TAG,"OnClick : "+parent.getItemAtPosition(position).toString());
-                Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -260,22 +259,22 @@ public class RenameApkFragment extends Fragment implements
         spinner5.setAdapter(spin_adapter5);
         spinner7.setAdapter(spin_adapter7);
 
-        AppListActivity.prefEditor.putBoolean(spinner_items_set,true);
+        AppListActivity.prefEditorApkManager.putBoolean(spinner_items_set,true);
         Log.i(TAG,"Spinners Data is Set ... ");
-        AppListActivity.prefEditor.commit();
+        AppListActivity.prefEditorApkManager.commit();
     }
 
     public void clearFormat(){
-        AppListActivity.prefEditor.remove(name_part_1);
-        AppListActivity.prefEditor.remove(name_part_2);
-        AppListActivity.prefEditor.remove(name_part_3);
-        AppListActivity.prefEditor.remove(name_part_4);
-        AppListActivity.prefEditor.remove(name_part_5);
-        AppListActivity.prefEditor.remove(name_part_6);
-        AppListActivity.prefEditor.remove(name_part_7);
-        AppListActivity.prefEditor.remove(name_part_8);
-        AppListActivity.prefEditor.remove(name_format_data_saved);
-        AppListActivity.prefEditor.commit();
+        AppListActivity.prefEditorApkManager.remove(name_part_1);
+        AppListActivity.prefEditorApkManager.remove(name_part_2);
+        AppListActivity.prefEditorApkManager.remove(name_part_3);
+        AppListActivity.prefEditorApkManager.remove(name_part_4);
+        AppListActivity.prefEditorApkManager.remove(name_part_5);
+        AppListActivity.prefEditorApkManager.remove(name_part_6);
+        AppListActivity.prefEditorApkManager.remove(name_part_7);
+        AppListActivity.prefEditorApkManager.remove(name_part_8);
+        AppListActivity.prefEditorApkManager.remove(name_format_data_saved);
+        AppListActivity.prefEditorApkManager.commit();
 
         Log.i(TAG,"Cleared Name Format Data");
 
@@ -284,16 +283,16 @@ public class RenameApkFragment extends Fragment implements
     }
 
     public void saveFormat(){
-        AppListActivity.prefEditor.putInt(name_part_1,spinner1.getSelectedItemPosition());
-        AppListActivity.prefEditor.putString(name_part_2,edit2.getText().toString());
-        AppListActivity.prefEditor.putInt(name_part_3,spinner3.getSelectedItemPosition());
-        AppListActivity.prefEditor.putString(name_part_4,edit4.getText().toString());
-        AppListActivity.prefEditor.putInt(name_part_5,spinner5.getSelectedItemPosition());
-        AppListActivity.prefEditor.putString(name_part_6,edit6.getText().toString());
-        AppListActivity.prefEditor.putInt(name_part_7,spinner7.getSelectedItemPosition());
-        AppListActivity.prefEditor.putString(name_part_8,edit8.getText().toString());
-        AppListActivity.prefEditor.putBoolean(name_format_data_saved,true);
-        AppListActivity.prefEditor.commit();
+        AppListActivity.prefEditorApkManager.putInt(name_part_1,spinner1.getSelectedItemPosition());
+        AppListActivity.prefEditorApkManager.putString(name_part_2,edit2.getText().toString());
+        AppListActivity.prefEditorApkManager.putInt(name_part_3,spinner3.getSelectedItemPosition());
+        AppListActivity.prefEditorApkManager.putString(name_part_4,edit4.getText().toString());
+        AppListActivity.prefEditorApkManager.putInt(name_part_5,spinner5.getSelectedItemPosition());
+        AppListActivity.prefEditorApkManager.putString(name_part_6,edit6.getText().toString());
+        AppListActivity.prefEditorApkManager.putInt(name_part_7,spinner7.getSelectedItemPosition());
+        AppListActivity.prefEditorApkManager.putString(name_part_8,edit8.getText().toString());
+        AppListActivity.prefEditorApkManager.putBoolean(name_format_data_saved,true);
+        AppListActivity.prefEditorApkManager.commit();
 
         setNameFormatLabel();
 
@@ -302,42 +301,42 @@ public class RenameApkFragment extends Fragment implements
     }
 
     public void setNameFormatLabel(){
-        name_format_string = getItem(sharedPref.getInt(name_part_1,1))+
-                sharedPref.getString(name_part_2,"_v")+
-                getItem(sharedPref.getInt(name_part_3,2))+
-                sharedPref.getString(name_part_4,"_")+
-                getItem(sharedPref.getInt(name_part_5,3))+
-                sharedPref.getString(name_part_6,"")+
-                getItem(sharedPref.getInt(name_part_7,0))+
-                sharedPref.getString(name_part_8,"");
+        name_format_string = getItem(sharedPrefApkManager.getInt(name_part_1,1))+
+                sharedPrefApkManager.getString(name_part_2,"_v")+
+                getItem(sharedPrefApkManager.getInt(name_part_3,2))+
+                sharedPrefApkManager.getString(name_part_4,"_")+
+                getItem(sharedPrefApkManager.getInt(name_part_5,3))+
+                sharedPrefApkManager.getString(name_part_6,"")+
+                getItem(sharedPrefApkManager.getInt(name_part_7,0))+
+                sharedPrefApkManager.getString(name_part_8,"");
 
         name_format.setText(name_format_string);
     }
 
     public void retrieveSpinnerData(){
 
-        if(sharedPref.contains(name_format_data_saved)){
+        if(sharedPrefApkManager.contains(name_format_data_saved)){
             Log.i(TAG,"Getting Data from SharedPreferences ... ");
 
-            spinner1.setSelection(sharedPref.getInt(name_part_1,1));
-            Log.i(TAG,String.valueOf(sharedPref.getInt(name_part_1,1)));
+            spinner1.setSelection(sharedPrefApkManager.getInt(name_part_1,1));
+            Log.i(TAG,String.valueOf(sharedPrefApkManager.getInt(name_part_1,1)));
 
-            edit2.setText(sharedPref.getString(name_part_2,"_v"));
+            edit2.setText(sharedPrefApkManager.getString(name_part_2,"_v"));
 
-            spinner3.setSelection(sharedPref.getInt(name_part_3,2));
-            Log.i(TAG,String.valueOf(sharedPref.getInt(name_part_3,2)));
+            spinner3.setSelection(sharedPrefApkManager.getInt(name_part_3,2));
+            Log.i(TAG,String.valueOf(sharedPrefApkManager.getInt(name_part_3,2)));
 
-            edit4.setText(sharedPref.getString(name_part_4,"_"));
+            edit4.setText(sharedPrefApkManager.getString(name_part_4,"_"));
 
-            spinner5.setSelection(sharedPref.getInt(name_part_5,3));
-            Log.i(TAG,String.valueOf(sharedPref.getInt(name_part_5,3)));
+            spinner5.setSelection(sharedPrefApkManager.getInt(name_part_5,3));
+            Log.i(TAG,String.valueOf(sharedPrefApkManager.getInt(name_part_5,3)));
 
-            edit6.setText(sharedPref.getString(name_part_6,""));
+            edit6.setText(sharedPrefApkManager.getString(name_part_6,""));
 
-            spinner7.setSelection(sharedPref.getInt(name_part_7,0));
-            Log.i(TAG,String.valueOf(sharedPref.getInt(name_part_7,0)));
+            spinner7.setSelection(sharedPrefApkManager.getInt(name_part_7,0));
+            Log.i(TAG,String.valueOf(sharedPrefApkManager.getInt(name_part_7,0)));
 
-            edit8.setText(sharedPref.getString(name_part_8,""));
+            edit8.setText(sharedPrefApkManager.getString(name_part_8,""));
         }
         else{
             Log.i(TAG,"NO FORMAT DATA SAVED IN SHARED_PREFERENCES");

@@ -10,7 +10,7 @@ import android.widget.Toast;
 import java.util.Collections;
 import java.util.Comparator;
 
-import static com.sunnykatiyar.AppManager.AppListActivity.search_menuItem;
+import static com.sunnykatiyar.AppManager.MainActivity.search_menuItem;
 import static com.sunnykatiyar.AppManager.AppListFragment.adapter;
 import static com.sunnykatiyar.AppManager.AppListFragment.app_listview;
 import static com.sunnykatiyar.AppManager.AppListFragment.applist;

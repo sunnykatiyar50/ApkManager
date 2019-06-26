@@ -57,43 +57,32 @@ public class CustomApkListAdapter extends RecyclerView.Adapter<CustomApkListView
         ver_app=temp.app_version_name + " " + temp.app_version_code;
 
         if(temp.isUpdatable == true){
-            cst.file_name.setTextColor(ContextCompat.getColor(context, R.color.Updatable));
             cst.app_name.setTextColor(ContextCompat.getColor(context, R.color.Updatable));
             cst.text_extra.setTextColor(ContextCompat.getColor(context, R.color.Updatable));
             cst.text_extra.setText("#Update");
             cst.text_extra.setTypeface(Typeface.DEFAULT_BOLD);
             cst.file_name.setTypeface(Typeface.DEFAULT_BOLD);
-            cst.app_name.setTypeface(Typeface.DEFAULT_BOLD);
             cst.apk_version.setTypeface(Typeface.DEFAULT_BOLD);
         }
         else if(temp.isInstalled == true){
-            cst.file_name.setTextColor(ContextCompat.getColor(context, R.color.InstalledOnly));
             cst.app_name.setTextColor(ContextCompat.getColor(context, R.color.InstalledOnly));
             cst.text_extra.setTextColor(ContextCompat.getColor(context, R.color.InstalledOnly));
             cst.text_extra.setTypeface(Typeface.DEFAULT);
             cst.file_name.setTypeface(Typeface.DEFAULT);
-            cst.app_name.setTypeface(Typeface.DEFAULT);
             cst.apk_version.setTypeface(Typeface.DEFAULT);
-            cst.text_extra.setText("Installed");
-        }else if(temp.isInstalled==false){
-            cst.file_name.setTextColor(ContextCompat.getColor(context, R.color.Not_Installed));
-            cst.app_name.setTextColor(ContextCompat.getColor(context, R.color.Not_Installed));
-            cst.text_extra.setTextColor(ContextCompat.getColor(context, R.color.Not_Installed));
-            cst.text_extra.setText("Not Installed");
-            cst.text_extra.setTypeface(Typeface.DEFAULT);
-            cst.file_name.setTypeface(Typeface.DEFAULT);
-            cst.app_name.setTypeface(Typeface.DEFAULT);
-            cst.apk_version.setTypeface(Typeface.DEFAULT);
-        }
+            cst.text_extra.setText("Installed");}
+//        }else if(temp.isInstalled==false){
+//            cst.app_name.setTextColor(ContextCompat.getColor(context, R.color.Not_Installed));
+//            cst.text_extra.setTextColor(ContextCompat.getColor(context, R.color.Not_Installed));
+//            cst.text_extra.setText("Not Installed");
+//            cst.text_extra.setTypeface(Typeface.DEFAULT);
+//            cst.file_name.setTypeface(Typeface.DEFAULT);
+//            cst.apk_version.setTypeface(Typeface.DEFAULT);
+//        }
 
         cst.file_name.setText(temp.file.getPath());
         cst.app_name.setText(temp.app_name);
-        if(temp.isInstalled){
-            cst.text_time.setText(temp.str_app_update_time);
-        }else if(!temp.isInstalled){
-            cst.text_time.setText(temp.str_file_creation_time);
-
-        }
+        cst.text_time.setText(temp.str_file_creation_time);
         cst.app_version.setText(ver_app);
         cst.apk_version.setText(ver_apk);
         cst.text_pkg_name.setText(temp.pkg_name);
@@ -118,44 +107,24 @@ public class CustomApkListAdapter extends RecyclerView.Adapter<CustomApkListView
             }
         });
 
-//      cst.file_name.setTooltipText("File Path : "+temp.file.getPath());
         cst.file_size.setTooltipText("File Size : " +temp.file_size);
         cst.text_pkg_name.setTooltipText("Package Name : " +temp.pkg_name);
         cst.apk_version.setTooltipText("Apk Version : " +temp.apk_version_name);
         cst.app_version.setTooltipText("App Version : " +temp.app_version_name);
         cst.text_time.setTooltipText("Last Update Time : "+temp.str_app_update_time);
+        cst.app_name.setTooltipText(temp.pkg_name);
+        cst.file_name.setTooltipText("File Path : "+temp.file.getAbsolutePath());
+        cst.app_name.setTooltipText(temp.app_name);
 
 
-        cst.file_name.setOnContextClickListener(new View.OnContextClickListener() {
-            @Override
-            public boolean onContextClick(View v) {
-                clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                clipboardManager.setPrimaryClip(ClipData.newPlainText("FilePath",temp.file.getAbsolutePath()));
-                cst.file_name.setTooltipText("File Path : "+temp.file.getAbsolutePath());
-                return false;
-            }
-        });
-
-        cst.app_name.setOnContextClickListener(new View.OnContextClickListener() {
-            @Override
-            public boolean onContextClick(View v) {
-                clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                clipboardManager.setPrimaryClip(ClipData.newPlainText("AppName",temp.app_name));
-                cst.app_name.setTooltipText(temp.app_name);
-                return false;
-            }
-        });
-
-        cst.text_pkg_name.setOnContextClickListener(new View.OnContextClickListener() {
-            @Override
-            public boolean onContextClick(View v) {
-                clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                clipboardManager.setPrimaryClip(ClipData.newPlainText("PackageName",temp.pkg_name));
-                cst.app_name.setTooltipText(temp.pkg_name);
-                return false;
-            }
-        });
-
+//        cst.file_name.setOnContextClickListener(new View.OnContextClickListener() {
+//            @Override
+//            public boolean onContextClick(View v) {
+//                clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+//                clipboardManager.setPrimaryClip(ClipData.newPlainText("FilePath :",temp.file.getAbsolutePath()));
+//                return false;
+//            }
+//        });
 
     }
 

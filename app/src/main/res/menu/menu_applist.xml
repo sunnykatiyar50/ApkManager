@@ -20,7 +20,7 @@
         app:showAsAction="never" />
 
 
-    <item android:title="Sort By"
+    <item android:title="Sort Apps By"
         android:orderInCategory="101"
         android:id="@+id/submenu_sort"
         android:icon="@drawable/ic_sort_black_24dp">

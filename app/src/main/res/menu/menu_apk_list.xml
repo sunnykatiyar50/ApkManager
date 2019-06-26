@@ -11,9 +11,9 @@
     <!--tools:ignore="AppCompatResource"/>-->
 
     <item
-        android:id="@+id/menuitem_search"
+        android:id="@+id/menuitem_load"
         android:orderInCategory="98"
-        android:showAsAction="always"
+        android:showAsAction="ifRoom"
         android:title="Load Files"
         tools:ignore="AppCompatResource" />
 
@@ -62,12 +62,12 @@
                 android:title="Move To Repo"
                 app:showAsAction="never" />
 
-            <item
-                android:id="@+id/menuitem_move_replace"
-                android:icon="@drawable/ic_content_copy_black_24dp"
-                android:orderInCategory="100"
-                android:title="Move to Replace in Repo"
-                app:showAsAction="never" />
+            <!--<item-->
+                <!--android:id="@+id/menuitem_move_replace"-->
+                <!--android:icon="@drawable/ic_content_copy_black_24dp"-->
+                <!--android:orderInCategory="100"-->
+                <!--android:title="Move to Replace in Repo"-->
+                <!--app:showAsAction="never" />-->
 
             <item
                 android:id="@+id/menuitem_uninstall"
@@ -94,67 +94,37 @@
 
     </item>
 
-
-    <item
-        android:id="@+id/submenu_selection"
+    <item  android:id="@+id/duplicate_selection"
         android:icon="@drawable/ic_sort_black_24dp"
         android:orderInCategory="102"
-        android:title="Selection">
-
-        <menu>
-
-            <item
-                android:id="@+id/menuitem_select_all"
-                android:checkable="true"
-                android:icon="@drawable/ic_check_circle_black_24dp"
-                android:orderInCategory="100"
-                android:title="Select All"
-                app:showAsAction="never" />
-            <item
-                android:id="@+id/menuitem_select_update"
-                android:icon="@drawable/ic_system_update_alt_black_24dp"
-                android:orderInCategory="100"
-                android:title="Select Updatable"
-                app:showAsAction="never" />
-
-        </menu>
-
-    </item>
-
-    <item
-        android:id="@+id/duplicate_selection"
-        android:icon="@drawable/ic_sort_black_24dp"
-        android:orderInCategory="102"
-        android:title="Duplicate Checker">
+        android:title="Select Duplicates">
 
         <menu>
 
             <item
                 android:id="@+id/menuitem__duplicate_old_version"
-                android:checkable="true"
                 android:icon="@drawable/ic_check_circle_black_24dp"
                 android:orderInCategory="100"
-                android:title="Previous Version"
+                android:title="Older Versions"
                 app:showAsAction="never" />
             <item
                 android:id="@+id/menuitem__duplicate_new_version"
-                android:checkable="true"
                 android:icon="@drawable/ic_check_circle_black_24dp"
                 android:orderInCategory="100"
-                android:title="Newer Version"
+                android:title="Newer Versions"
                 app:showAsAction="never" />
 
             <item
                 android:id="@+id/menuitem_duplicate_time_old"
                 android:icon="@drawable/ic_date_range_black_24dp"
                 android:orderInCategory="100"
-                android:title="Older Files"
+                android:title="Old Files By Date"
                 app:showAsAction="never" />
             <item
                 android:id="@+id/menuitem_duplicate_time_new"
                 android:icon="@drawable/ic_date_range_black_24dp"
                 android:orderInCategory="100"
-                android:title="Newer"
+                android:title="New Files By Date"
                 app:showAsAction="never" />
 
             <item
@@ -168,27 +138,62 @@
                 android:id="@+id/menuitem_duplicate_size_larger"
                 android:icon="@drawable/ic_system_update_alt_black_24dp"
                 android:orderInCategory="100"
-                android:title="Greater Size"
+                android:title="Larger Size"
                 app:showAsAction="never" />
 
         </menu>
 
     </item>
 
-    <item
-        android:id="@+id/menuitem_root"
+    <item  android:id="@+id/submenu_selection"
+        android:icon="@drawable/ic_sort_black_24dp"
+        android:orderInCategory="102"
+        android:title="Select">
+
+        <menu>
+
+            <item
+                android:id="@+id/menuitem_select_all"
+                android:icon="@drawable/ic_check_box_black_24dp"
+                android:orderInCategory="100"
+                android:title="Select All"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menuitem_unselect_all"
+                android:icon="@drawable/ic_check_box_outline_blank_black_24dp"
+                android:orderInCategory="100"
+                android:title="Unselect All"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menuitem_select_invert"
+                android:icon="@drawable/ic_indeterminate_check_box_black_24dp"
+                android:orderInCategory="100"
+                android:title="Invert Selection"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/menuitem_select_update"
+                android:icon="@drawable/ic_update_black_24dp"
+                android:orderInCategory="100"
+                android:title="Select Updatable"
+                app:showAsAction="never" />
+
+        </menu>
+
+    </item>
+
+    <item  android:id="@+id/menuitem_root"
         android:checkable="true"
         android:icon="@drawable/ic_build_black_24dp"
         android:orderInCategory="110"
         android:title="Use Root"
         app:showAsAction="never" />
 
-
-    <item
-        android:id="@+id/submenu_sort"
+    <item  android:id="@+id/submenu_sort"
         android:icon="@drawable/ic_sort_black_24dp"
         android:orderInCategory="101"
-        android:title="Sort By">
+        android:title="Sort Apps By">
 
         <menu>
 

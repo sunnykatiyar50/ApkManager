@@ -294,7 +294,7 @@
 //        Log.i(TAG," onOptionsItemSelected : "+item.getTitle()+" AND  isItemChecked()="+item.isChecked());
 //
 //        //--------------------------------SEARCH-----------------------------------------
-//        if(id == R.id.menuitem_search) {
+//        if(id == R.id.menuitem_load) {
 //
 //            File dir_path = new File(value_local_path.getText().toString());
 //            new LongTask().execute("search",dir_path.toString());
@@ -606,7 +606,7 @@
 //           // navigationView.getMenu().findItem(R.id.nav_file_renamer).setChecked(true);
 //
 //        } else if (id == R.id.nav_applist) {
-//            Intent i = new Intent(this,AppListActivity.class);
+//            Intent i = new Intent(this,MainActivity.class);
 //            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //            startActivity(i);
 //            item.setChecked(false);

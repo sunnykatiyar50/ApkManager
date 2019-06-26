@@ -41,14 +41,14 @@
 
             <!--<meta-data-->
                 <!--android:name="android.support.PARENT_ACTIVITY"-->
-                <!--android:value="com.sunnykatiyar.AppManager.AppListActivity" />-->
+                <!--android:value="com.sunnykatiyar.AppManager.MainActivity>-->
             <!--<meta-data-->
                 <!--android:name="android.app.searchable"-->
                 <!--android:resource="@xml/searchable" />-->
         <!--</activity>-->
 
         <activity
-            android:name="com.sunnykatiyar.AppManager.AppListActivity"
+            android:name="com.sunnykatiyar.AppManager.MainActivity"
             android:label="App Explorer"
             android:theme="@style/FilePickerTheme">
             <intent-filter>
@@ -63,21 +63,21 @@
         <activity
             android:name="com.sunnykatiyar.AppManager.AppDetailsActivity"
             android:label="@string/title_activity_app_details_"
-            android:parentActivityName="com.sunnykatiyar.AppManager.AppListActivity"
+            android:parentActivityName="com.sunnykatiyar.AppManager.MainActivity"
             android:theme="@style/FilePickerTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sunnykatiyar.AppManager.AppListActivity" />
+                android:value="com.sunnykatiyar.AppManager.MainActivity" />
         </activity>
 
         <activity
             android:name="com.sunnykatiyar.AppManager.About"
             android:label="@string/title_activity_app_details_"
-            android:parentActivityName="com.sunnykatiyar.AppManager.AppListActivity"
+            android:parentActivityName="com.sunnykatiyar.AppManager.MainActivity"
             android:theme="@style/FilePickerTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sunnykatiyar.AppManager.AppListActivity" />
+                android:value="com.sunnykatiyar.AppManager.MainActivity" />
         </activity>
 
         <provider

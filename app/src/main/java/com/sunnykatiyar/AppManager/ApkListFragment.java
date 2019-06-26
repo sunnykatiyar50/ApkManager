@@ -34,26 +34,24 @@ import com.topjohnwu.superuser.Shell;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Intent.EXTRA_PACKAGE_NAME;
-import static com.sunnykatiyar.AppManager.AppListActivity.prefEditorApkManager;
-import static com.sunnykatiyar.AppManager.AppListActivity.prefEditRepository;
-import static com.sunnykatiyar.AppManager.AppListActivity.sharedPrefAppSettings;
-import static com.sunnykatiyar.AppManager.AppListActivity.sharedPrefRepository;
+import static com.sunnykatiyar.AppManager.MainActivity.prefEditorApkManager;
+import static com.sunnykatiyar.AppManager.MainActivity.prefEditRepository;
+import static com.sunnykatiyar.AppManager.MainActivity.sharedPrefAppSettings;
+import static com.sunnykatiyar.AppManager.MainActivity.sharedPrefRepository;
 
 public class ApkListFragment extends Fragment {
     private static final int PERMISSION_REQUEST_CODE = 100;
 
-    private static final String TAG = "MAIN ACTIVITY : ";
+    private static final String TAG = "APKLIST FRAGMENT ACTIVITY : ";
     Button btn_local_path;
     public static Menu option_menu;
     public static TextView text_msgs;
@@ -125,15 +123,21 @@ public class ApkListFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_apk_list, container, false);
-
         recyclerView = v.findViewById(R.id.r_view);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-
+        setRetainInstance(true);
         mDividerItemDecoration = new DividerItemDecoration(getContext(), llm.getOrientation());
         recyclerView.addItemDecoration(mDividerItemDecoration);
 
@@ -142,13 +146,13 @@ public class ApkListFragment extends Fragment {
         btn_local_path = v.findViewById(R.id.btn_browse_local_path);
         value_local_path = v.findViewById(R.id.edit_search_folder);
 
-        value_global_path = AppListActivity.sharedPrefApkManager.getString(key_global_path, "Path Not Set");
+        value_global_path = MainActivity.sharedPrefApkManager.getString(key_global_path, "Path Not Set");
         value_local_path.setText(value_global_path);
 
         File dir_path = new File(value_local_path.getText().toString());
 
         if (dir_path.exists() & dir_path.isDirectory()) {
-            sort_apks_by = AppListActivity.sharedPrefApkManager.getString(value_sorting, sort_apks_by_name);
+            sort_apks_by = MainActivity.sharedPrefApkManager.getString(value_sorting, sort_apks_by_name);
             new LongTask().execute("search", dir_path);
         } else {
             Toast.makeText(getContext(), "Set a Valid Folder To Load Files.", Toast.LENGTH_SHORT);
@@ -158,6 +162,7 @@ public class ApkListFragment extends Fragment {
         cla = new CustomApkListAdapter(apkFilesList, getContext());
         recyclerView.setAdapter(cla);
         cla.notifyDataSetChanged();
+        registerForContextMenu(recyclerView);
 
         btn_local_path.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,9 +186,6 @@ public class ApkListFragment extends Fragment {
                 startActivityForResult(i, 2);
             }
         });
-
-        setHasOptionsMenu(true);
-
         return v;
     }
 
@@ -218,7 +220,7 @@ public class ApkListFragment extends Fragment {
         Log.i(TAG, " onPrepareOptionsMenu : ");
 
 //-----------------------LOADING "SORT BY" FROM SHARED PREFERENCES---------------------------------------
-        value_sorting = AppListActivity.sharedPrefApkManager.getString(key_sorting, sort_apks_by_name);
+        value_sorting = MainActivity.sharedPrefApkManager.getString(key_sorting, sort_apks_by_name);
         Log.i(TAG, "Sorting Setting in Shared Preferences: " + value_sorting);
 
         if (value_sorting.equals(sort_apks_by_name)) {
@@ -242,7 +244,7 @@ public class ApkListFragment extends Fragment {
 
 //--------------------------------LOADING "ORDER BY" FROM SHARED PREFERENCES---------------------------------------
 
-        value_order_by = AppListActivity.sharedPrefApkManager.getString(key_order_by, order_apks_increasing);
+        value_order_by = MainActivity.sharedPrefApkManager.getString(key_order_by, order_apks_increasing);
         Log.i(TAG, " Found Ordering Settings in SHARED PREFERENCES: " + value_order_by);
 
         if (value_order_by.equals(order_apks_decreasing)) {
@@ -255,7 +257,7 @@ public class ApkListFragment extends Fragment {
         Log.i(TAG, " Value of order by : " + order_apks_by);
 
 //----------------------------------------------------------------------------------------------------------------------
-        option_menu.findItem(R.id.menuitem_root).setChecked(AppListActivity.sharedPrefApkManager.getBoolean("ROOT", true));
+        option_menu.findItem(R.id.menuitem_root).setChecked(MainActivity.sharedPrefApkManager.getBoolean("ROOT", true));
         rootSelected = option_menu.findItem(R.id.menuitem_root).isChecked();
 //--------------------------------------------------------------------------------------------------------------------
     }
@@ -267,7 +269,7 @@ public class ApkListFragment extends Fragment {
         Log.i(TAG, " onOptionsItemSelected : " + item.getTitle() + " AND  isItemChecked()=" + item.isChecked());
 
         //--------------------------------SEARCH-----------------------------------------
-        if (id == R.id.menuitem_search) {
+        if (id == R.id.menuitem_load) {
 
             File dir_path = new File(value_local_path.getText().toString());
             new LongTask().execute("search", dir_path);
@@ -278,8 +280,8 @@ public class ApkListFragment extends Fragment {
 
         //-----------------------RELOAD------------------------------------------------
         if (id == R.id.menuitem_reset_path) {
-            if (AppListActivity.sharedPrefApkManager.contains(key_global_path)) {
-                value_global_path = AppListActivity.sharedPrefApkManager.getString(key_global_path, "Path Not Set");
+            if (MainActivity.sharedPrefApkManager.contains(key_global_path)) {
+                value_global_path = MainActivity.sharedPrefApkManager.getString(key_global_path, "Path Not Set");
                 value_local_path.setText(value_global_path);
             }
         }
@@ -432,61 +434,51 @@ public class ApkListFragment extends Fragment {
 
         }
 
-        //-------------------MOVE AND REPLACE FILES----------------------
-//        if (id == R.id.menuitem_move_replace) {
-//
-//            if (cla != null) {
-//                this.selected_files_list = cla.getSelectedItemsList();
-//                Toast.makeText(getContext(), " No. of selecetd files : " + cla.getSelectedItemsList().size(), Toast.LENGTH_LONG);
-//            }
-//
-//            String state = Environment.getExternalStorageState();
-//            if (Environment.MEDIA_MOUNTED.equals(state)) {
-//                if(checkPermission()) {
-//                    String path = Environment.getExternalStorageDirectory().toString();
-//                    builder = new AlertDialog.Builder(getContext());
-//                    builder.setTitle("Confirm Moving " + selected_files_list.size() + " Files To Repository Folder");
-//                    builder.setMessage("Click Yes to Continue...");
-//                    builder.setCancelable(false);
-//
-//                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            Toast.makeText(getContext(), "Trying To Move Files.", Toast.LENGTH_SHORT).show();
-//                            if (selected_files_list != null & selected_files_list.size() > 0) {
-//                                new LongTask().execute("replace", selected_files_list);
-//                            } else {
-//                                Log.i(TAG, " No Items Selected.");
-//                                Toast.makeText(getContext(), "No Items Selected. ", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                    });
-//
-//                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            Toast.makeText(getContext(), "MOving Cancelled.", Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//
-//                    builder.show();
-//                }else{
-//                    requestPermission(); // Code for permission
-//                }
-//            }
-//
-//
-//        }
-
-        //---------------------SELECT ALL----------------------
+        //---------------------SELECT ALL-------------------------------------
         if (id == R.id.menuitem_select_all) {
+
+           // item.setChecked(!item.isChecked());
+
+            if (apkFilesList.size() > 0) {
+                //-------------------Selecting each file--------------------
+                for (ApkListDataItem item1 : apkFilesList) {
+                    item1.select_box_state = true;
+                }
+            }
+            else{
+                Toast.makeText(getContext(), "First Load Files to Select", Toast.LENGTH_SHORT);
+            }
+            cla = new CustomApkListAdapter(apkFilesList, getContext());
+            recyclerView.setAdapter(cla);
+            cla.notifyDataSetChanged();
+        }
+
+        //---------------------------UNSELECT_ALL-------------------------------------
+        if (id == R.id.menuitem_unselect_all) {
+            if (apkFilesList.size() > 0) {
+                //-------------------Selecting each file--------------------
+                for (ApkListDataItem l : apkFilesList) {
+                    l.select_box_state = false;
+                }
+            }else{
+                Toast.makeText(getContext(), "First Load Files to Select", Toast.LENGTH_SHORT);
+            }
+            cla = new CustomApkListAdapter(apkFilesList, getContext());
+            recyclerView.setAdapter(cla);
+            cla.notifyDataSetChanged();
+            ShowMsgInTextView(true,"");
+
+        }
+
+        //--------------------INVERT SELECTION------------------------------------
+        if (id == R.id.menuitem_select_invert) {
 
             item.setChecked(!item.isChecked());
 
             if (apkFilesList.size() > 0) {
                 //-------------------Selecting each file--------------------
                 for (ApkListDataItem l : apkFilesList) {
-                    l.select_box_state = item.isChecked();
+                    l.select_box_state = !l.select_box_state;
                 }
             } else {
                 Toast.makeText(getContext(), "First Load Files to Select", Toast.LENGTH_SHORT);
@@ -494,14 +486,9 @@ public class ApkListFragment extends Fragment {
             cla = new CustomApkListAdapter(apkFilesList, getContext());
             recyclerView.setAdapter(cla);
             cla.notifyDataSetChanged();
-//
-//            File dir_path = new File(value_local_path.getText().toString());
-//            if (dir_path.exists() & dir_path.isDirectory()) {
-//                new LongTask().execute("search", dir_path);
-//            } else {
-//                Toast.makeText(getContext(), "Set Correct Path", Toast.LENGTH_SHORT);
-//            }
+            ShowMsgInTextView(true,"");
         }
+
 
         //----------------------UNINSTALL APPS----------------------------------
         if (id == R.id.menuitem_uninstall) {
@@ -510,6 +497,7 @@ public class ApkListFragment extends Fragment {
                 selected_files_list = cla.getSelectedItemsList();
                 Toast.makeText(getContext(), " No. of selecetd files : " + cla.getSelectedItemsList().size(), Toast.LENGTH_LONG);
             }
+
             builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Confirm Batch Uninstall " + selected_files_list.size() + " Apps");
             builder.setMessage("Are You Sure ");
@@ -541,16 +529,13 @@ public class ApkListFragment extends Fragment {
                     }
                 }
             });
-
             builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Toast.makeText(getContext(), "Uninstallation Cancelled.", Toast.LENGTH_SHORT).show();
                 }
             });
-
             builder.show();
-
         }
 
         //----------------------DELETE FILES--------------------------------------
@@ -565,7 +550,6 @@ public class ApkListFragment extends Fragment {
             builder.setTitle("Confirm Deleting " + selected_files_list.size() + " Files");
             builder.setMessage("Are You Sure");
             builder.setCancelable(false);
-            boolean yes;
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -622,38 +606,33 @@ public class ApkListFragment extends Fragment {
             item.setChecked(true);
             sort_apks_by = sort_apks_by_name;
             prefEditorApkManager.putString(key_sorting, sort_apks_by).commit();
-            SortApkList();
-        }
+            SortApkList(apkFilesList);        }
 
         if (id == R.id.menuitem_sortbydate) {
             item.setChecked(true);
             sort_apks_by = sort_apks_by_date;
             prefEditorApkManager.putString(key_sorting, sort_apks_by).commit();
-            SortApkList();
-        }
+            SortApkList(apkFilesList);        }
 
         if (id == R.id.menuitem_sortbysize) {
             item.setChecked(true);
             //    Log.i(TAG,"Clicked sort by size");
             sort_apks_by = sort_apks_by_size;
             prefEditorApkManager.putString(key_sorting, sort_apks_by).commit();
-            SortApkList();
-        }
+            SortApkList(apkFilesList);        }
 
         //-----------------------------------INVERSE SORTING-------------------------------------
         if (id == R.id.menuitem_decreasing) {
             item.setChecked(true);
             order_apks_by = order_apks_decreasing;
             prefEditorApkManager.putString(key_order_by, order_apks_by).commit();
-            SortApkList();
-        }
+            SortApkList(apkFilesList);        }
 
         if (id == R.id.menuitem_increasing) {
             item.setChecked(true);
             order_apks_by = order_apks_increasing;
             prefEditorApkManager.putString(key_order_by, order_apks_by).commit();
-            SortApkList();
-        }
+            SortApkList(apkFilesList);        }
 
         //-----------------------------------SELECT UPDATED APKS-------------------------------------
         if (id == R.id.menuitem_select_update) {
@@ -661,8 +640,7 @@ public class ApkListFragment extends Fragment {
                 cla.SelectUpdatable();
                 cla.notifyDataSetChanged();
             }
-            ShowMsgInTextView();
-
+            ShowMsgInTextView(true,"");
         }
 
         //-----------------------------------SELECT NEW VERSIONS-------------------------------------
@@ -671,48 +649,52 @@ public class ApkListFragment extends Fragment {
                 SelectNewVersionsApks(apkFilesList);
             }
             cla.notifyDataSetChanged();
-            ShowMsgInTextView();
-        }
+            ShowMsgInTextView(false,"Warning : If Version Code is equal, old files will be selected.");        }
+
         //-----------------------------------SELECT OLD VERSIONS-------------------------------------
         if (id == R.id.menuitem__duplicate_old_version) {
             if (cla != null & apkFilesList != null){
                 SelectOldVersionsApks(apkFilesList);
             }
             cla.notifyDataSetChanged();
-            ShowMsgInTextView();
+            ShowMsgInTextView(false,"Warning : If Version Code is equal, old files will be selected.");
+
         }
+
         //-----------------------------------SELECT SMALLER APKS-------------------------------------
         if (id == R.id.menuitem_duplicate_size_smaller) {
             if (cla != null & apkFilesList != null){
                 SelectSmallerSizeApks(apkFilesList);
             }
             cla.notifyDataSetChanged();
-            ShowMsgInTextView();
-        }
+            ShowMsgInTextView(true,"");        }
+
         //-----------------------------------SELECT BIGGER APKS-------------------------------------
-        if (id == R.id.menuitem_duplicate_size_smaller) {
+        if (id == R.id.menuitem_duplicate_size_larger) {
             if (cla != null & apkFilesList != null){
                 SelectBiggerSizeApks(apkFilesList);
             }
             cla.notifyDataSetChanged();
-            ShowMsgInTextView();
-        }
+            label_reset = true;
+            ShowMsgInTextView(true,"");        }
+
         //-----------------------------------SELECT NEWER APKS-------------------------------------
         if(id == R.id.menuitem_duplicate_time_new) {
             if (cla != null & apkFilesList != null){
                 SelectNewerApks(apkFilesList);
             }
             cla.notifyDataSetChanged();
-            ShowMsgInTextView();
-        }
+            label_reset = true;
+            ShowMsgInTextView(true,"");        }
+
         //-----------------------------------SELECT OLDER APKS-------------------------------------
-        if(id == R.id.menuitem_duplicate_time_new) {
+        if(id == R.id.menuitem_duplicate_time_old) {
             if (cla != null & apkFilesList != null){
                 SelectOlderApks(apkFilesList);
             }
             cla.notifyDataSetChanged();
-            ShowMsgInTextView();
-        }
+            label_reset = true;
+            ShowMsgInTextView(true,""); }
 
         return true;
     }
@@ -721,10 +703,22 @@ public class ApkListFragment extends Fragment {
         Comparator<ApkListDataItem> duplicate_file_name_finder = new Comparator<ApkListDataItem>() {
             @Override
             public int compare(ApkListDataItem o1, ApkListDataItem o2) {
-                if(o1.pkg_name == o2.pkg_name){
+                if(o1.pkg_name == o2.pkg_name)
+                {
                     if(o1.apk_pkg_info.versionCode < o2.apk_pkg_info.versionCode){
                         o1.select_box_state=true;
                         o2.select_box_state=false;
+                    }else if(o1.apk_pkg_info.versionCode > o2.apk_pkg_info.versionCode){
+                        o1.select_box_state=false;
+                        o2.select_box_state=true;
+                    }else if(o1.apk_pkg_info.versionCode == o2.apk_pkg_info.versionCode){
+                        if(o1.file_creation_time < o2.file_creation_time){
+                            o1.select_box_state=true;
+                            o2.select_box_state=false;
+                        }else{
+                            o2.select_box_state=true;
+                            o1.select_box_state=false;
+                        }
                     }
                 }
 
@@ -732,7 +726,8 @@ public class ApkListFragment extends Fragment {
             }
         };
         Collections.sort(apkFilesList,duplicate_file_name_finder);
-    }
+        label_reset = true;
+        ShowMsgInTextView(true,"");    }
 
     public void SelectNewVersionsApks(List<ApkListDataItem> list){
         Comparator<ApkListDataItem> duplicate_file_name_finder = new Comparator<ApkListDataItem>() {
@@ -742,13 +737,25 @@ public class ApkListFragment extends Fragment {
                     if(o1.apk_pkg_info.versionCode > o2.apk_pkg_info.versionCode){
                         o1.select_box_state=true;
                         o2.select_box_state=false;
+                    }else if(o1.apk_pkg_info.versionCode < o2.apk_pkg_info.versionCode){
+                        o1.select_box_state=false;
+                        o2.select_box_state=true;
+                    }else if(o1.apk_pkg_info.versionCode == o2.apk_pkg_info.versionCode){
+                        if(o1.file_creation_time < o2.file_creation_time){
+                            o1.select_box_state=true;
+                            o2.select_box_state=false;
+                        }else{
+                            o2.select_box_state=true;
+                            o1.select_box_state=false;
+                        }
                     }
                 }
                 return 0;
             }
         };
         Collections.sort(apkFilesList,duplicate_file_name_finder);
-
+        label_reset = true;
+        ShowMsgInTextView(true,"");
     }
 
     public void SelectSmallerSizeApks(List<ApkListDataItem> list){
@@ -765,8 +772,8 @@ public class ApkListFragment extends Fragment {
             }
         };
         Collections.sort(apkFilesList,duplicate_file_name_finder);
-
-    }
+        label_reset = true;
+        ShowMsgInTextView(true,"");    }
 
     public void SelectBiggerSizeApks(List<ApkListDataItem> list){
         Comparator<ApkListDataItem> duplicate_file_name_finder = new Comparator<ApkListDataItem>() {
@@ -782,8 +789,8 @@ public class ApkListFragment extends Fragment {
             }
         };
         Collections.sort(apkFilesList,duplicate_file_name_finder);
-
-    }
+        label_reset = true;
+        ShowMsgInTextView(true,"");    }
 
     public void SelectNewerApks(List<ApkListDataItem> list){
         Comparator<ApkListDataItem> duplicate_file_name_finder = new Comparator<ApkListDataItem>() {
@@ -799,7 +806,7 @@ public class ApkListFragment extends Fragment {
             }
         };
         Collections.sort(list,duplicate_file_name_finder);
-    }
+        ShowMsgInTextView(true,"");    }
 
     public void SelectOlderApks(List<ApkListDataItem> list){
         Comparator<ApkListDataItem> duplicate_file_name_finder = new Comparator<ApkListDataItem>() {
@@ -815,6 +822,7 @@ public class ApkListFragment extends Fragment {
             }
         };
         Collections.sort(list,duplicate_file_name_finder);
+        ShowMsgInTextView(true,"");
     }
 
 
@@ -834,14 +842,11 @@ public class ApkListFragment extends Fragment {
 
             if(((String) objects[0]).equals("toast")){
                 Toast.makeText(getContext(), (String) objects[1], Toast.LENGTH_LONG).show();
-            }else if(((String) objects[0]).equals("label_file")){
-                text_msgs.setText("Loading : " + ((File) objects[1]).getName());
-                // Log.i(TAG,objects[0].getClass().toString());
-                Log.i(TAG, "Loading : " + ((File) objects[1]).getName());
-            }else if(((String) objects[0]).equals("label_string")){
-                text_msgs.setText((String) objects[1]);
             }
-
+            else if(((String) objects[0]).equals("label")) {
+                ShowMsgInTextView((boolean)objects[2],((String) objects[1]));
+            }
+            // Log.i(TAG, "Loading : " + ((String) objects[1]));
             super.onProgressUpdate(objects);
         }
 
@@ -851,6 +856,7 @@ public class ApkListFragment extends Fragment {
 
             if (objects[0].equals("search")) {
                 searchApks((File) objects[1]);
+                SortApkList(apkFilesList);
                 return "Searching completed.";
             } else if (objects[0].equals("rootinstall")) {
                 RootInstall((List) objects[1]);
@@ -879,9 +885,9 @@ public class ApkListFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             Log.i(TAG, "in OnPostExecute :");
-            SortApkList();
-            //showSnackBar(s);
-            //ShowMsgInTextView();
+            cla = new CustomApkListAdapter(apkFilesList, getContext());
+            recyclerView.setAdapter(cla);
+            cla.notifyDataSetChanged();
             super.onPostExecute(s);
         }
 
@@ -894,23 +900,25 @@ public class ApkListFragment extends Fragment {
             if (dir_path.exists() & dir_path.isDirectory()) {
                 // CHECK IF TO SEARCH IN SUBDIRECTORY
                 publishProgress("toast","Path is set to : " + dir_path.getAbsolutePath());
-                if (AppListActivity.sharedPrefApkManager.getBoolean(key_search_subfolders, true)) {
+                if (MainActivity.sharedPrefApkManager.getBoolean(key_search_subfolders, true)) {
                     apkFilesList = getAllSubDirFiles(dir_path);
                     Log.i(TAG, apkFilesList.size() + " files found. Search in SubDirectory : ON");
                 }
                 // CHECK IF TO NOT SEARCH IN SUBDIRECTORY
-                else if (!AppListActivity.sharedPrefApkManager.getBoolean(key_search_subfolders, true)) {
+                else if (!MainActivity.sharedPrefApkManager.getBoolean(key_search_subfolders, true)) {
                     apkFilesList = getDirFiles(dir_path);
                     Log.i(TAG, apkFilesList.size() + " files found.Search in SubDirectory : OFF");
                 }
             } else {              // IF INVALID FOLDER PATH
-                publishProgress("toast","Set Correct Path");
+                publishProgress("label","Select valid path.",false);
             }
-            label_reset =true;
+
+            publishProgress("label"," Total apk files found : "+apkFilesList.size(),false);
         }
 
         List<ApkListDataItem> apklist = new ArrayList<>();
         String path_not_set = "PATH NOT SET";
+        int count_apkfilesList=0;
 
         public List getAllSubDirFiles(File file1) {
             //  Log.i(TAG,"getAllSubDirFiles: "+f1.getName());
@@ -921,10 +929,11 @@ public class ApkListFragment extends Fragment {
                     ldm = new ApkListDataItem(f1, getContext());
                     if (ldm.apk_pkg_info != null) {
                         apklist.add(ldm);
+                        count_apkfilesList++;
+                        publishProgress("label",count_apkfilesList+" - Adding "+ldm.file_name,false);
                     }
                     //Log.i(TAG,"File : "+f1.getName());
-                    publishProgress("label_file",f1);
-                } else if (f1.isDirectory()) {
+                }else if (f1.isDirectory()) {
                     getAllSubDirFiles(f1);
                 }
             }
@@ -933,11 +942,14 @@ public class ApkListFragment extends Fragment {
         }
 
         public List getDirFiles(File file1) {
+            count_apkfilesList = 0;
             List<ApkListDataItem> apklist = new ArrayList<>();
             for (File f1 : file1.listFiles()) {
                 if (f1.isFile() & f1.getName().endsWith(".apk")) {
-                    apklist.add(new ApkListDataItem(f1, getContext()));
-                    publishProgress("label_file",f1);
+                    ApkListDataItem ldm = new ApkListDataItem(f1, getContext());
+                    apklist.add(ldm);
+                    count_apkfilesList++;
+                    publishProgress("label",count_apkfilesList+" - Adding "+ldm.file_name,false);
                 }
             }
             label_reset =true;
@@ -952,57 +964,66 @@ public class ApkListFragment extends Fragment {
 
             Log.i(TAG, "Root Access " + rootAccess);
             Log.i(TAG, " No. of files to UPDATE/INSALL  " + selected_files_list.size());
-            //   Toast.makeText(getContext(), "No. of files to install : " + selected_files_list.size(), Toast.LENGTH_LONG).show();
             publishProgress("toast","No. of files to install : " + selected_files_list.size());
+            int count_success=0;
+            int count_failed=0;
 
             for (ApkListDataItem file : files_list) {
                 try {
                     apk_size = file.file.length();
                     command = "cat \"" + file.file.getPath() + "\"|pm install -S " + apk_size;
-                    Shell.su(command).to(std_out, std_err).exec();
-                    //  Log.i(TAG, " EXECUTING :"+ command);
+                    //  Log.i(TAG, "COMMAND :"+ command);
+                    Shell.su(command).exec();
+                    count_success++;
                     Log.i(TAG, " ROOT installing " + file.file_name + " : " + std_out.get(0));
-                    publishProgress("toast","Installation Output : " + std_out.get(0));
+                    publishProgress("label","File "+count_success+" Installed "+file.file_name+" successfully.",false);
                 } catch (Exception ex) {
-                    if (!std_err.isEmpty()) {
-                        //  Log.e(TAG, " ROOT INSTALL ERROR of " + file.file_name + " \nError : " + std_err.get(0));
-                        publishProgress("toast"," Error installing \"" + file.file_name + "\"");
-                    }
+                    count_failed++;
+                    publishProgress("label","File No. "+count_failed+file.file_name+" installation failed.",false);
                     Log.e(TAG, " ROOT INSTALL ERROR of " + file.file_name + " \nError : " + ex);
                 }
             }
-            label_reset =true;
+
+            publishProgress("label","Total Files To Be Installed "+files_list.size()+
+                    "\nInstallation Successfull : "+count_success+
+                    "\tInstallation Failed : "+count_failed
+                    ,false);
         }
 
         public void RootUninstall(List<ApkListDataItem> files_list) {
             String command;
             List<String> std_err = new ArrayList<>();
             List<String> std_out = new ArrayList<>();
+            int count_success=0;
+            int count_failed=0;
+            int count_not_installed=0;
 
             Log.i(TAG, "Root Access " + rootAccess);
             Log.i(TAG, " No. of files to UNINSTALL  " + selected_files_list.size());
-            publishProgress("No. of files to uninstall : " + selected_files_list.size());
+            publishProgress("toast","No. of files to uninstall : " + selected_files_list.size());
 
             for (ApkListDataItem file : files_list) {
                 if (file.isInstalled) {
                     try {
                         command = "pm uninstall " + file.pkg_name;
                         Shell.su(command).to(std_out, std_err).exec();
-                        Log.i(TAG, " EXECUTING :" + command);
+                        count_success++;
                         Log.i(TAG, " ROOT Uninstalling " + file.file_name + " : " + std_out.get(0));
-                        publishProgress("UnInstallation Output : " + std_out.get(0));
-                    } catch (Exception ex) {
-                        if (!std_err.isEmpty()) {
-                            Log.e(TAG, " ROOT UNINSTALL ERROR : " + file.file_name + " \nError : " + std_err.get(0));
-                            //Toast.makeText(getContext(), " Error installing \"" + file.file_name + "\"", Toast.LENGTH_SHORT).show();
-                            //publishProgress(" Error Uninstalling \"" + file.file_name + "\"");
-                        }
-                        //publishProgress(" Error Uninstalling \"" + file.file_name + "ex");
+                        publishProgress("label","File "+count_success+" Installed "+file.file_name+" successfully.",false);
+                    }catch(Exception ex) {
+                        count_failed++;
                         Log.e(TAG, " ROOT INSTALL ERROR of " + file.file_name + " \nError : " + ex);
+                        publishProgress("label","File "+count_failed+" Installed "+file.file_name+" successfully.",false);
                     }
+                }else if(!file.isInstalled){
+                    count_not_installed++;
                 }
             }
-            label_reset =true;
+            publishProgress("label","Total Selected "+files_list.size()+
+                            "\t Not installed : "+count_not_installed+
+                            "\nUninstallation Successfull : "+count_success+
+                            "\tUninstallation Failed : "+count_failed
+                            ,false);
         }
 
         public void Uninstall(List<ApkListDataItem> files_list) {
@@ -1010,9 +1031,12 @@ public class ApkListFragment extends Fragment {
             List<String> std_err = new ArrayList<>();
             List<String> std_out = new ArrayList<>();
             Intent i;
-            Log.i(TAG, "Root Access " + rootAccess);
+            int count_success=0;
+            int count_failed=0;
+            int count_not_installed=0;
+
             Log.i(TAG, " No. of files to UNINSTALL  " + selected_files_list.size());
-            publishProgress("No. of files to uninstall : " + selected_files_list.size());
+            publishProgress("label","Selected NO_ROOT Uninstallation."+"\nTotal Selected to Uninstall "+selected_files_list.size(),false);
 
             for (ApkListDataItem file : files_list) {
                 if (file.isInstalled) {
@@ -1024,8 +1048,11 @@ public class ApkListFragment extends Fragment {
                     Log.i(TAG, " Uninstalling " + file.file_name + " : " + std_out.get(0));
                 }
             }
-            label_reset =true;
-        }
+            publishProgress("label","Total Selected "+files_list.size()+
+                            "\t Not installed : "+count_not_installed+
+                            "\nUninstallation Successfull : "+count_success+
+                            "\tUninstallation Failed : "+count_failed
+                    ,false);        }
 
         public void MoveApks(List<ApkListDataItem> list) {
             String value_parent_folder;
@@ -1041,16 +1068,16 @@ public class ApkListFragment extends Fragment {
                 if (value_parent_folder.equals(path_not_set)) {
                     count_cannot_move++;
                 } else {
-                    publishProgress("label_string"," Moving :" + aldi.file_name + "\nTo :" + value_parent_folder+"/");
+                    publishProgress("label"," Moving :" + aldi.file_name + "\nTo :" + value_parent_folder+"/",false);
                     String command = "mv \""+aldi.file.getAbsolutePath()+"\" \""+value_parent_folder + "/" + aldi.file_name+"\"";
 
                     try{
                         Shell.sh(command).exec();
-                        publishProgress("toast","Moved " + aldi.file_name + " to " + value_parent_folder+" Successfully");
+                        publishProgress("label","Moved " + aldi.file_name + " to " + value_parent_folder+" Successfully",false);
                         count_moved++;
                     }catch(Exception ex){
                         Log.i(TAG,"Error Moving : "+ex);
-                        publishProgress("toast","Failed Moving " + aldi.file_name + " to " + value_parent_folder);
+                        publishProgress("label","Failed Moving " + aldi.file_name + " to " + value_parent_folder,false);
                         count_not_moved++;
                     }
                     // status = copyFileTo(new File(aldi.file.getAbsolutePath()), new File(value_parent_folder + "/" + aldi.file_name));
@@ -1068,9 +1095,9 @@ public class ApkListFragment extends Fragment {
             Log.i(TAG, "MOVING SUCCESSFUL FOR :" + count_moved);
             Log.i(TAG, "CANNOT MOVE :" + count_cannot_move);
             Log.i(TAG, "MOVING FAILED :" + count_not_moved);
-            publishProgress("label_string","MOVING SUCCESSFUL :" + count_moved +
+            publishProgress("label","MOVING SUCCESSFUL :" + count_moved +
                                     "\nMOVING FAILED :" + count_not_moved+
-                                    "\tCANNOT MOVE :" + count_cannot_move);
+                                    "\tCANNOT MOVE :" + count_cannot_move,false);
         }
 
 //        public void ReplaceApks(List<ApkListDataItem> list) {
@@ -1182,6 +1209,8 @@ public class ApkListFragment extends Fragment {
 
         public void NoRootInstall(List<ApkListDataItem> files_list) {
 
+            int count_sucess=0;
+
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setType("application/vnd.android.package-archive");
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1192,70 +1221,81 @@ public class ApkListFragment extends Fragment {
             for (ApkListDataItem file : files_list) {
 //                i.setData(file.file_uri);
 //                getContext().startActivity(i);
+                //publishProgress("label",count_sucess+" Renaming : \"" + file.file_name +,false);
+
             }
-            label_reset =true;
+
         }
 
         public void DeleteApks(List<ApkListDataItem> files_list) {
 
             boolean isDeleted;
+             int count_deleted=0;
             for (ApkListDataItem file : files_list) {
                 isDeleted = file.file.delete();
+                if(isDeleted){
+                    count_deleted++;
+                }
                 Log.i(TAG, "Deletion of " + file.file_name + " : " + isDeleted);
-                publishProgress("label_string","Deletion of " + file.file_name + " : " + isDeleted);
+                publishProgress("label","Deletion of " + file.file_name + " : " + isDeleted,false);
             }
-            label_reset =true;
+            publishProgress("label","Total Selected to Delete "+files_list.size()+"Deleted Successfully "+count_deleted,false);
         }
 
         public void RenameApks(List<ApkListDataItem> files_list) {
             Log.i(TAG, "Renaming Files Count :" + files_list.size());
 
-            if (AppListActivity.sharedPrefApkManager.contains(name_format_data_saved)) {
+            int count_renamed=0;
+            int part1 = MainActivity.sharedPrefApkManager.getInt(name_part_1, 1);
+            Log.i(TAG, "Part 1 :" + part1);
 
-                int part1 = AppListActivity.sharedPrefApkManager.getInt(name_part_1, 1);
-                Log.i(TAG, "Part 1 :" + part1);
+            String part2 = MainActivity.sharedPrefApkManager.getString(name_part_2, "_v");
+            Log.i(TAG, "Part 2 :" + part2);
 
-                String part2 = AppListActivity.sharedPrefApkManager.getString(name_part_2, "_v");
-                Log.i(TAG, "Part 2 :" + part2);
+            int part3 = MainActivity.sharedPrefApkManager.getInt(name_part_3, 2);
+            Log.i(TAG, "Part 3 :" + part3);
 
-                int part3 = AppListActivity.sharedPrefApkManager.getInt(name_part_3, 2);
-                Log.i(TAG, "Part 3 :" + part3);
+            String part4 = MainActivity.sharedPrefApkManager.getString(name_part_4, "_");
+            Log.i(TAG, "Part 4 :" + part4);
 
-                String part4 = AppListActivity.sharedPrefApkManager.getString(name_part_4, "_");
-                Log.i(TAG, "Part 4 :" + part4);
+            int part5 = MainActivity.sharedPrefApkManager.getInt(name_part_5, 3);
+            Log.i(TAG, "Part 5 :" + part5);
 
-                int part5 = AppListActivity.sharedPrefApkManager.getInt(name_part_5, 3);
-                Log.i(TAG, "Part 5 :" + part5);
+            String part6 = MainActivity.sharedPrefApkManager.getString(name_part_6, "");
+            Log.i(TAG, "Part 6 :" + part6);
 
-                String part6 = AppListActivity.sharedPrefApkManager.getString(name_part_6, "");
-                Log.i(TAG, "Part 6 :" + part6);
+            int part7 = MainActivity.sharedPrefApkManager.getInt(name_part_7, 0);
+            Log.i(TAG, "Part 7 :" + part7);
 
-                int part7 = AppListActivity.sharedPrefApkManager.getInt(name_part_7, 0);
-                Log.i(TAG, "Part 7 :" + part7);
+            String part8 = MainActivity.sharedPrefApkManager.getString(name_part_8, "");
+            Log.i(TAG, "Part 8 :" + part8);
+            File f1;
+            File f2;
+            String parent;
+            int count_rename=0;
+            boolean result;
 
-                String part8 = AppListActivity.sharedPrefApkManager.getString(name_part_8, "");
-                Log.i(TAG, "Part 8 :" + part8);
-
-                File f1;
-                File f2;
-                String parent;
-                boolean result;
+            if (MainActivity.sharedPrefApkManager.contains(name_format_data_saved)) {
                 for (ApkListDataItem f : files_list) {
                     f1 = new File(f.file.getAbsolutePath());
                     Log.i(TAG, " f1 path : " + f.file.getAbsolutePath());
                     parent = f.file.getParent();
+
                     Log.i(TAG, " f1 parent : " + parent);
                     f2 = new File(parent + "/" + getName(f, part1) + part2 + getName(f, part3) + part4 + getName(f, part5) + part6 + getName(f, part7) + part8 + ".apk");
                     result = (f.file).renameTo(f2);
-                    publishProgress("label_string","Renaming : \"" + f.file_name + "\" - " + result);
+                    if(result){
+                        count_rename++;
+                    }
+                    publishProgress("label",count_rename+" Renaming : \"" + f.file_name + "\" - " + result,false);
                     Log.i(TAG, "Renaming " + f.file_name + " : \"" + f2 + "\" - " + result);
                 }
-            } else {
+            }else{
                 Log.i(TAG, "Set a proper Name Format First");
                 publishProgress("toast","Set a proper Name Format First");
             }
 
-            label_reset =true;
+            publishProgress("label","Total Selected to Rename : "+files_list.size()+"\nSuccessfully Renamed : " + count_rename,false);
         }
 
         protected String getName(ApkListDataItem ld, int i) {
@@ -1285,15 +1325,16 @@ public class ApkListFragment extends Fragment {
         }
     }
 
-    public void ShowMsgInTextView() {
-        if (label_reset) {
-            String msg_text = "Total : " + apkFilesList.size() + "\t Selected : " + cla.getSelectedItemsList().size();
-            text_msgs.setText(msg_text);
+    public void ShowMsgInTextView(boolean empty_string,String str) {
+        if(empty_string) {
+            String default_string = "Total : " + apkFilesList.size() + "\t Selected : " + cla.getSelectedItemsList().size();
+            text_msgs.setText(default_string);
+        }else{
+            text_msgs.setText(str);
         }
-        label_reset = false;
     }
 
-    public void SortApkList() {
+    public void SortApkList(List to_sort_list) {
         Comparator<ApkListDataItem> file_name_comparator = (ApkListDataItem l1, ApkListDataItem l2) -> l1.file_name.compareTo(l2.file_name);
         Comparator<ApkListDataItem> file_size_comparator = (ApkListDataItem l1, ApkListDataItem l2) -> Long.compare(l1.file.length(), l2.file.length());
         Comparator<ApkListDataItem> modified_date_comparator = (ApkListDataItem l1, ApkListDataItem l2) -> Long.compare(l1.file.lastModified(), l2.file.lastModified());
@@ -1303,7 +1344,7 @@ public class ApkListFragment extends Fragment {
 
         switch (sort_apks_by) {
             case sort_apks_by_name: {
-                Collections.sort(apkFilesList, file_name_comparator);
+                Collections.sort(to_sort_list, file_name_comparator);
                 if (order_apks_by == order_apks_decreasing) {
                     Collections.reverse(apkFilesList);
                 }
@@ -1312,7 +1353,7 @@ public class ApkListFragment extends Fragment {
             }
 
             case sort_apks_by_date: {
-                Collections.sort(apkFilesList, creation_date_comparator);
+                Collections.sort(to_sort_list, creation_date_comparator);
                 if (order_apks_by == order_apks_decreasing) {
                     Collections.reverse(apkFilesList);
                 }
@@ -1321,7 +1362,7 @@ public class ApkListFragment extends Fragment {
             }
 
             case sort_apks_by_size: {
-                Collections.sort(apkFilesList, file_size_comparator);
+                Collections.sort(to_sort_list, file_size_comparator);
                 if (order_apks_by == order_apks_decreasing) {
                     Collections.reverse(apkFilesList);
                 }
@@ -1330,16 +1371,11 @@ public class ApkListFragment extends Fragment {
             }
 
             default: {
-                Collections.sort(apkFilesList, file_name_comparator);
+                Collections.sort(to_sort_list, file_name_comparator);
                 break;
             }
         }
-
-        cla = new CustomApkListAdapter(apkFilesList, getContext());
-        recyclerView.setAdapter(cla);
-
-        cla.notifyDataSetChanged();
-        ShowMsgInTextView();
+        apkFilesList = to_sort_list;
     }
 
     private boolean checkPermission() {

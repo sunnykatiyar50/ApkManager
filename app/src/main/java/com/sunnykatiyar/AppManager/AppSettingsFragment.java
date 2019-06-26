@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,6 +44,11 @@ public class AppSettingsFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_app_settings, container, false);
@@ -50,7 +56,7 @@ public class AppSettingsFragment extends Fragment {
         ediRepositoryPath = view.findViewById(R.id.text_path_repository);
         buttonSavePath = view.findViewById(R.id.button_save_paths);
         clearReositoryPref = view.findViewById(R.id.button_clear_repository_pref);
-        value_repository_folder = AppListActivity.sharedPrefAppSettings.getString(key_repository_folder,"Path Not Set");
+        value_repository_folder = MainActivity.sharedPrefAppSettings.getString(key_repository_folder,"Path Not Set");
         ediRepositoryPath.setText(value_repository_folder);
         root_selected = view.findViewById(R.id.switch_root_access);
         ediRepositoryPath.setOnClickListener(onclickSetRepositoryPath);
@@ -58,7 +64,7 @@ public class AppSettingsFragment extends Fragment {
         buttonSavePath.setOnClickListener(v -> {
             File f = new File(ediRepositoryPath.getText().toString());
             if(f.exists() & f.isDirectory()){
-                AppListActivity.prefEditAppSettings.putString(key_repository_folder,f.getAbsolutePath()).commit();
+                MainActivity.prefEditAppSettings.putString(key_repository_folder,f.getAbsolutePath()).commit();
             }
             Log.i(TAG,"Repository Path Set: "+f.getAbsolutePath());
             Toast.makeText(getContext(), "Repository Path Set to : "+f.getAbsolutePath(), Toast.LENGTH_SHORT).show();
@@ -66,13 +72,13 @@ public class AppSettingsFragment extends Fragment {
         });
 
         root_selected.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppListActivity.prefEditAppSettings.putBoolean(key_root_access,isChecked).commit();
+            MainActivity.prefEditAppSettings.putBoolean(key_root_access,isChecked).commit();
             Toast.makeText(getContext(), " ROOT Actions : "+isChecked, Toast.LENGTH_LONG).show();
             Log.e(TAG, "ROOT SELECTED :" + isChecked);
         });
 
         clearReositoryPref.setOnClickListener(v -> {
-            AppListActivity.prefEditRepository.clear().commit();
+            MainActivity.prefEditRepository.clear().commit();
             Log.i(TAG," Repository Preference Cleared.");
             Toast.makeText(getContext(), " Repository Preference Cleared.", Toast.LENGTH_SHORT).show();
         });
@@ -82,12 +88,11 @@ public class AppSettingsFragment extends Fragment {
     EditText.OnClickListener onclickSetRepositoryPath = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             Intent i = new Intent(getContext(),FilePickerActivity.class);
             i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
             i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
             i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
-            value_repository_folder = AppListActivity.sharedPrefAppSettings.getString(key_repository_folder,path_not_set);
+            value_repository_folder = MainActivity.sharedPrefAppSettings.getString(key_repository_folder,path_not_set);
             File f = new File(value_repository_folder);
 
             if(f.exists() & f.isFile()){
@@ -106,8 +111,6 @@ public class AppSettingsFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-
         switch (requestCode) {
             case 4:
                 if (resultCode == RESULT_OK) {
@@ -116,10 +119,8 @@ public class AppSettingsFragment extends Fragment {
                     ediRepositoryPath.setText(file.getPath());
                     break;
                 }
-
                 super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
 
 }

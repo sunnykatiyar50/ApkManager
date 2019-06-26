@@ -27,7 +27,7 @@ public class CustomApkListViewHolder extends RecyclerView.ViewHolder {
         this.file_name = itemView.findViewById(R.id.text_apk_name);
         this.file_size = itemView.findViewById(R.id.text_file_size);
         this.app_name = itemView.findViewById(R.id.text_app_name);
-        this.text_extra = itemView.findViewById(R.id.text_extra);
+        this.text_extra = itemView.findViewById(R.id.text_app_status);
         this.text_pkg_name = itemView.findViewById(R.id.text_pkg_name);
         this.app_version=itemView.findViewById(R.id.text_app_version);
         this.apk_version=itemView.findViewById(R.id.text_apk_version);

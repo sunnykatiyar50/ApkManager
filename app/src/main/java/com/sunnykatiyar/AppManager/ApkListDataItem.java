@@ -4,7 +4,12 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.util.Log;
+
+import androidx.documentfile.provider.DocumentFile;
+
+import com.nononsenseapps.filepicker.Utils;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -15,10 +20,14 @@ import java.text.SimpleDateFormat;
 
 public class ApkListDataItem {
 
-//    Uri file_uri;
 //    String file_path;
 //    Context context;
+
+    private final String TAG = "ApkListDataItem :";
+
     File file;
+    DocumentFile file_doc;
+    Uri file_uri;
     ApplicationInfo app_info;
     PackageInfo apk_pkg_info;
     PackageInfo app_pkg_info;
@@ -30,22 +39,22 @@ public class ApkListDataItem {
     String app_version_code;
     String apk_version_name;
     String apk_version_code;
-  //Drawable icon;
+    String pkg_name ;
+    String str_file_creation_time;
+    String str_app_update_time;
+    Uri parent;
+
     boolean isInstalled ;
     boolean isUpdatable ;
     boolean select_box_state ;
 
-    String pkg_name ;
-    private final String TAG = "ApkListDataItem :";
     long app_install_time;
     long app_update_time;
     long file_creation_time;
-    String str_file_creation_time;
-    String str_app_update_time;
     long file_modified_time;
+
     PackageManager pm = ApkListFragment.pm;
 
-    private final String str_no_install = "App Not Installed";
     private static final DecimalFormat format = new DecimalFormat("#.##");
     private static final long MB = 1024 * 1024;
     private static final long KB = 1024;
@@ -55,7 +64,44 @@ public class ApkListDataItem {
 
         super();
         this.file = f1;
-        this.file_name = file.getName();
+        this.file_doc = DocumentFile.fromFile(file);
+        this.file_name = file_doc.getName();
+        this.file_uri = this.file_doc.getUri();
+       //this.parent = this.file_doc.getParentFile().getUri();
+
+//        Log.i(TAG,"ISDIRECTORY()"+file_doc.isDirectory());
+//
+//        Log.i(TAG,"URI : "+file_uri.toString());
+//
+//        Log.i(TAG,"GETSCHEME(): "+file_uri.getScheme());
+//
+//        Log.i(TAG,"GETSCHEMESPECIFICPART: "+file_uri.getSchemeSpecificPart());
+//        Log.i(TAG,"ENCODEDSCHEMESPECIFICPART: "+file_uri.getEncodedSchemeSpecificPart());
+//
+//        Log.i(TAG,"GETPATH(): "+file_uri.getPath());
+//        Log.i(TAG,"GETENCODEDPATH(): "+file_uri.getEncodedPath());
+//
+//        Log.i(TAG,"GETLASTPATHSEGMENT(): "+file_uri.getLastPathSegment());
+//
+//        Log.i(TAG,"GETQUERY(): "+file_uri.getQuery());
+//        Log.i(TAG,"GETENCODEDQUERY(): "+file_uri.getEncodedQuery());
+//
+//        Log.i(TAG,"GETHOST(): "+file_uri.getHost());
+//
+//        int i=1;
+//        for(String str:file_uri.getPathSegments()){
+//            Log.i(TAG,"GETPATHSEGMENTS(): "+(i++)+" : "+str);
+//        }
+//
+//        Log.i(TAG,"GETUSERINFO: "+file_uri.getUserInfo());
+//        Log.i(TAG,"GETENCODEDUSERINFO(): "+file_uri.getEncodedUserInfo());
+//
+//        Log.i(TAG,"GETAUTHORITY: "+file_uri.getAuthority());
+//
+//        Log.i(TAG,"GETFRAGMENT(): "+file_uri.getFragment());
+//
+//        Log.i(TAG,"ISABSOLUTE(): "+file_uri.isAbsolute());
+
 
         try{
             BasicFileAttributes attr = Files.readAttributes(f1.toPath(), BasicFileAttributes.class);
@@ -103,13 +149,6 @@ public class ApkListDataItem {
                 this.isInstalled =  true;
                 this.isUpdatable = false;
             }
-
-//            if(isInstalled){
-//                this.app_name = (String) app_pkg_info.applicationInfo.loadLabel(pm);
-//                //this.icon = apk_pkg_info.applicationInfo.loadLogo(pm);
-//            }else if(!isInstalled){
-//                this.app_name=file_name;
-//            }
 
         }catch(Exception ex){
             Log.e(TAG," : "+ex);

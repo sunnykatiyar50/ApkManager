@@ -1,12 +1,11 @@
 package com.sunnykatiyar.AppManager;
 
-import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +16,16 @@ import java.util.List;
 
 public class CustomApkListAdapter extends RecyclerView.Adapter<CustomApkListViewHolder> {
 
+    private String TAG = " Custom List Adapter : ";
     List<ApkListDataItem> list ;
     Context context;
     ApkListDataItem temp;
-    private String TAG = " Custom List Adapter : ";
     List<ApkListDataItem> selected_items_list;
     String msg_text;
-    private final String str_no_install = "App Not Installed";
+    private final String str_no_install = "Not Installed";
+    private final String str_install = "Installed";
+    private final String str_update = "#Update";
+
     ClipboardManager clipboardManager;
 
     public CustomApkListAdapter(List<ApkListDataItem> apks_list,Context c) {
@@ -51,34 +53,33 @@ public class CustomApkListAdapter extends RecyclerView.Adapter<CustomApkListView
          String ver_apk;
          String ver_app;
 
-    if(temp.apk_pkg_info != null){
+    if(temp.apk_pkg_info != null) {
 
-        ver_apk=temp.apk_version_name + " " + temp.apk_version_code;
-        ver_app=temp.app_version_name + " " + temp.app_version_code;
+        ver_apk = temp.apk_version_name + " " + temp.apk_version_code;
+        ver_app = temp.app_version_name + " " + temp.app_version_code;
 
-        if(temp.isUpdatable == true){
+        if (temp.isUpdatable == true) {
             cst.app_name.setTextColor(ContextCompat.getColor(context, R.color.Updatable));
-            cst.text_extra.setTextColor(ContextCompat.getColor(context, R.color.Updatable));
-            cst.text_extra.setText("#Update");
-            cst.text_extra.setTypeface(Typeface.DEFAULT_BOLD);
+            cst.text_app_install_status.setTextColor(ContextCompat.getColor(context, R.color.Updatable));
+            cst.text_app_install_status.setText(str_update);
+            cst.text_app_install_status.setTypeface(Typeface.DEFAULT_BOLD);
             cst.file_name.setTypeface(Typeface.DEFAULT_BOLD);
             cst.apk_version.setTypeface(Typeface.DEFAULT_BOLD);
-        }
-        else if(temp.isInstalled == true){
+        } else if (temp.isInstalled == true) {
             cst.app_name.setTextColor(ContextCompat.getColor(context, R.color.InstalledOnly));
-            cst.text_extra.setTextColor(ContextCompat.getColor(context, R.color.InstalledOnly));
-            cst.text_extra.setTypeface(Typeface.DEFAULT);
+            cst.text_app_install_status.setTextColor(ContextCompat.getColor(context, R.color.InstalledOnly));
+            cst.text_app_install_status.setTypeface(Typeface.DEFAULT);
             cst.file_name.setTypeface(Typeface.DEFAULT);
             cst.apk_version.setTypeface(Typeface.DEFAULT);
-            cst.text_extra.setText("Installed");}
-//        }else if(temp.isInstalled==false){
-//            cst.app_name.setTextColor(ContextCompat.getColor(context, R.color.Not_Installed));
-//            cst.text_extra.setTextColor(ContextCompat.getColor(context, R.color.Not_Installed));
-//            cst.text_extra.setText("Not Installed");
-//            cst.text_extra.setTypeface(Typeface.DEFAULT);
-//            cst.file_name.setTypeface(Typeface.DEFAULT);
-//            cst.apk_version.setTypeface(Typeface.DEFAULT);
-//        }
+            cst.text_app_install_status.setText("Installed");
+        } else if (temp.isInstalled == false) {
+            cst.app_name.setTextColor(ContextCompat.getColor(context, R.color.Not_Installed));
+            cst.text_app_install_status.setTextColor(ContextCompat.getColor(context, R.color.Not_Installed));
+            cst.text_app_install_status.setText(str_no_install);
+            cst.text_app_install_status.setTypeface(Typeface.DEFAULT);
+            cst.file_name.setTypeface(Typeface.DEFAULT);
+            cst.apk_version.setTypeface(Typeface.DEFAULT);
+        }
 
         cst.file_name.setText(temp.file.getPath());
         cst.app_name.setText(temp.app_name);
@@ -96,24 +97,23 @@ public class CustomApkListAdapter extends RecyclerView.Adapter<CustomApkListView
         cst.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(cst.select_box.isChecked()){
+                if (cst.select_box.isChecked()) {
                     cst.select_box.setChecked(false);
                     temp.select_box_state = false;
-                }
-                else{
+                } else {
                     cst.select_box.setChecked(true);
                     temp.select_box_state = false;
                 }
             }
         });
 
-        cst.file_size.setTooltipText("File Size : " +temp.file_size);
-        cst.text_pkg_name.setTooltipText("Package Name : " +temp.pkg_name);
-        cst.apk_version.setTooltipText("Apk Version : " +temp.apk_version_name);
-        cst.app_version.setTooltipText("App Version : " +temp.app_version_name);
-        cst.text_time.setTooltipText("Last Update Time : "+temp.str_app_update_time);
+        cst.file_size.setTooltipText("File Size : " + temp.file_size);
+        cst.text_pkg_name.setTooltipText("Package Name : " + temp.pkg_name);
+        cst.apk_version.setTooltipText("Apk Version : " + temp.apk_version_name);
+        cst.app_version.setTooltipText("App Version : " + temp.app_version_name);
+        cst.text_time.setTooltipText("Last Update Time : " + temp.str_app_update_time);
         cst.app_name.setTooltipText(temp.pkg_name);
-        cst.file_name.setTooltipText("File Path : "+temp.file.getAbsolutePath());
+        cst.file_name.setTooltipText("File Path : " + temp.file.getAbsolutePath());
         cst.app_name.setTooltipText(temp.app_name);
 
 
@@ -145,9 +145,9 @@ public class CustomApkListAdapter extends RecyclerView.Adapter<CustomApkListView
 
             sel = getSelectedItemsList().size();
             msg_text = "Total : "+total+"\t Selected : "+sel;
-            ApkListFragment.text_msgs.setText(msg_text);
-           // ApkListFragment.cla.notifyDataSetChanged();
-          //  Toast.makeText(context,list.get(i).app_name+ "selection state changed. \n Selected Count :"+sel,Toast.LENGTH_SHORT).show();
+            ApkListFragment.msg_textview.setText(msg_text);
+           //ApkListFragment.cla.notifyDataSetChanged();
+           //Toast.makeText(context,list.get(i).app_name+ "selection state changed. \n Selected Count :"+sel,Toast.LENGTH_SHORT).show();
         }
         });
 

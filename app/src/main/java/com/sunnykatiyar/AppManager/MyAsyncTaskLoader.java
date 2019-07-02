@@ -28,6 +28,7 @@ public class MyAsyncTaskLoader extends AsyncTaskLoader<Void> {
 
     Activity context;
     String Loading_text;
+
     public MyAsyncTaskLoader(Activity a,String s){
         super(a);
         Log.e("MyAsyncTaskLoader :","Constructor : "+((System.currentTimeMillis() - initFragmentTime) / 1000) + "s");

@@ -3,12 +3,10 @@ package com.sunnykatiyar.AppManager;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.widget.Toast;
 import com.topjohnwu.superuser.Shell;
@@ -54,22 +52,19 @@ public class AppMenu {
     final public String open_market="Open in PlayStore";
     final public String uninstall_app="Uninstall App";
 
-    public final static  String PREF_NAME = RenameApkFragment.PREF_NAME;
-    public final static String key_global_path = RenameApkFragment.key_global_path;
 
-    SharedPreferences sharedPref ;
-    Snackbar snackbar;
-    SharedPreferences.Editor prefEditor;
     int itemname;
     PackageInfo p;
     String applabel;
     Intent i;
     Context menu_context;
     private String dest_folder_name;
-    boolean root_selected;
+    boolean rootAccess;
     File source_apk;
     File dest_apk;
     String apk_source_path;
+    public static final String key_root_access = AppSettingsFragment.key_root_access;
+    final String path_not_set = "PATH NOT SET";
 
     static {
         Shell.Config.setFlags(Shell.FLAG_REDIRECT_STDERR);
@@ -82,12 +77,11 @@ public class AppMenu {
         p=menu_pkginfo;
         this.applabel=applabel;
         menu_context=context;
-        sharedPref = context.getSharedPreferences(PREF_NAME,Context.MODE_PRIVATE);
-        root_selected = sharedPref.getBoolean("ROOT",false);
-        dest_folder_name = sharedPref.getString(RenameApkFragment.key_global_path,"Path Not Set");
+       // sharedPref = context.getSharedPreferences(PREF_NAME,Context.MODE_PRIVATE);
+        rootAccess = MainActivity.sharedPrefAppSettings.getBoolean(key_root_access,false);
+        dest_folder_name = MainActivity.sharedPrefApkManager.getString(ApkListFragment.key_local_path,path_not_set);
         Log.i(TAG," Constructor : ");
     }
-
 
     public void PerAppMenu() {
         switch(itemname){
@@ -112,17 +106,16 @@ public class AppMenu {
 
             case R.id.uninstall_item: {
                 Toast.makeText(menu_context, "Confirm to uninstall " + applabel, Toast.LENGTH_SHORT).show();
-                if(!root_selected){
+                if(!rootAccess){
                     i = new Intent(Intent.ACTION_DELETE);
-                    //   i.setData(Uri.parse(p.packageName));
+                    i.setData(Uri.parse(p.packageName));
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    i.putExtra(EXTRA_PACKAGE_NAME, p.packageName);
+                    //i.putExtra(EXTRA_PACKAGE_NAME, p.packageName);
                     menu_context.startActivity(i);
                 }else{
-                    List<String> oup =  new ArrayList<>();
                     try{
                         Log.i(TAG,"Uninstallation RootAccess :"+Shell.rootAccess());
-                        Shell.su("pm uninstall "+p.packageName).to(oup).exec();
+                        Shell.su("pm uninstall "+p.packageName).exec();
                         Log.i(TAG,p.applicationInfo.loadLabel(mainpm).toString()+" uninstalled Successfully.");
                     }catch(Exception ex){
                         Log.i(TAG,"Uninstallation Failed :"+ex);
@@ -159,7 +152,7 @@ public class AppMenu {
                 menu_context.startActivity(createChooser(i, "Share Link Via"));
                 break;
             }
-            /*      case kill_app: {
+            /* case kill_app: {
                 Toast.makeText(menu_context, "Stopping Background Tasks for " + applabel, Toast.LENGTH_SHORT).show();
                 activityManager.killBackgroundProcesses(applabel);
                 break;
@@ -177,32 +170,31 @@ public class AppMenu {
     private void set_dest_apk(){
         Log.i(TAG,"in get_apk_name");
 
-        int part1 = sharedPref.getInt(name_part_1,1);
+        int part1 = MainActivity.sharedPrefApkManager.getInt(name_part_1,1);
         Log.i(TAG,"Part 1 :"+ part1);
 
-        String part2 = sharedPref.getString(name_part_2,"_v");
+        String part2 = MainActivity.sharedPrefApkManager.getString(name_part_2,"_v");
         Log.i(TAG,"Part 2 :"+part2);
 
-        int part3 =sharedPref.getInt(name_part_3,2);
+        int part3 =MainActivity.sharedPrefApkManager.getInt(name_part_3,2);
         Log.i(TAG,"Part 3 :"+ part3);
 
-        String part4 = sharedPref.getString(name_part_4,"_");
+        String part4 = MainActivity.sharedPrefApkManager.getString(name_part_4,"_");
         Log.i(TAG,"Part 4 :"+part4);
 
-        int part5 =sharedPref.getInt(name_part_5,3);
+        int part5 =MainActivity.sharedPrefApkManager.getInt(name_part_5,3);
         Log.i(TAG,"Part 5 :"+ part5);
 
-        String part6 = sharedPref.getString(name_part_6,"");
+        String part6 = MainActivity.sharedPrefApkManager.getString(name_part_6,"");
         Log.i(TAG,"Part 6 :"+part6);
 
-        int part7 =sharedPref.getInt(name_part_7,0);
+        int part7 =MainActivity.sharedPrefApkManager.getInt(name_part_7,0);
         Log.i(TAG,"Part 7 :"+ part7);
 
-        String part8 = sharedPref.getString(name_part_8,"");
+        String part8 = MainActivity.sharedPrefApkManager.getString(name_part_8,"");
         Log.i(TAG,"Part 8 :"+part8);
 
         this.dest_apk = new File(this.dest_folder_name+"/"+getName(part1)+part2+getName(part3)+part4+getName(part5)+part6+getName(part7)+part8+".apk");
-
     }
 
     private void set_source_apk(){
@@ -261,7 +253,7 @@ public class AppMenu {
             String command;
             if(new File((dest_folder_name)).exists())
             {  Log.i(TAG,"ExtractApk() : dest_folder_set");
-                if(root_selected)
+                if(rootAccess)
                 {
                     command = "cp \""+source_apk+"\" \""+dest_apk+"\"";
                     Log.i(TAG," Command :"+command);
@@ -275,21 +267,19 @@ public class AppMenu {
                         Log.i(TAG,"Extracting failed Error : "+ex);
                         publishProgress(applabel+" Apk Extraction Failed.");
                     }
-
                 }else{
                             Log.i(TAG,"ExtractApk() : No Root Method");
                             if(source_apk.exists() & source_apk.isFile()){
                                 Log.i(TAG," source file path : "+source_apk.getAbsolutePath());
                                 copyFileTo(source_apk,dest_apk);
-                                //  result = (file).renameTo(f2);
-                                //Log.i(TAG,"Renaming "+f.file_name+" : \""+f2+"\" - "+result);
+                                //  result = (file).renameTo(dest_apk);
+                                //Log.i(TAG,"Renaming "+f.file_name+" : \""+dest_apk+"\" - "+result);
                     }else{
                         Log.i(TAG," source apk does not exist or is not file : ");
                     }
                 }
-            }else{ Toast.makeText(menu_context,"Set a valid path in ApkRename Settings to Extract Apk",Toast.LENGTH_SHORT); }
+            }else{ Log.i(TAG,"Set a valid path in ApkRename Settings to Extract Apk"); }
         }
-
 
         public  boolean copyFileTo(FileInputStream originFile, File destinationFile) {
             boolean exportDone = true;

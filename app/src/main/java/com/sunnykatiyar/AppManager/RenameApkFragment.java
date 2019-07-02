@@ -1,11 +1,8 @@
 package com.sunnykatiyar.AppManager;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,14 +16,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nononsenseapps.filepicker.FilePickerActivity;
-import com.nononsenseapps.filepicker.Utils;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.app.Activity.RESULT_OK;
 import static com.sunnykatiyar.AppManager.MainActivity.sharedPrefApkManager;
 
 
@@ -51,10 +43,8 @@ public class RenameApkFragment extends Fragment implements
     private final String TAG = "RENAME_APK_SETTINGS ";
     Button button_save;
     Button button_clear;
-    Button button_get_path;
     TextView name_format;
     String name_format_string;
-    EditText global_path;
     ArrayAdapter<String> spin_adapter1;
     ArrayAdapter<String> spin_adapter3;
     ArrayAdapter<String> spin_adapter5;
@@ -100,6 +90,8 @@ public class RenameApkFragment extends Fragment implements
 
         View v = inflater.inflate(R.layout.fragment_apk_rename_settings, container, false);
 
+
+
         spinner_items = new ArrayList<>();
 
         spinner1 = v.findViewById(R.id.spinner1);
@@ -116,37 +108,15 @@ public class RenameApkFragment extends Fragment implements
         spinner5.setOnItemSelectedListener(this);
         spinner7.setOnItemSelectedListener(this);
 
-        button_save = v.findViewById(R.id.buttton_save);
-        button_clear = v.findViewById(R.id.buttton_clear);
+        button_save = v.findViewById(R.id.buttton_set_extsd);
+        button_clear = v.findViewById(R.id.buttton_clear_extsd);
         name_format = v.findViewById(R.id.text_format);
-        global_path = v.findViewById(R.id.text_path_repository);
-        button_get_path = v.findViewById(R.id.button_global_path);
+
 
         setNewSpinnerData();
 
         retrieveSpinnerData();
 
-        button_get_path.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getContext(), FilePickerActivity.class);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
-                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
-                File f = new File(global_path.toString());
-
-                if(f.exists() & f.isFile()){
-                    i.putExtra(FilePickerActivity.EXTRA_START_PATH, f.getParent());
-
-                }else if(f.exists() & f.isDirectory()){
-                    i.putExtra(FilePickerActivity.EXTRA_START_PATH, f.getAbsoluteFile());
-                }else{
-                    i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
-                }                startActivityForResult(i, 2);
-            }
-        });
-
-        global_path.setText(sharedPrefApkManager.getString(key_global_path,"Path Not Set"));
         setNameFormatLabel();
 
         button_save.setOnClickListener(new View.OnClickListener() {
@@ -167,20 +137,6 @@ public class RenameApkFragment extends Fragment implements
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
-
-        if(requestCode==2){
-            if(resultCode == RESULT_OK)
-            {
-                List<Uri> files = Utils.getSelectedFilesFromResult(intent);
-                File file = Utils.getFileForUri(files.get(0));
-                global_path.setText(file.getPath());
-                MainActivity.prefEditorApkManager.putString(key_global_path,global_path.getText().toString());
-                MainActivity.prefEditorApkManager.commit();
-            }
-        }
-    }
-    @Override
     public boolean onOptionsItemSelected(MenuItem item){
 
         return super.onOptionsItemSelected(item);
@@ -200,31 +156,41 @@ public class RenameApkFragment extends Fragment implements
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Log.i(TAG,"OnClick Called: ");
-        switch(view.getId()){
+        Log.i(TAG,"OnClick Called: position :"+position);
+
+        switch(parent.getId()){
+
             case R.id.spinner1 :{
-                parent.setSelection(position);
-                Log.i(TAG,"OnClick : "+parent.getItemAtPosition(position).toString());
+                spinner1.setSelection(position);
+                Log.i(TAG,"OnClick : Spinner1 : "+parent.getItemAtPosition(position).toString());
                 Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT).show();
+                break;
             }
 
             case R.id.spinner3 :{
                 spinner3.setSelection(position);
-                Log.i(TAG,"OnClick : "+parent.getItemAtPosition(position).toString());
+                Log.i(TAG,"OnClick : Spinner3 : "+parent.getItemAtPosition(position).toString());
                 Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT).show();
+                break;
             }
 
             case R.id.spinner5 :{
-                parent.setSelection(position);
-                Log.i(TAG,"OnClick : "+parent.getItemAtPosition(position).toString());
+                spinner5.setSelection(position);
+                Log.i(TAG,"OnClick : Spinner5 : "+parent.getItemAtPosition(position).toString());
                 Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT).show();
+                break;
             }
 
             case R.id.spinner7 :{
                 spinner7.setSelection(position);
-                Log.i(TAG,"OnClick : "+parent.getItemAtPosition(position).toString());
+                Log.i(TAG,"OnClick : Spinner6 : "+parent.getItemAtPosition(position).toString());
                 Toast.makeText(getContext(),parent.getItemAtPosition(position).toString(),Toast.LENGTH_SHORT).show();
+                break;
             }
+
+            default :{   Log.i(TAG,"in switch spinner click unknown item :");
+                            break;
+                        }
         }
     }
 
@@ -259,9 +225,8 @@ public class RenameApkFragment extends Fragment implements
         spinner5.setAdapter(spin_adapter5);
         spinner7.setAdapter(spin_adapter7);
 
-        MainActivity.prefEditorApkManager.putBoolean(spinner_items_set,true);
+        MainActivity.prefEditorApkManager.putBoolean(spinner_items_set,true).commit();
         Log.i(TAG,"Spinners Data is Set ... ");
-        MainActivity.prefEditorApkManager.commit();
     }
 
     public void clearFormat(){
@@ -301,6 +266,8 @@ public class RenameApkFragment extends Fragment implements
     }
 
     public void setNameFormatLabel(){
+        Log.i(TAG,"Set Name Format Label");
+
         name_format_string = getItem(sharedPrefApkManager.getInt(name_part_1,1))+
                 sharedPrefApkManager.getString(name_part_2,"_v")+
                 getItem(sharedPrefApkManager.getInt(name_part_3,2))+
@@ -315,15 +282,18 @@ public class RenameApkFragment extends Fragment implements
 
     public void retrieveSpinnerData(){
 
+        Log.i(TAG,"retrieveSpinnerData()");
+
+
         if(sharedPrefApkManager.contains(name_format_data_saved)){
             Log.i(TAG,"Getting Data from SharedPreferences ... ");
 
-            spinner1.setSelection(sharedPrefApkManager.getInt(name_part_1,1));
+            spinner1.setSelection(sharedPrefApkManager.getInt(name_part_1,1),true);
             Log.i(TAG,String.valueOf(sharedPrefApkManager.getInt(name_part_1,1)));
 
             edit2.setText(sharedPrefApkManager.getString(name_part_2,"_v"));
 
-            spinner3.setSelection(sharedPrefApkManager.getInt(name_part_3,2));
+            spinner3.setSelection(sharedPrefApkManager.getInt(name_part_3,2),false);
             Log.i(TAG,String.valueOf(sharedPrefApkManager.getInt(name_part_3,2)));
 
             edit4.setText(sharedPrefApkManager.getString(name_part_4,"_"));

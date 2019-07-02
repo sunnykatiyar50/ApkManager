@@ -53,7 +53,7 @@ public class SetAppDetails {
 
         // --------------------ADD SPLIT APKS LIST-----------------------------------
 
-            // pkg1=appInfo_pm.getPackageInfo(pkg.packageName,PackageManager.PER);
+            // pkg1=appinfo_pm.getPackageInfo(pkg.packageName,PackageManager.PER);
             if(pkg.splitNames!=null) {
                 split_apks_names = Arrays.asList(pkg.splitNames);
             }else{
@@ -86,7 +86,7 @@ public class SetAppDetails {
         // --------------------ADD PERMISSIONS-----------------------------------
         PermissionInfo[] permissionInfos = pkg.permissions;
         try {
-           // pkg1=appInfo_pm.getPackageInfo(pkg.packageName,PackageManager.PER);
+           // pkg1=appinfo_pm.getPackageInfo(pkg.packageName,PackageManager.PER);
             if(permissionInfos!=null) {
                 for (PermissionInfo per : permissionInfos) {
                     permissions_list.add(per.toString());

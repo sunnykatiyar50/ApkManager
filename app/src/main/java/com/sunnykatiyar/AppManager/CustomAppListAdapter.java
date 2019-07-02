@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -70,7 +70,7 @@ public class CustomAppListAdapter extends RecyclerView.Adapter<CustomAppListView
         vholder.install_date.setText(getTime(pkginfo.lastUpdateTime));
         File f = new File(pkginfo.applicationInfo.sourceDir);
         vholder.app_size.setText(getSize(f));
-        vholder.extra_info.setText(pkginfo.applicationInfo.processName);
+        vholder.text_extra.setText(String.valueOf(pkginfo.versionCode));
 
         vholder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,7 +133,7 @@ public class CustomAppListAdapter extends RecyclerView.Adapter<CustomAppListView
 
     public String getSize(File file) {
 
-        Log.i(TAG,file.getClass().toString());
+       // Log.i(TAG,file.getClass().toString());
 
         if (!file.isFile()) {
             throw new IllegalArgumentException("Expected a file");

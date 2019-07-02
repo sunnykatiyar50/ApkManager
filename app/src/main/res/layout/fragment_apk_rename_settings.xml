@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -15,17 +14,17 @@
 
     <TextView
         android:id="@+id/label_from_folder"
-        android:layout_width="400dp"
+        android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_marginTop="8dp"
-        android:background="#004D40"
-        android:padding="@dimen/padding_large"
-        android:text="Settings for Renaming Apk Files"
-        android:textAlignment="center"
-        android:textColor="#F7B905"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:paddingStart="60dp"
+        android:text="Set Format for Renaming APK Files"
+        android:textColor="#F8DC2D"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,7 +39,7 @@
         android:textAlignment="center"
         android:textColor="@color/colorAccent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_path_repository" />
+        app:layout_constraintTop_toBottomOf="@+id/label_from_folder" />
 
     <EditText
         android:id="@+id/editText2"
@@ -53,11 +52,11 @@
         android:hint="@string/hint_separator"
         android:inputType="text"
         android:textSize="14sp"
-        app:layout_constraintStart_toEndOf="@+id/textView3"
+        app:layout_constraintStart_toEndOf="@+id/label_exsd_path"
         app:layout_constraintTop_toBottomOf="@+id/spinner1" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/label_exsd_path"
         android:layout_width="140dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
@@ -80,7 +79,7 @@
         android:textAlignment="center"
         android:textColor="@color/colorAccent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/label_exsd_path" />
 
     <TextView
         android:id="@+id/textView5"
@@ -173,7 +172,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.333"
         app:layout_constraintStart_toEndOf="@+id/textView2"
-        app:layout_constraintTop_toBottomOf="@+id/text_path_repository" />
+        app:layout_constraintTop_toBottomOf="@+id/label_from_folder" />
 
     <Spinner
         android:id="@+id/spinner3"
@@ -230,7 +229,7 @@
         app:layout_constraintTop_toBottomOf="@+id/spinner7" />
 
     <Button
-        android:id="@+id/buttton_save"
+        android:id="@+id/buttton_set_extsd"
         android:layout_width="135dp"
         android:layout_height="52dp"
         android:layout_marginTop="24dp"
@@ -240,7 +239,7 @@
         app:layout_constraintTop_toBottomOf="@+id/text_format" />
 
     <Button
-        android:id="@+id/buttton_clear"
+        android:id="@+id/buttton_clear_extsd"
         android:layout_width="135dp"
         android:layout_height="52dp"
         android:layout_marginStart="52dp"
@@ -256,35 +255,16 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
+        android:gravity="center"
         android:text="Current Format Here..."
         android:textAlignment="center"
-        android:textStyle="bold"
+        android:textColor="#00C853"
+        android:textSize="@dimen/text_size_medium"
+        android:textStyle="bold|italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText8" />
 
-    <EditText
-        android:id="@+id/text_path_repository"
-        android:layout_width="312dp"
-        android:layout_height="43dp"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="Set a default path here"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_from_folder" />
 
-    <Button
-        android:id="@+id/button_global_path"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="4dp"
-        android:text="Browse"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_from_folder" />
-
-
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

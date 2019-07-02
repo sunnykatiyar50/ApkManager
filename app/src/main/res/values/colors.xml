@@ -5,24 +5,12 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="Normal_Black">#BD0E0D0D</color>
 
-    <color name="Updatable">#CE6A6A</color>
-    <color name="InstalledOnly">#47AA4E</color>
-    <color name="Not_Installed">#B4959F</color>
+    <color name="Updatable">#E68D07</color>
+    <color name="InstalledOnly">#04EB13</color>
+    <color name="Not_Installed">#789963</color>
 
-    <color name="white">#ffffff</color>
     <color name="black">#000000</color>
-    <color name="red_accent">#d50000</color>
-    <color name="green_accent_light">#64dd17</color>
-    <color name="purple_accent_deep">#6200ea</color>
-    <color name="yellow">#ffff00</color>
-    <color name="pink_purple">#ff00ff</color>
-    <color name="aqua_blue">#00ffff</color>
     <color name="dark_grey">#333333</color>
-    <color name="mid_grey">#888888</color>
-    <color name="material_light_grey">#bdbdbd</color>
-    <color name="material_brown">#5d4037</color>
-    <color name="material_dark_pink">#880e4f</color>
-    <color name="material_purple">#7b1fa2</color>
-    <color name="material_lime">#827717</color>
-    <color name="orange">#ff9100</color>
+
+    <color name="my_divider_color">#232527</color>
 </resources>

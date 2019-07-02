@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/listview_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="2dp"
@@ -20,29 +19,30 @@
         android:lines="3"
         android:maxLines="3"
         android:minLines="2"
+        android:paddingStart="4dp"
         android:text="FileName will be shown here..."
         android:textAlignment="gravity"
-        android:textColor="#F0EAEA"
         android:textSize="12sp"
         android:tooltipText="File Path"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_file_size"
+        app:layout_constraintTop_toBottomOf="@+id/text_apk_size"
         app:layout_constraintVertical_bias="1.0" />
 
     <TextView
-        android:id="@+id/text_file_size"
-        android:layout_width="111dp"
-        android:layout_height="21dp"
+        android:id="@+id/text_apk_size"
+        android:layout_width="0dp"
+        android:layout_height="22dp"
         android:autoSizeMaxTextSize="14dp"
         android:autoSizeMinTextSize="11dp"
         android:autoSizeTextType="uniform"
+        android:background="#066659"
         android:ellipsize="end"
         android:fontFamily="sans-serif-condensed"
         android:maxLines="1"
         android:paddingStart="2dp"
         android:text="File Size Here.."
-        android:textAlignment="textEnd"
+        android:textAlignment="center"
         android:textSize="14sp"
         android:tooltipText="File Size"
         app:layout_constraintEnd_toStartOf="@+id/text_apk_version"
@@ -51,7 +51,7 @@
         app:layout_constraintTop_toBottomOf="@+id/text_pkg_name" />
 
     <CheckBox
-        android:id="@+id/file_select_box"
+        android:id="@+id/apk_select_box"
         android:layout_width="36dp"
         android:layout_height="39dp"
         android:layout_alignParentEnd="true"
@@ -65,48 +65,58 @@
 
     <TextView
         android:id="@+id/text_app_name"
-        android:layout_width="149dp"
-        android:layout_height="26dp"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
         android:layout_marginStart="4dp"
-        android:autoSizeMaxTextSize="16sp"
-        android:autoSizeMinTextSize="13sp"
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeMinTextSize="12sp"
         android:autoSizeTextType="uniform"
+        android:gravity="center_vertical"
+        android:lines="2"
+        android:maxLines="2"
+        android:minLines="1"
+        android:paddingLeft="4sp"
         android:text="App Name Here"
-        android:textAlignment="textStart"
         android:textSize="14sp"
-        android:textStyle="bold"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toStartOf="@+id/text_app_status"
         app:layout_constraintStart_toEndOf="@+id/app_icon"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_app_version"
-        android:layout_width="117dp"
-        android:layout_height="25dp"
+        android:layout_width="104dp"
+        android:layout_height="30dp"
         android:autoSizeMaxTextSize="14dp"
-        android:autoSizeMinTextSize="11dp"
+        android:autoSizeMinTextSize="12dp"
         android:autoSizeTextType="uniform"
         android:fontFamily="sans-serif-condensed-medium"
+        android:gravity="center_vertical"
+        android:lines="2"
+        android:maxLines="2"
+        android:minLines="1"
         android:text="App version"
-        android:textAlignment="textEnd"
         android:textSize="14dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/text_app_status"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_apk_version"
-        android:layout_width="117dp"
-        android:layout_height="23dp"
+        android:layout_width="124dp"
+        android:layout_height="22dp"
         android:autoSizeMaxTextSize="14dp"
         android:autoSizeMinTextSize="11dp"
         android:autoSizeTextType="uniform"
-        android:background="#9C4C59"
+        android:background="#75343E"
         android:fontFamily="sans-serif-condensed"
         android:text="APK version"
         android:textAlignment="textEnd"
         android:textSize="14dp"
         android:tooltipText="APK Version"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_pkg_name" />
+        app:layout_constraintStart_toEndOf="@+id/text_apk_size"
+        app:layout_constraintTop_toBottomOf="@+id/text_extra2" />
 
     <ImageView
         android:id="@+id/app_icon"
@@ -114,7 +124,7 @@
         android:layout_height="47dp"
         android:layout_marginStart="2dp"
         android:layout_marginTop="8dp"
-        android:src="@drawable/icon"
+        android:src="@drawable/ic_android"
         android:tooltipText="Icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -122,7 +132,7 @@
     <TextView
         android:id="@+id/text_pkg_name"
         android:layout_width="231dp"
-        android:layout_height="21dp"
+        android:layout_height="22dp"
         android:layout_marginStart="4dp"
         android:text="Package Name Here..."
         android:textSize="14dp"
@@ -133,17 +143,17 @@
 
     <TextView
         android:id="@+id/text_app_status"
-        android:layout_width="86dp"
-        android:layout_height="25dp"
+        android:layout_width="95dp"
+        android:layout_height="30dp"
         android:autoSizeMaxTextSize="14dp"
-        android:autoSizeMinTextSize="11dp"
+        android:autoSizeMinTextSize="12dp"
         android:autoSizeTextType="uniform"
         android:fontFamily="sans-serif-condensed-medium"
+        android:gravity="center_vertical"
         android:lines="2"
         android:maxLines="2"
         android:minLines="1"
         android:text="App Status Here"
-        android:textAlignment="viewEnd"
         android:textSize="14sp"
         android:textStyle="normal"
         app:layout_constraintEnd_toStartOf="@+id/text_app_version"
@@ -153,13 +163,13 @@
 
     <TextView
         android:id="@+id/text_time"
-        android:layout_width="121dp"
+        android:layout_width="112dp"
         android:layout_height="22dp"
         android:layout_marginStart="4dp"
         android:autoSizeMaxTextSize="14dp"
         android:autoSizeMinTextSize="11dp"
         android:autoSizeTextType="uniform"
-        android:background="#3B6177"
+        android:background="#1F4961"
         android:fontFamily="sans-serif-condensed"
         android:lines="1"
         android:maxLines="2"
@@ -170,8 +180,8 @@
 
     <TextView
         android:id="@+id/text_extra2"
-        android:layout_width="121dp"
-        android:layout_height="20dp"
+        android:layout_width="117dp"
+        android:layout_height="22dp"
         android:autoSizeMaxTextSize="14sp"
         android:autoSizeMinTextSize="11sp"
         android:autoSizeTextType="uniform"
@@ -181,4 +191,4 @@
         app:layout_constraintStart_toEndOf="@+id/text_pkg_name"
         app:layout_constraintTop_toBottomOf="@+id/text_app_version" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

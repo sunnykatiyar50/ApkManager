@@ -1,7 +1,7 @@
 package com.sunnykatiyar.AppManager;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,7 +14,7 @@ public class CustomAppListViewHolder extends RecyclerView.ViewHolder {
     TextView app_size;
     TextView install_date;
     TextView version;
-    TextView extra_info;
+    TextView text_extra;
 
     public CustomAppListViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -23,7 +23,7 @@ public class CustomAppListViewHolder extends RecyclerView.ViewHolder {
         this.version = itemView.findViewById(R.id.version_num);
         this.applogo = itemView.findViewById(R.id.app_icon);
         this.install_date = itemView.findViewById(R.id.label_install_time);
-        this.extra_info = itemView.findViewById(R.id.label_extra);
+        this.text_extra = itemView.findViewById(R.id.label_extra);
         this.app_size = itemView.findViewById(R.id.label_app_size);
     }
 }

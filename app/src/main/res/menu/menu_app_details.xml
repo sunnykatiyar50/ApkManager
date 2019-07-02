@@ -32,12 +32,11 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/copymenu_item"
         android:orderInCategory="100"
         android:title="@string/copy_submenu"
         app:showAsAction="never">
 
-        <menu android:id="@+id/copy_submenu" >
+        <menu>
             <item
                 android:id="@+id/share_link_item"
                 android:orderInCategory="100"

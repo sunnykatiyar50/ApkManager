@@ -2,19 +2,19 @@ package com.sunnykatiyar.AppManager;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.PendingIntent;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.loader.content.AsyncTaskLoader;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,9 +34,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
-import static com.sunnykatiyar.AppManager.MainActivity.appListFragment;
-import static com.sunnykatiyar.AppManager.MainActivity.fm;
-import static com.sunnykatiyar.AppManager.MainActivity.ft;
 import static com.sunnykatiyar.AppManager.MainActivity.prefEditorAppList;
 import static com.sunnykatiyar.AppManager.MainActivity.sharedPrefAppList;
 import static com.sunnykatiyar.AppManager.MainActivity.toolbar_main;
@@ -54,6 +51,7 @@ public class AppListFragment extends Fragment {
     public static ActivityManager activityManager;
     public static ClipboardManager clipboardManager;
     public static CustomAppListAdapter adapter;
+
     MyAsyncTask myAsyncTask;
     DividerItemDecoration mDividerItemDecoration;
     final static String TAG ="APPLIST_FRAGMENT : ";
@@ -71,11 +69,15 @@ public class AppListFragment extends Fragment {
 
     public static String sort_apps_by;
     public static String order_apps_by;
-    public static String search_query="";
+    public String search_query="";
 
     public static final String key_sorting = "SORT_APPS_BY";
     public static final String key_order_by = "ORDER_APPS_BY";
 
+    final String toast_msg = "show_as_toast";
+    final String textview_msg = "show_in_textview";
+    final String log_only = "show_in_log_only";
+    Activity context = getActivity();
     String value_sorting;
     String  value_order_by;
     LinearLayoutManager llm;
@@ -83,9 +85,8 @@ public class AppListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sort_apps_by = sharedPrefAppList.getString(key_sorting, sort_apps_by_name);
-        appContext = getContext();
         setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -98,7 +99,10 @@ public class AppListFragment extends Fragment {
         progress_percent = v.findViewById(R.id.progress_int);
         app_listview =  v.findViewById(R.id.app_recycleview_list);
         label_msgbox = v.findViewById(R.id.label_applist_msgbox);
-        mainpm = appContext.getPackageManager();
+        mainpm = getContext().getPackageManager();
+
+        sort_apps_by = sharedPrefAppList.getString(key_sorting, sort_apps_by_name);
+        appContext = getContext();
 
         Log.e("in ApplistFragment : ","getInstalled Packages in "+((System.currentTimeMillis()-initFragmentTime)/1000)+"s");
 
@@ -106,28 +110,31 @@ public class AppListFragment extends Fragment {
         activityManager= (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
 
         llm = new LinearLayoutManager(appContext);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        llm.setOrientation(RecyclerView.VERTICAL);
         app_listview.setLayoutManager(llm);
 
         mDividerItemDecoration = new DividerItemDecoration(appContext,llm.getOrientation());
         app_listview.addItemDecoration(mDividerItemDecoration);
 
-        if(myAsyncTask!=null){
-            myAsyncTask.cancel(true);
-            myAsyncTask=null;
+        if(myAsyncTask==null){
+            launchable_apps_list = new ArrayList<>();
+            myAsyncTask = new MyAsyncTask(getActivity(), search_query);
+            myAsyncTask.execute();
+            adapter = new CustomAppListAdapter(mainpm, launchable_apps_list, getActivity());
+         //   app_listview.setAdapter(adapter);
+        //    adapter.notifyDataSetChanged();
+            showMsg(toast_msg,"Launching asynctask : query = "+search_query,false);
+        }else{
+            showMsg(toast_msg,"Using old aynctask for applist : query = "+search_query,false);
+            adapter = new CustomAppListAdapter(mainpm, launchable_apps_list, getActivity());
+            app_listview.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+
         }
 
-        Log.i(TAG,"Launching Fragment : query = "+search_query);
-        myAsyncTask = new MyAsyncTask(getActivity(), search_query);
-        launchable_apps_list = new ArrayList<>();
-        myAsyncTask.execute();
-
+        showMsgInTextView(true,"");
         //MyAsyncTaskLoader m = new MyAsyncTaskLoader(getActivity(),"Fetching Apps");
-        adapter = new CustomAppListAdapter(mainpm, launchable_apps_list, getActivity());
-        //app_listview.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
         registerForContextMenu(app_listview);
-
         return v;
     }
 
@@ -185,7 +192,7 @@ public class AppListFragment extends Fragment {
         inflater.inflate(R.menu.menu_applist, menu);
 
         search_menuItem = menu.findItem(R.id.search_item);
-        search_menuItem.setVisible(false);
+        search_menuItem.setVisible(true);
 
         searchView = (SearchView) search_menuItem.getActionView();
         searchView.setIconifiedByDefault(true);
@@ -194,38 +201,35 @@ public class AppListFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 search_query = query;
-                ft = fm.beginTransaction();
-                //  ft.remove(appListFragment).commit();
-                appListFragment = new AppListFragment();
-                ft.replace(R.id.fragment_container, appListFragment,query).commit();
-                return false;
+                myAsyncTask = new MyAsyncTask(getActivity(), search_query);
+                myAsyncTask.execute();
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String query) {
                 Log.e("in MainActivity : ", " in QueryTextChangeListener ");
-                // adapter.getFilter().filter(newText);
-//                search_query = query;
-//                ft = fm.beginTransaction();
-//                //  ft.remove(appListFragment).commit();
-//                appListFragment = new AppListFragment();
-//                ft.replace(R.id.fragment_container, appListFragment,query).commit();
-                return false;
+                search_query = query;
+                myAsyncTask.cancel(true);
+                myAsyncTask = new MyAsyncTask(getActivity(), search_query);
+                myAsyncTask.execute();
+
+                return true;
             }});
 
-        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                Log.e("in MainActivity : ", " in setOnclickListener ");
-                if(b) toolbar_main.setTitle("");
-            }
-
-        });
+//        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View view, boolean b) {
+//                Log.e("in MainActivity : ", " OnFocusChanged ");
+//                if(b) toolbar_main.setTitle("");
+//            }
+//
+//        });
 
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                toolbar_main.setTitle("");
             }
         });
 
@@ -251,23 +255,24 @@ public class AppListFragment extends Fragment {
         Log.i(TAG,"Sorting Setting in Shared Preferences: "+value_sorting);
 
         if(value_sorting.equals(sort_apps_by_name)){
-            Log.i(TAG," inside equating sort_apps_by_name : ");
+            menu.findItem(R.id.menuitem_sortappsby_name).setChecked(true);
             sort_apps_by = sort_apps_by_name;
-            menu.findItem(R.id.menuitem_sortbyname).setChecked(true);
+            Log.i(TAG," inside equating sort_apps_by_name : ");
         }
         else if(value_sorting.equals(sort_apps_by_update_time)){
-            Log.i(TAG," inside equating sort_by_date : ");
+            menu.findItem(R.id.menuitem_sortappsby_updatetime).setChecked(true);
             sort_apps_by = sort_apps_by_update_time;
-            menu.findItem(R.id.menuitem_sortby_update_time).setChecked(true);
-        }else if(value_sorting.equals(sort_apps_by_install_time)){
-            Log.i(TAG," inside equating sort_by_date : ");
+            Log.i(TAG," inside equating sort_by_update_time : ");
+        }
+        else if(value_sorting.equals(sort_apps_by_install_time)){
+            menu.findItem(R.id.menuitem_sortappsby_installtime).setChecked(true);
             sort_apps_by = sort_apps_by_update_time;
-            menu.findItem(R.id.menuitem_sortby_install_time).setChecked(true);
+            Log.i(TAG," inside equating sort_by_install_time : ");
         }
         else if(value_sorting.equals(sort_apps_by_size)){
-            Log.i(TAG," inside equating sort_apps_by_size : ");
+            menu.findItem(R.id.menuitem_sortappsby_size).setChecked(true);
             sort_apps_by = sort_apps_by_size;
-            menu.findItem(R.id.menuitem_sortbysize).setChecked(true);
+            Log.i(TAG," inside equating sort_apps_by_size : ");
         }
         Log.i(TAG," Value of sort_apks_by : " + sort_apps_by);
 
@@ -277,11 +282,11 @@ public class AppListFragment extends Fragment {
         Log.i(TAG," Found Ordering Settings in SHARED PREFERENCES: "+ value_order_by);
 
         if(value_order_by.equals(order_apps_decreasing)){
-            menu.findItem(R.id.menuitem_decreasing).setChecked(true);
+            menu.findItem(R.id.menuitem_apps_decreasing).setChecked(true);
             order_apps_by = order_apps_decreasing;
         }
         else if(value_order_by.equals(order_apps_increasing)){
-            menu.findItem(R.id.menuitem_increasing).setChecked(true);
+            menu.findItem(R.id.menuitem_apps_increasing).setChecked(true);
             order_apps_by = order_apps_increasing;
         }
         Log.i(TAG," Value of order by : " + order_apps_by);
@@ -298,76 +303,94 @@ public class AppListFragment extends Fragment {
         {
             case R.id.search_item:{
                 Log.e("in MainActivity : ", "Search Menu Button Clicked");
-                break;            }
+                break;
+            }
             case R.id.reload:{
-                ft = fm.beginTransaction();
-                ft.replace(R.id.fragment_container, appListFragment);
-                ft.commit();
-                break;         }
-
-//             case R.id.settings:{
-//                Toast.makeText(getApplication(),"OpeningSettings", Toast.LENGTH_SHORT).show();
-//                 ft = fm.beginTransaction();
-//                 ft.replace(R.id.fragment_container, renameFilesFragment );
-//                 ft.commit();
-//                 break;
-//             }
+                myAsyncTask = new MyAsyncTask(getActivity(), search_query);
+                myAsyncTask.execute();
+                adapter = new CustomAppListAdapter(mainpm, launchable_apps_list, getActivity());
+                app_listview.setAdapter(adapter);
+                break;
+            }
 
             case R.id.menuitem_sortbyname : {
                 item.setChecked(true);
                 sort_apps_by = sort_apps_by_name;
+                Log.i(TAG,"Clicked sort by name");
                 prefEditorAppList.putString(key_sorting, sort_apps_by).commit();
-                appListFragment.SortAppList();
+                SortAppList();
                 break;
             }
 
-            case R.id.menuitem_sortby_install_time: {
+            case R.id.menuitem_sortappsby_installtime: {
                 item.setChecked(true);
                 Log.i(TAG,"Clicked sort by size");
                 sort_apps_by = sort_apps_by_update_time;
                 prefEditorAppList.putString(key_sorting, sort_apps_by).commit();
-                appListFragment.SortAppList();
+                SortAppList();
                 break;
             }
 
-            case R.id.menuitem_sortby_update_time: {
+            case R.id.menuitem_sortappsby_updatetime: {
                 item.setChecked(true);
                 Log.i(TAG,"Clicked sort by size");
                 sort_apps_by = sort_apps_by_update_time;
                 prefEditorAppList.putString(key_sorting, sort_apps_by).commit();
-                appListFragment.SortAppList();
+                SortAppList();
                 break;
             }
 
-            case R.id.menuitem_sortbysize:{
+            case R.id.menuitem_sortappsby_size:{
                 item.setChecked(true);
                 Log.i(TAG,"Clicked sort by size");
                 sort_apps_by = sort_apps_by_size;
                 prefEditorAppList.putString(key_sorting, sort_apps_by).commit();
-                appListFragment.SortAppList();
+                SortAppList();
                 break;
             }
 
             //-----------------------------------INVERSE SORTING-------------------------------------
-            case R.id.menuitem_decreasing:{
+            case R.id.menuitem_apps_decreasing:{
                 item.setChecked(true);
                 order_apps_by = order_apps_decreasing;
                 prefEditorAppList.putString(key_order_by, order_apps_by).commit();
-                appListFragment.SortAppList();
+                SortAppList();
                 break;
             }
 
-            case R.id.menuitem_increasing:{
+            case R.id.menuitem_apps_increasing:{
                 item.setChecked(true);
                 order_apps_by = order_apps_increasing;
                 prefEditorAppList.putString(key_order_by, order_apps_by).commit();
-                appListFragment.SortAppList();
+                SortAppList();
                 break;
             }
         }
         return true;
     }
 
+    private void showMsg(String display_as, String msg, boolean isempty){
+
+        if(display_as.equals(toast_msg)){
+            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+        }
+        else if(display_as.equals(textview_msg)) {
+            showMsgInTextView(isempty,msg);
+        }else if(display_as.equals(log_only)){
+
+        }
+
+        Log.i(TAG, msg);
+    }
+
+    public void showMsgInTextView(boolean empty_string, String str) {
+        if(empty_string) {
+            String default_string = "Total Apps : " + launchable_apps_list.size();
+            label_msgbox.setText(default_string);
+        }else{
+            label_msgbox.setText(str);
+        }
+    }
 
     class MyAsyncTask extends AsyncTask<Void, String , String> {
 
@@ -384,9 +407,7 @@ public class AppListFragment extends Fragment {
         protected void onPreExecute() {
             Log.e("in MyAsyncTask :","in onPreExecute : "+((System.currentTimeMillis() - initFragmentTime) / 1000) + "s");
             progressBar.setVisibility(View.VISIBLE);
-            //progressBar.setMax(launchable_apps_list.size());
-            progress_percent.setVisibility(View.VISIBLE);
-            progress_percent.setText("Fetching Apps...");
+//            progress_percent.setVisibility(View.VISIBLE);
             applist = new ArrayList<>();
             launchable_apps_list = new ArrayList<>();
         }
@@ -395,8 +416,6 @@ public class AppListFragment extends Fragment {
         protected String doInBackground(Void... voids) {
            Log.e("in MyAsyncTask :", "in doInBackground : " + ((System.currentTimeMillis() - initFragmentTime) / 1000) + "s");
            LoadAppList(search_filter);
-           Log.e("in AppListFragment : ","Launchable Applist in "+((System.currentTimeMillis()-initFragmentTime)/1000)+"s");
-           Log.e("in MyAsyncTask :", "out doInBackground : " + ((System.currentTimeMillis() - initFragmentTime) / 1000) + "s");
            return null;
         }
 
@@ -405,52 +424,52 @@ public class AppListFragment extends Fragment {
             setLabelTextMsg(strings[0]);
         }
 
-        @Override
-        protected void onPostExecute(String s) {
-            progress_percent.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
-            search_menuItem.setVisible(true);
-
-            SortAppList();
-
-            Intent i = new Intent(activity, MainActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            PendingIntent p = PendingIntent.getActivity(activity,0,i,PendingIntent.FLAG_UPDATE_CURRENT);
-
-            Log.e("in MyAsyncTask :", "in onPostExecute : "+launchable_apps_list.size()+" apps in "+((System.currentTimeMillis() - initFragmentTime) / 1000) + "s");
-            Toast.makeText(activity, launchable_apps_list.size() + " Apps Loaded in " + ((System.currentTimeMillis() - initFragmentTime) / 1000) + "s", Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        protected void onCancelled() {
-            Log.i(TAG,"in AsyncTask OnCancelled :");
-            app_listview.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-            super.onCancelled();
-        }
-
         public void LoadAppList(String str){
+            Log.e("in MyAsyncTask :", "AppLoadList : " + ((System.currentTimeMillis() - initFragmentTime) / 1000) + "s");
             applist = new ArrayList<>();
             launchable_apps_list = new ArrayList<>();
             applist = mainpm.getInstalledPackages(0);
             int i=0;
             String name ;
             for (PackageInfo p : applist) {
-                if (mainpm.getLaunchIntentForPackage(p.packageName) != null){
+                if (mainpm.getLaunchIntentForPackage(p.packageName) != null)
+                {
                     name = p.applicationInfo.loadLabel(mainpm).toString();
                     //Log.i(TAG," Matching "+search_filter+" AND "+name+" And i = "+i);
-                    if(name.toLowerCase().contains(search_filter.toLowerCase())){
-                      //  Log.i(TAG," Matched "+search_filter+" AND "+name);
+                    if(name.toLowerCase().contains(str.toLowerCase())){
+                        //  Log.i(TAG," Matched "+search_filter+" AND "+name);
                         launchable_apps_list.add(p);
                         publishProgress((i++)+" : "+name);
                     }
                 }
+                if(isCancelled()){
+                    Log.i(TAG,"Task Cancelled");
+                    break;
+                }
             }
         }
-    }
 
-    public void setLabelTextMsg(String str){
-            label_msgbox.setText(str);
+        @Override
+        protected void onPostExecute(String s) {
+            Log.i(TAG,"in AsyncTask OnPostExecute :");
+            //  progress_percent.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+
+            SortAppList();
+
+            showMsgInTextView(true,"");
+            showMsg(toast_msg,"in onPostExecute : "+launchable_apps_list.size()+" apps in "+((System.currentTimeMillis() - initFragmentTime) / 1000) + "s",false);
+            Toast.makeText(activity, launchable_apps_list.size() + " Apps Loaded in " + ((System.currentTimeMillis() - initFragmentTime) / 1000) + "s", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            Log.i(TAG,"in AsyncTask OnCancelled :");
+            app_listview.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
+
     }
 
     public void SortAppList() {
@@ -509,6 +528,11 @@ public class AppListFragment extends Fragment {
         adapter.notifyDataSetChanged();
         setLabelTextMsg("Total Apps : "+launchable_apps_list.size());
     }
+
+    public void setLabelTextMsg(String str){
+            label_msgbox.setText(str);
+    }
+
 
     @Override
     public void onResume() {

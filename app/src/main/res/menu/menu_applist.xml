@@ -22,16 +22,14 @@
 
     <item android:title="Sort Apps By"
         android:orderInCategory="101"
-        android:id="@+id/submenu_sort"
         android:icon="@drawable/ic_sort_black_24dp">
 
         <menu>
 
             <group android:checkableBehavior="single"
-                android:id="@+id/menugroup_sort"
                 android:menuCategory="secondary">
                 <item
-                    android:id="@+id/menuitem_sortbyname"
+                    android:id="@+id/menuitem_sortappsby_name"
                     android:orderInCategory="100"
                     android:checked="true"
                     android:title="Sort By Name"
@@ -39,21 +37,21 @@
                     app:showAsAction="never" />
 
                 <item
-                    android:id="@+id/menuitem_sortby_install_time"
+                    android:id="@+id/menuitem_sortappsby_installtime"
                     android:orderInCategory="101"
                     android:title="Sort By Install Time"
                     android:icon="@drawable/ic_date_range_black_24dp"
                     app:showAsAction="never" />
 
                 <item
-                    android:id="@+id/menuitem_sortby_update_time"
+                    android:id="@+id/menuitem_sortappsby_updatetime"
                     android:orderInCategory="101"
                     android:title="Sort By Update Time"
                     android:icon="@drawable/ic_date_range_black_24dp"
                     app:showAsAction="never" />
 
                 <item
-                    android:id="@+id/menuitem_sortbysize"
+                    android:id="@+id/menuitem_sortappsby_size"
                     android:orderInCategory="101"
                     android:title="Sort By Size"
                     android:icon="@drawable/ic_sort_black_24dp"
@@ -62,18 +60,16 @@
 
 
             <group android:checkableBehavior="single"
-                android:id="@+id/menugroup_order"
                 android:menuCategory="secondary">
                 <item
-                    android:id="@+id/menuitem_increasing"
+                    android:id="@+id/menuitem_apps_increasing"
                     android:orderInCategory="101"
-
                     android:title="Increasing Order"
                     android:icon="@drawable/ic_vertical_align_top_black_24dp"
                     app:showAsAction="never" />
 
                 <item
-                    android:id="@+id/menuitem_decreasing"
+                    android:id="@+id/menuitem_apps_decreasing"
                     android:orderInCategory="101"
                     android:title="Decreasing Order "
                     android:icon="@drawable/ic_vertical_align_bottom_black_24dp"

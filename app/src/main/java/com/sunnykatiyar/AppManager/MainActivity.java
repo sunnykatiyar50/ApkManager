@@ -1,21 +1,19 @@
 package com.sunnykatiyar.AppManager;
 
 import android.app.Activity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.app.NotificationManager;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import com.google.android.material.navigation.NavigationView;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
-import android.support.v7.widget.Toolbar;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -57,12 +55,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     final String TAG_FILE_RENAMER_FORMAT  = "file_renamer_format_activity";
     final String TAG_APK_RENAME_FORMAT  = "apk_renamer_format_activity";
 
+    final String key_last_fragment = "LAST_FRAGMENT_ID";
+
     int CURRENT_FRAGMENT = 0;
     public static AppListFragment appListFragment;
     RenameFilesFragment renameFilesFragment;
     RenameApkFragment renameApkFragment;
     AppSettingsFragment appSettingsFragment;
     ApkListFragment apkListFragment;
+    AboutFragment aboutFragment;
+    HelpFragment helpFragment;
+    FilesListFragment filesListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_app_list);
 
         toolbar_main = findViewById(R.id.toolbar_applist);
-        toolbar_main.setTitle(R.string.app_explorer_activity_name);
         setSupportActionBar(toolbar_main);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -82,8 +84,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView = findViewById(R.id.nav_view_applist);
         navigationView.setNavigationItemSelectedListener(this);
-
-//        notimgr = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
 
         sharedPrefAppList = getSharedPreferences(PREF_NAME_APPLIST,MODE_PRIVATE);
         prefEditorAppList = sharedPrefAppList.edit();
@@ -102,112 +102,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         renameFilesFragment = new RenameFilesFragment();
         apkListFragment = new ApkListFragment();
         renameApkFragment = new RenameApkFragment();
+        aboutFragment = new AboutFragment();
+        helpFragment = new HelpFragment();
+        filesListFragment = new FilesListFragment();
 
         fm = this.getSupportFragmentManager();
 
-        Log.e(TAG,"CURRENT_FRAGMENT VALUE = "+CURRENT_FRAGMENT);
-
-        if(this.CURRENT_FRAGMENT == 0){
-            this.CURRENT_FRAGMENT = R.id.nav_applist;
+        CURRENT_FRAGMENT = sharedPrefAppSettings.getInt(key_last_fragment,0);
+        setFragment(CURRENT_FRAGMENT);
+        if(navigationView.getMenu().findItem(CURRENT_FRAGMENT).getTitle()==null){
+            Log.e(TAG,"CURRENT_FRAGMENT VALUE = "+"the App is Opened first Time");
+        }else{
             Log.e(TAG,"CURRENT_FRAGMENT VALUE = "+navigationView.getMenu().findItem(CURRENT_FRAGMENT).getTitle());
         }
-
-        Log.e(TAG,"CURRENT_FRAGMENT VALUE = "+navigationView.getMenu().findItem(CURRENT_FRAGMENT).getTitle());
-        navigationView.getMenu().findItem(CURRENT_FRAGMENT).setChecked(true);
-        setFragment(CURRENT_FRAGMENT);
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
         setFragment(item.getItemId());
-
-  //      int id = item.getItemId();
-
-
-//        if (id == R.id.nav_apk_rename_format) {
-//            Log.e(TAG,"NavBar Rename APK fragment begin ");
-//            ft = fm.beginTransaction();
-//            ft.replace(R.id.fragment_container, renameApkFragment);
-//            ft.addToBackStack(null);
-//            ft.commit();
-//            CURRENT_FRAGMENT = id;
-//            Log.i(TAG,": onNavItem Selected"+id);
-//
-//        } else if (id == R.id.nav_apklist) {
-//            Log.e(TAG,"NavBar ApkList Fragment ");
-//
-//            ft = fm.beginTransaction();
-//            ft.replace(R.id.fragment_container, apkListFragment);
-//            ft.addToBackStack(null);
-//            ft.commit();
-//            Log.i(TAG,": onNavItem Selected"+id);
-//            CURRENT_FRAGMENT = id;
-//            item.setChecked(true);
-//
-//        } else if (id == R.id.nav_file_renamer) {
-//            Log.e(TAG,"NavBar Rename Files fragment begin ");
-//            ft = fm.beginTransaction();
-//            ft.replace(R.id.fragment_container, renameFilesFragment);
-//            ft.addToBackStack(null);
-//            ft.commit();
-//            CURRENT_FRAGMENT = id;
-//            Log.i(TAG,": onNavItem Selected"+id);
-//
-//
-//        } else if (id == R.id.nav_applist) {
-//            Log.e(TAG,"NavBar App List ");
-//            ft = fm.beginTransaction();
-//            ft.replace(R.id.fragment_container, appListFragment);
-//            ft.addToBackStack(null);
-//            ft.commit();
-//            CURRENT_FRAGMENT = id;
-//            item.setChecked(true);
-//            Log.i(TAG,": onNavItem Selected"+id);
-//
-//        } else if (id == R.id.nav_app_settings) {
-//            Log.e(TAG,"NavBar App Settings ");
-//            ft = fm.beginTransaction();
-//            ft.replace(R.id.fragment_container, appSettingsFragment);
-//            ft.addToBackStack(null);
-//            ft.commit();
-//            Log.i(TAG,": onNavItem Selected"+id);
-//            CURRENT_FRAGMENT = id;
-//
-//        }
-//        else if (id == R.id.nav_send) {
-//            CURRENT_FRAGMENT = id;
-//            Log.i(TAG,": onNavItem Selected"+id);
-//
-//        }
-//        else  if (id == R.id.nav_about) {
-//            Toast.makeText(getApplication(),"About Selected", Toast.LENGTH_SHORT).show();
-//            startActivity(new Intent(this,About.class));
-//                      CURRENT_FRAGMENT = id;
-//            Log.i(TAG,": onNavItem Selected"+id);
-//
-////          Toast.makeText(context, "Don't be so curious about me. I am in the making.. ", Toast.LENGTH_LONG).show();
-//        }
-//        else if (id == R.id.nav_help) {
-//            CURRENT_FRAGMENT = id;
-//            Log.i(TAG,": onNavItem Selected"+id);
-//            Toast.makeText(activity, " If you can't help yourself.. Nobody can.", Toast.LENGTH_LONG).show();
-//        }
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        CURRENT_FRAGMENT = sharedPrefAppSettings.getInt(key_last_fragment,0);
         setFragment(CURRENT_FRAGMENT);
     }
 
     private void setFragment(int id){
-
-        Log.e(TAG,"CURRENT_FRAGMENT VALUE = "+navigationView.getMenu().findItem(id).getTitle());
 
         switch(id){
             case R.id.nav_apklist:{
@@ -216,10 +139,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ft.replace(R.id.fragment_container, apkListFragment);
                 ft.addToBackStack(null);
                 ft.commit();
-                Log.e(TAG,"NavBar ApkList Fragment End");
-                CURRENT_FRAGMENT = id;
-                navigationView.getMenu().findItem(R.id.nav_apklist).setChecked(true);
-                Log.i(TAG,": onresume : "+navigationView.getMenu().findItem(R.id.nav_apklist).getTitle());
+                prefEditAppSettings.putInt(key_last_fragment,id).commit();
+                navigationView.getMenu().findItem(id).setChecked(true);
+                toolbar_main.setTitle(R.string.apk_manager_activity_name);
+                Log.i(TAG,": onresume : "+navigationView.getMenu().findItem(id).getTitle());
                 break;
             }
 
@@ -229,9 +152,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ft.replace(R.id.fragment_container, appListFragment);
                 ft.addToBackStack(null);
                 ft.commit();
-                CURRENT_FRAGMENT = id;
-                navigationView.getMenu().findItem(R.id.nav_applist).setChecked(true);
-                Log.i(TAG,": onresume : "+navigationView.getMenu().findItem(R.id.nav_apklist).getTitle());
+                prefEditAppSettings.putInt(key_last_fragment,id).commit();
+                navigationView.getMenu().findItem(id).setChecked(true);
+                toolbar_main.setTitle(R.string.app_explorer_activity_name);
+                Log.i(TAG,": onresume : "+navigationView.getMenu().findItem(id).getTitle());
                 break;
             }
 
@@ -241,7 +165,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ft.replace(R.id.fragment_container, appSettingsFragment);
                 ft.addToBackStack(null);
                 ft.commit();
-                CURRENT_FRAGMENT = id;
+                prefEditAppSettings.putInt(key_last_fragment,id).commit();
+                toolbar_main.setTitle(R.string.app_settings_fragment_name);
+                navigationView.getMenu().findItem(id).setChecked(true);
                 Log.i(TAG,": onresume : "+navigationView.getMenu().findItem(id).getTitle());
                 break;
             }
@@ -252,15 +178,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ft.replace(R.id.fragment_container, renameApkFragment);
                 ft.addToBackStack(null);
                 ft.commit();
-                CURRENT_FRAGMENT = id;
+                prefEditAppSettings.putInt(key_last_fragment,id).commit();
+                navigationView.getMenu().findItem(id).setChecked(true);
+                toolbar_main.setTitle(R.string.apk_renamer_fragment_name);
                 Log.i(TAG,": onresume : "+navigationView.getMenu().findItem(id).getTitle());
                 break;
             }
 
-            case R.id.nav_file_renamer:{
-                CURRENT_FRAGMENT = id;
+            case R.id.nav_file_list:{
+                ft = fm.beginTransaction();
+                ft.replace(R.id.fragment_container, filesListFragment);
+                ft.addToBackStack(null);
+                ft.commit();
+                prefEditAppSettings.putInt(key_last_fragment,id).commit();
+                navigationView.getMenu().findItem(id).setChecked(true);
+                toolbar_main.setTitle(R.string.file_list_fragment_name);
                 Log.i(TAG,": onresume : "+navigationView.getMenu().findItem(id).getTitle());
-
                 break;
             }
 
@@ -270,26 +203,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ft.replace(R.id.fragment_container, renameFilesFragment);
                 ft.addToBackStack(null);
                 ft.commit();
-                CURRENT_FRAGMENT = id;
+                prefEditAppSettings.putInt(key_last_fragment,id).commit();
+                navigationView.getMenu().findItem(id).setChecked(true);
+                toolbar_main.setTitle(R.string.file_format_fragment_name);
                 Log.i(TAG,": onresume : "+navigationView.getMenu().findItem(id).getTitle());
                 break;
             }
             case R.id.nav_about : {
-                Toast.makeText(getApplication(),"About Selected", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this,About.class));
-                CURRENT_FRAGMENT = id;
+                ft = fm.beginTransaction();
+                ft.replace(R.id.fragment_container, aboutFragment);
+                ft.addToBackStack(null);
+                ft.commit();
+                prefEditAppSettings.putInt(key_last_fragment,id).commit();
+                navigationView.getMenu().findItem(id).setChecked(true);
+                toolbar_main.setTitle(R.string.about_fragment_name);
                 Log.i(TAG,": onresume : "+navigationView.getMenu().findItem(id).getTitle());
                 break;
             }
             case R.id.nav_help: {
-                CURRENT_FRAGMENT = id;
-                Toast.makeText(activity, " If you can't help yourself.. Nobody can.", Toast.LENGTH_LONG).show();
-                Log.i(TAG,": onresume : "+navigationView.getMenu().findItem(id).getTitle());
-                break;
+                ft = fm.beginTransaction();
+                ft.replace(R.id.fragment_container, helpFragment);
+                ft.addToBackStack(null);
+                ft.commit();
+                prefEditAppSettings.putInt(key_last_fragment,id).commit();
+                navigationView.getMenu().findItem(id).setChecked(true);
+                toolbar_main.setTitle(R.string.help_fragment_name);
+                Log.i(TAG,": onresume : "+navigationView.getMenu().findItem(id).getTitle());                break;
             }
 
             default:{
                 Log.i(TAG,": onresume : DEFAULT");
+                ft = fm.beginTransaction();
+                ft.replace(R.id.fragment_container, appListFragment);
+                ft.addToBackStack(null);
+                ft.commit();
+                prefEditAppSettings.putInt(key_last_fragment,R.id.nav_applist).commit();
+                navigationView.getMenu().findItem(R.id.nav_applist).setChecked(true);
+                Log.i(TAG,": onresume : "+navigationView.getMenu().findItem(R.id.nav_applist).getTitle());
                 break;
             }
         }

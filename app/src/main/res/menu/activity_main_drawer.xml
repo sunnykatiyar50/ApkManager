@@ -17,17 +17,17 @@
         <item
             android:id="@+id/nav_apk_rename_format"
             android:icon="@drawable/ic_sort_by_alpha_black_24dp"
-            android:title="Apk Rename Format" />
+            android:title="Apk Renaming Settings" />
 
         <item
-            android:id="@+id/nav_file_renamer"
+            android:id="@+id/nav_file_list"
             android:icon="@drawable/ic_note_add_black_24dp"
-            android:title="Files Renamer" />
+            android:title="File Manager" />
 
         <item
             android:id="@+id/nav_file_rename_format"
             android:icon="@drawable/ic_sort_by_alpha_black_24dp"
-            android:title="Files Renaming Format" />
+            android:title="Files Renaming Settings" />
 
         <item
             android:id="@+id/nav_app_settings"
@@ -38,19 +38,8 @@
 
     <item android:title="Communicate">
         <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-
-        <item
+           <item
             android:id="@+id/nav_help"
-            android:orderInCategory="100"
             android:title="Help !"
             android:icon="@drawable/ic_help_black_24dp"
             />
@@ -61,6 +50,16 @@
             android:icon="@drawable/ic_info_black_24dp"
             android:title="About"
             />
+
+            <!--<item-->
+                <!--android:id="@+id/nav_share"-->
+                <!--android:icon="@drawable/ic_menu_share"-->
+                <!--android:title="Share" />-->
+            <!--<item-->
+                <!--android:id="@+id/nav_send"-->
+                <!--android:icon="@drawable/ic_menu_send"-->
+                <!--android:title="Send" />-->
+        </menu>
     </item>
 
 </menu>

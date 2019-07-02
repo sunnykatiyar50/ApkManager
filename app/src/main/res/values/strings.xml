@@ -1,57 +1,42 @@
 <resources>
     <string name="app_name">App Manager</string>
-    <string name="apk_explorer_activity_name">Apk Manager</string>
     <string name="app_explorer_activity_name">App Explorer</string>
-    <string name="app_settings">App Explorer Settings></string>
-    <string name="app_details">App Details page></string>
+    <string name="apk_renamer_fragment_name">Apk Naming Format</string>
+    <string name="apk_manager_activity_name">Apk Manager</string>
+    <string name="file_format_fragment_name">File Renaming Options</string>
+    <string name="file_list_fragment_name">File Manager</string>
+    <string name="app_settings_fragment_name">General Settings</string>
+    <string name="about_fragment_name">About</string>
+    <string name="help_fragment_name">Help</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">APK Manager</string>
     <string name="nav_header_subtitle">com.sunnykatiyar</string>
     <string name="nav_header_desc">Install, Delete, Rename Update Apks</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_files">Files</string>
-    <string name="title_activity_rename_apk_setting">Rename Apk Settings</string>
     <string name="hint_separator">"Enter any character or word"</string>
-    <string name="title_activity_rename_files">RenameFiles</string>
     <string name="search_hint">Type here to search files</string>
-    <string name="search_title">Apk Search</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="blank_fragment">Hello blank fragment</string>
-
 
     <!---->
 
-    <string name="install_on">Installed On </string>
-    <string name="activities">Activities</string>
-    <string name="permissions">All Permissions</string>
-    <string name="install_path">Installation Path </string>
     <string name="apk_size">Apk Size </string>
     <string name="app_size">App Size </string>
-    <string name="pkg_name">Package Name </string>
-    <string name="ver_nmae">Version Name </string>
-    <string name="ver_code">Version Code </string>
-    <string name="install_source">Installation Source </string>
-    <string name="launch">Launch</string>
     <string name="copy_appName">Copy App Name</string>
     <string name="copy_pkgName">Copy Package Name</string>
     <string name="copy_link">Copy Market Link</string>
     <string name="share_link">Share Market Link</string>
-    <string name="reload_applist">Reload Apps</string>
     <string name="open_sys_appInfo">Open System AppInfo</string>
     <string name="open_inPlaystore">Open in Playstore</string>
     <string name="extract_apk">Extract Apk</string>
     <string name="launch_app">Launch App</string>
     <string name="uninstall_app">Uninstall App</string>
-    <string name="cop_menu">Copy Menu</string>
-    <string name="title_activity_main2">Main2Activity</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_app_details_">App Details</string>
     <string name="about_title_text">This is title text</string>
     <string name="about_text_string">This app is the parting of android learning experience. This is also my first app. after learning enough, I would like to develop the app professionally and make this app available for others.</string>
-    <string name="settings">Settings</string>
     <string name="copy_submenu"><![CDATA[Copy & Share]]></string>
+    <string name="hint_extsd_label">Set ExtSDCard Path to write in it</string>
 </resources>

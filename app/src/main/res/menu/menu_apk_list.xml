@@ -1,40 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <!--<item android:id="@+id/search"-->
-    <!--android:title="@string/search_title"-->
-    <!--android:icon="@drawable/ic_search_black_24dp"-->
-    <!--android:showAsAction="collapseActionView|ifRoom"-->
-    <!--android:actionViewClass="android.widget.SearchView"-->
-    <!--tools:ignore="AppCompatResource"/>-->
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menuitem_load"
         android:orderInCategory="98"
-        android:showAsAction="ifRoom"
-        android:title="Load Files"
-        tools:ignore="AppCompatResource" />
+        app:showAsAction="ifRoom"
+        android:title="Reload" />
 
     <item
-        android:id="@+id/menuitem_reset_path"
+        android:id="@+id/menuitem_refresh"
         android:icon="@drawable/ic_refresh_black_24dp"
-        android:orderInCategory="99"
-        android:title="Get Global Path"
-        android:visible="true" />
+        android:orderInCategory="98"
+        app:showAsAction="never"
+        android:title="Refresh" />
 
     <item
         android:id="@+id/menuitem_subdir"
         android:checkable="true"
         android:checked="true"
-        android:icon="@drawable/ic_create_new_folder_black_24dp"
         android:orderInCategory="100"
         android:title="Search Subfolders "
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/submenu_file_operation"
         android:icon="@drawable/ic_sort_black_24dp"
         android:orderInCategory="100"
         android:title="Actions">
@@ -49,6 +38,13 @@
                 app:showAsAction="never" />
 
             <item
+                android:id="@+id/menuitem_uninstall"
+                android:icon="@drawable/ic_android_black_24dp"
+                android:orderInCategory="100"
+                android:title="Uninstall (Apps Only)"
+                app:showAsAction="never" />
+
+            <item
                 android:id="@+id/menuitem_rename"
                 android:icon="@drawable/ic_note_add_black_24dp"
                 android:orderInCategory="100"
@@ -57,23 +53,31 @@
 
             <item
                 android:id="@+id/menuitem_move_files"
-                android:icon="@drawable/ic_content_copy_black_24dp"
+                android:icon="@drawable/ic_content_cut_black_24dp"
                 android:orderInCategory="100"
-                android:title="Move To Repo"
+                android:title="AutoMove To Repo"
                 app:showAsAction="never" />
 
-            <!--<item-->
-                <!--android:id="@+id/menuitem_move_replace"-->
-                <!--android:icon="@drawable/ic_content_copy_black_24dp"-->
-                <!--android:orderInCategory="100"-->
-                <!--android:title="Move to Replace in Repo"-->
-                <!--app:showAsAction="never" />-->
+            <item
+                android:id="@+id/menuitem_copy_files"
+                android:icon="@drawable/ic_content_copy_black_24dp"
+                android:orderInCategory="100"
+                android:title="Copy to Selected Folder"
+                app:showAsAction="never" />
 
             <item
-                android:id="@+id/menuitem_uninstall"
-                android:icon="@drawable/ic_android_black_24dp"
+                android:id="@+id/menuitem_move_manually"
+                android:icon="@drawable/ic_content_cut_black_24dp"
                 android:orderInCategory="100"
-                android:title="Uninstall (Apps Only)"
+                android:title="Move to Selected Folder"
+                app:showAsAction="never" />
+
+
+            <item
+                android:id="@+id/menuitem_delete"
+                android:icon="@drawable/ic_delete_black_24dp"
+                android:orderInCategory="100"
+                android:title="Delete (APKs Only) "
                 app:showAsAction="never" />
 
             <item
@@ -83,18 +87,11 @@
                 android:title="Build Repository"
                 app:showAsAction="never" />
 
-            <item
-                android:id="@+id/menuitem_delete"
-                android:icon="@drawable/ic_delete_black_24dp"
-                android:orderInCategory="100"
-                android:title="Delete (APKs Only) "
-                app:showAsAction="never" />
-
         </menu>
 
     </item>
 
-    <item  android:id="@+id/duplicate_selection"
+    <item
         android:icon="@drawable/ic_sort_black_24dp"
         android:orderInCategory="102"
         android:title="Select Duplicates">
@@ -103,13 +100,13 @@
 
             <item
                 android:id="@+id/menuitem__duplicate_old_version"
-                android:icon="@drawable/ic_check_circle_black_24dp"
+                android:icon="@drawable/ic_check_box_black_24dp"
                 android:orderInCategory="100"
                 android:title="Older Versions"
                 app:showAsAction="never" />
             <item
                 android:id="@+id/menuitem__duplicate_new_version"
-                android:icon="@drawable/ic_check_circle_black_24dp"
+                android:icon="@drawable/ic_content_copy_black_24dp"
                 android:orderInCategory="100"
                 android:title="Newer Versions"
                 app:showAsAction="never" />
@@ -145,9 +142,9 @@
 
     </item>
 
-    <item  android:id="@+id/submenu_selection"
+    <item
         android:icon="@drawable/ic_sort_black_24dp"
-        android:orderInCategory="102"
+        android:orderInCategory="106"
         android:title="Select">
 
         <menu>
@@ -184,13 +181,12 @@
     </item>
 
     <item  android:id="@+id/menuitem_root"
-        android:checkable="true"
         android:icon="@drawable/ic_build_black_24dp"
-        android:orderInCategory="110"
-        android:title="Use Root"
+        android:orderInCategory="99"
+        android:title="Root Status Unknown "
         app:showAsAction="never" />
 
-    <item  android:id="@+id/submenu_sort"
+    <item
         android:icon="@drawable/ic_sort_black_24dp"
         android:orderInCategory="101"
         android:title="Sort Apps By">
@@ -198,7 +194,6 @@
         <menu>
 
             <group
-                android:id="@+id/menugroup_sort"
                 android:checkableBehavior="single"
                 android:menuCategory="secondary">
                 <item
@@ -226,7 +221,6 @@
 
 
             <group
-                android:id="@+id/menugroup_order"
                 android:checkableBehavior="single"
                 android:menuCategory="secondary">
                 <item

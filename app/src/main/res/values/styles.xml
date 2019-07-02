@@ -8,11 +8,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -35,21 +30,10 @@
     </style>
 
     <!-- You can also inherit from NNF_BaseTheme.Light -->
-    <style name="FilePickerTheme.NoToolBar" parent="NNF_BaseTheme">
-        <!-- Set these to match your theme -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="windowActionBar">true</item>
 
-        <!-- Setting a divider is entirely optional -->
-        <item name="nnf_list_item_divider">?android:attr/listDivider</item>
-
-        <!-- Need to set this also to style create folder dialog -->
-        <item name="alertDialogTheme">@style/FilePickerAlertDialogTheme</item>
-
-        <!-- If you want to set a specific toolbar theme, do it here -->
-        <!-- <item name="nnf_toolbarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item> -->
+    <style name="MyDarkAppTheme" parent="FilePickerTheme">
+        <item name="android:listDivider">@color/my_divider_color</item>
+        <item name="android:dividerHeight">@dimen/my_divider_height</item>
     </style>
 
     <style name="FilePickerAlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">

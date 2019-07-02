@@ -48,11 +48,11 @@
 //    private static final String TAG = "MAIN ACTIVITY : ";
 //    Button btn_local_path;
 //    public static Menu option_menu;
-//    public static  TextView text_msgs ;
+//    public static  TextView msg_textview ;
 //
 //    public static MenuItem menuitem_select_all;
 //    public Context context = ApkListActivity.this;
-//    EditText value_local_path;
+//    EditText text_local_path;
 //    List<File> list_files ;
 //    CustomApkListAdapter cla;
 //    List<ApkListDataItem> apkFilesList ;
@@ -113,7 +113,7 @@
 //    @Override
 //    protected void onCreate(Bundle savedInstanceState) {
 //        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
+//        setContentView(R.fragment_help.activity_main);
 //        Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 //
@@ -123,7 +123,7 @@
 //        drawer.addDrawerListener(toggle);
 //        toggle.syncState();
 //
-//        this.text_msgs= findViewById(R.id.text_msgs);
+//        this.msg_textview= findViewById(R.id.msg_textview);
 //        navigationView = findViewById(R.id.nav_view);
 //        navigationView.setNavigationItemSelectedListener(this);
 //        navigationView.getMenu().findItem(R.id.nav_apklist).setChecked(true);
@@ -142,12 +142,12 @@
 //        pm = getPackageManager();
 //
 //        btn_local_path = findViewById(R.id.btn_browse_local_path);
-//        value_local_path = findViewById(R.id.edit_search_folder);
+//        text_local_path = findViewById(R.id.edit_search_folder);
 //
 //        value_global_path = sharedPrefApkManager.getString(key_global_path,"Path Not Set");
-//        value_local_path.setText(value_global_path);
+//        text_local_path.setText(value_global_path);
 //
-//        File dir_path = new File(value_local_path.getText().toString());
+//        File dir_path = new File(text_local_path.getText().toString());
 //
 //        if(dir_path.exists() & dir_path.isDirectory()){
 //            sort_apks_by = sharedPrefApkManager.getString(value_sorting,sort_apks_by_name);
@@ -170,7 +170,7 @@
 //                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
 //                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
 //
-//                File f = new File(value_local_path.toString());
+//                File f = new File(text_local_path.toString());
 //
 //                    if(f.exists() & f.isFile()){
 //                        i.putExtra(FilePickerActivity.EXTRA_START_PATH, f.getParent());
@@ -197,7 +197,7 @@
 //                                //Use the provided utility method to parse the result
 //                                List<Uri> files = Utils.getSelectedFilesFromResult(data);
 //                                File file = Utils.getFileForUri(files.get(0));
-//                                value_local_path.setText(file.getPath());
+//                                text_local_path.setText(file.getPath());
 //                                btn_local_path.setEnabled(true);
 //
 //                            }
@@ -296,7 +296,7 @@
 //        //--------------------------------SEARCH-----------------------------------------
 //        if(id == R.id.menuitem_load) {
 //
-//            File dir_path = new File(value_local_path.getText().toString());
+//            File dir_path = new File(text_local_path.getText().toString());
 //            new LongTask().execute("search",dir_path.toString());
 //            cla = new CustomApkListAdapter(apkFilesList,context);
 //            recyclerView.setAdapter(cla);
@@ -308,7 +308,7 @@
 //
 //            if(sharedPrefApkManager.contains(key_global_path)){
 //                value_global_path = sharedPrefApkManager.getString(key_global_path,"Path Not Set");
-//                value_local_path.setText(value_global_path);
+//                text_local_path.setText(value_global_path);
 //            }
 //        }
 //
@@ -400,7 +400,7 @@
 //                Toast.makeText(context,"First Load Files to Select",Toast.LENGTH_SHORT);
 //            }
 //
-//            File dir_path = new File(value_local_path.getText().toString());
+//            File dir_path = new File(text_local_path.getText().toString());
 //            if (dir_path.exists() & dir_path.isDirectory()) {
 //                new LongTask().execute("search",dir_path.toString());
 //                cla = new CustomApkListAdapter(apkFilesList,context);
@@ -573,7 +573,7 @@
 //                cla.SelectUpdatable();
 //                cla.notifyDataSetChanged();
 //            }
-//            ShowMsgInTextView();
+//            showMsgInTextView();
 //
 //        }
 //        return true;
@@ -616,9 +616,9 @@
 //        } else if (id == R.id.nav_send) {
 //
 //        }else  if (id == R.id.nav_about) {
-//            Toast.makeText(getApplication(),"About Selected", Toast.LENGTH_SHORT).show();
-//            startActivity(new Intent(this,About.class));
-////            Toast.makeText(context, "Don't be so curious about me. I am in the making.. ", Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplication(),"AboutFragment Selected", Toast.LENGTH_SHORT).show();
+//            startActivity(new Intent(this,AboutFragment.class));
+////            Toast.makeText(context, "Don't be so curious fragment_about me. I am in the making.. ", Toast.LENGTH_LONG).show();
 //        }else if (id == R.id.nav_help) {
 //            Toast.makeText(context, " If you can't help yourself.. Nobody can.", Toast.LENGTH_LONG).show();
 //        }
@@ -651,7 +651,7 @@
 //
 //            if(objects[0] instanceof File){
 //             //   Log.i(TAG,objects[0].getClass().toString());
-//                text_msgs.setText("Loading : "+((File)objects[0]).getName());
+//                msg_textview.setText("Loading : "+((File)objects[0]).getNamePartsFromApkItem());
 //            }
 //            super.onProgressUpdate(objects);
 //        }
@@ -687,7 +687,7 @@
 //            Log.i(TAG,"in OnPostExecute :");
 //            SortApkList();
 //           // showSnackBar(s);
-//          //  ShowMsgInTextView();
+//          //  showMsgInTextView();
 //            super.onPostExecute(s);
 //        }
 //
@@ -722,31 +722,31 @@
 //
 //        public void getAllSubDirFiles(File file1){
 //        ApkListDataItem ldm ;
-//            for(File f1 : file1.listFiles()){
-//            //   Log.i(TAG,"File : "+f1.getName());
-//                if(f1.isFile() & f1.getName().endsWith(".apk")){
+//            for(File source_apk : file1.listFiles()){
+//            //   Log.i(TAG,"File : "+source_apk.getNamePartsFromApkItem());
+//                if(source_apk.isFile() & source_apk.getNamePartsFromApkItem().endsWith(".apk")){
 //
-//                    ldm = new ApkListDataItem(f1,context);
+//                    ldm = new ApkListDataItem(source_apk,context);
 //
 //                    if(ldm.apk_pkg_info!=null){
 //                        apkFilesList.add(ldm);
 //                    }
-//                  //   Log.i(TAG,"File : "+f1.getName());
-//                    publishProgress(f1);
+//                  //   Log.i(TAG,"File : "+source_apk.getNamePartsFromApkItem());
+//                    publishProgress(source_apk);
 //                }
-//                else if(f1.isDirectory())
+//                else if(source_apk.isDirectory())
 //                {
-//                    getAllSubDirFiles(f1);
+//                    getAllSubDirFiles(source_apk);
 //                }
 //            }
 //        }
 //
 //        public void getDirFiles(File file1){
 //
-//            for(File f1 : file1.listFiles()){
-//                if(f1.isFile() & f1.getName().endsWith(".apk")){
-//                    apkFilesList.add(new ApkListDataItem(f1,context));
-//                    publishProgress(f1);
+//            for(File source_apk : file1.listFiles()){
+//                if(source_apk.isFile() & source_apk.getNamePartsFromApkItem().endsWith(".apk")){
+//                    apkFilesList.add(new ApkListDataItem(source_apk,context));
+//                    publishProgress(source_apk);
 //                }
 //            }
 //            //return apkFilesList;
@@ -889,20 +889,20 @@
 //                String part8 = sharedPrefApkManager.getString(name_part_8,"");
 //                Log.i(TAG,"Part 8 :"+part8);
 //
-//                File f1;
-//                File f2;
+//                File source_apk;
+//                File dest_apk;
 //                String parent;
 //                boolean result ;
 //                for (ApkListDataItem f : files_list)
 //                {
-//                    f1 = new File(f.file.getAbsolutePath());
-//                    Log.i(TAG," f1 path : "+f.file.getAbsolutePath());
+//                    source_apk = new File(f.file.getAbsolutePath());
+//                    Log.i(TAG," source_apk path : "+f.file.getAbsolutePath());
 //                    parent = f.file.getParent();
-//                    Log.i(TAG," f1 parent : "+parent);
-//                    f2 = new File(parent+"/"+getName(f,part1)+part2+getName(f,part3)+part4+getName(f,part5)+part6+getName(f,part7)+part8+".apk");
-//                    result = (f.file).renameTo(f2);
+//                    Log.i(TAG," source_apk parent : "+parent);
+//                    dest_apk = new File(parent+"/"+getNamePartsFromApkItem(f,part1)+part2+getNamePartsFromApkItem(f,part3)+part4+getNamePartsFromApkItem(f,part5)+part6+getNamePartsFromApkItem(f,part7)+part8+".apk");
+//                    result = (f.file).renameTo(dest_apk);
 //                    publishProgress("Renaming : \""+f.file_name+"\" - "+result);
-//                    Log.i(TAG,"Renaming "+f.file_name+" : \""+f2+"\" - "+result);
+//                    Log.i(TAG,"Renaming "+f.file_name+" : \""+dest_apk+"\" - "+result);
 //                }
 //            }else
 //            {
@@ -911,7 +911,7 @@
 //            }
 //        }
 //
-//        protected String getName(ApkListDataItem ld, int i){
+//        protected String getNamePartsFromApkItem(ApkListDataItem ld, int i){
 //            switch(i){
 //                case 0:{  return "";              }
 //                case 1:{  return ld.app_name;     }
@@ -924,14 +924,14 @@
 //        }
 //    }
 //
-//    public void ShowMsgInTextView(String str){
+//    public void showMsgInTextView(String str){
 //        String msg_text = "Total : "+apkFilesList.size()+"\t Selected : "+cla.getSelectedItemsList().size()+"\n"+str;
-//        text_msgs.setText(msg_text);
+//        msg_textview.setText(msg_text);
 //    }
 //
-//    public void ShowMsgInTextView(){
+//    public void showMsgInTextView(){
 //        String msg_text = "Total : "+apkFilesList.size()+"\t Selected : "+cla.getSelectedItemsList().size();
-//        text_msgs.setText(msg_text);
+//        msg_textview.setText(msg_text);
 //    }
 //
 //    public void SortApkList(){
@@ -966,7 +966,7 @@
 //        cla = new CustomApkListAdapter(apkFilesList,context);
 //       recyclerView.setAdapter(cla);
 //        cla.notifyDataSetChanged();
-//        ShowMsgInTextView();
+//        showMsgInTextView();
 //
 //    }
 //

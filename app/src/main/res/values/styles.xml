@@ -31,7 +31,12 @@
 
     <!-- You can also inherit from NNF_BaseTheme.Light -->
 
-    <style name="MyDarkAppTheme" parent="FilePickerTheme">
+    <style name="MyDarkAppTheme.ActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        <item name="android:listDivider">@color/my_divider_color</item>
+        <item name="android:dividerHeight">@dimen/my_divider_height</item>
+    </style>
+
+    <style name="MyDarkAppTheme" parent="ThemeOverlay.MaterialComponents.Dark">
         <item name="android:listDivider">@color/my_divider_color</item>
         <item name="android:dividerHeight">@dimen/my_divider_height</item>
     </style>
@@ -40,6 +45,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
 

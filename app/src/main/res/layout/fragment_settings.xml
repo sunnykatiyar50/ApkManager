@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:textAlignment="viewStart"
+    tools:layout_editor_absoluteX="5dp"
+    tools:layout_editor_absoluteY="5dp"><![CDATA[
+
+
+    android:layout_margin="@dimen/margin_medium" >
+
+
+
+
+
+    ]]>
+
+    <TextView
+        android:id="@+id/label_exsd_path"
+        android:layout_width="394dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:padding="2dp"
+        android:text="@string/label_path_spinner"
+        android:textAlignment="center"
+        android:textColor="#64FFDA"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch_root_access" />
+
+    <Button
+        android:id="@+id/buttton_add_extsd"
+        android:layout_width="144dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="56dp"
+        android:text="Add Path"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settings_storage_spinner"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/buttton_clear_extsd"
+        android:layout_width="151dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="8dp"
+        android:text="Delete Path"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settings_storage_spinner"
+        tools:visibility="visible" />
+
+    <EditText
+        android:id="@+id/text_path_repository"
+        android:layout_width="395dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="16dp"
+        android:autoSizeMaxTextSize="16sp"
+        android:autoSizeMinTextSize="12sp"
+        android:autoSizeTextType="uniform"
+        android:clickable="false"
+        android:editable="false"
+        android:ems="10"
+        android:focusable="auto"
+        android:focusableInTouchMode="false"
+        android:focusedByDefault="false"
+        android:hint="Set The Repository Path"
+        android:inputType="textPersonName"
+        android:lines="2"
+        android:maxLines="3"
+        android:minLines="2"
+        android:textAlignment="viewStart"
+        android:textColor="#00BFA5"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.437"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_browse_repo"
+        android:layout_width="183dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:text="Browse Repository "
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_path_repository" />
+
+    <Button
+        android:id="@+id/button_clear_repo_data"
+        android:layout_width="162dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="28dp"
+        android:text="Clear Repo Data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_path_repository" />
+
+    <Switch
+        android:id="@+id/switch_root_access"
+        android:layout_width="391dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="ROOT Operations"
+        android:textColor="#F78383"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_browse_repo" />
+
+    <Button
+        android:id="@+id/button_open_selector"
+        android:layout_width="193dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Test File Selector"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Spinner
+        android:id="@+id/settings_storage_spinner"
+        android:layout_width="399dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_exsd_path" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

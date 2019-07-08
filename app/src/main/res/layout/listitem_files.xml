@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/file_item_name"
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="6dp"
+        android:layout_weight="1"
+        android:background="#388E3C"
+        android:text="File  Name Here...."
+        android:textColor="#F7F7F7"
+        android:textSize="@dimen/text_size_large"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/file_item_checkbox"
+        app:layout_constraintStart_toEndOf="@+id/file_item_thumbnails"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/file_item_checkbox"
+        android:layout_width="28dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/file_item_time"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:text="File Creation Date here"
+        android:textAlignment="textEnd"
+        android:textColor="#69F0AE"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/file_item_checkbox"
+        app:layout_constraintStart_toEndOf="@+id/file_item_perm"
+        app:layout_constraintTop_toBottomOf="@+id/file_item_size"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/file_item_type"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="6dp"
+        android:text="File Extension Here"
+        android:textAlignment="textStart"
+        android:textColor="#18FFFF"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/file_item_perm"
+        app:layout_constraintEnd_toStartOf="@+id/file_item_size"
+        app:layout_constraintStart_toEndOf="@+id/file_item_thumbnails"
+        app:layout_constraintTop_toBottomOf="@+id/file_item_name" />
+
+    <TextView
+        android:id="@+id/file_item_perm"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="6dp"
+        android:text="File Permissions"
+        android:textColor="#00FF48"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/file_item_time"
+        app:layout_constraintStart_toEndOf="@+id/file_item_thumbnails"
+        app:layout_constraintTop_toBottomOf="@+id/file_item_type" />
+
+    <TextView
+        android:id="@+id/file_item_size"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:text="Size Here"
+        android:textAlignment="textEnd"
+        android:textColor="#FBC02D"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/file_item_time"
+        app:layout_constraintEnd_toStartOf="@+id/file_item_checkbox"
+        app:layout_constraintStart_toEndOf="@+id/file_item_type"
+        app:layout_constraintTop_toBottomOf="@+id/file_item_name" />
+
+    <ImageView
+        android:id="@+id/file_item_thumbnails"
+        android:layout_width="41dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_launcher_background" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

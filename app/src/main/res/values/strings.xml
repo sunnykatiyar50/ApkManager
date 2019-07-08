@@ -17,8 +17,6 @@
     <string name="hint_separator">"Enter any character or word"</string>
     <string name="search_hint">Type here to search files</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-
     <!---->
 
     <string name="apk_size">Apk Size </string>
@@ -27,16 +25,27 @@
     <string name="copy_pkgName">Copy Package Name</string>
     <string name="copy_link">Copy Market Link</string>
     <string name="share_link">Share Market Link</string>
-    <string name="open_sys_appInfo">Open System AppInfo</string>
+    <string name="open_sys_appInfo">Open AppInfo</string>
     <string name="open_inPlaystore">Open in Playstore</string>
     <string name="extract_apk">Extract Apk</string>
     <string name="launch_app">Launch App</string>
-    <string name="uninstall_app">Uninstall App</string>
+    <string name="uninstall_app">Uninstall (Delete Data)</string>
+    <string name="keepdata_uninstall">Uninstall (Keep Data/Cache)</string>
+    <string name="clear_data">Clear Data</string>
+    <string name="disable_app">Disable App</string>
+    <string name="enable_app">Enable App</string>
+    <string name="revoke_perm">Revoke Permissions</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_app_details_">App Details</string>
     <string name="about_title_text">This is title text</string>
     <string name="about_text_string">This app is the parting of android learning experience. This is also my first app. after learning enough, I would like to develop the app professionally and make this app available for others.</string>
     <string name="copy_submenu"><![CDATA[Copy & Share]]></string>
-    <string name="hint_extsd_label">Set ExtSDCard Path to write in it</string>
+    <string name="title_activity_files">FilesActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="textview_msg_hint">Important msg will be shown Here</string>
+    <string name="files_textview_path_hint">Please Grant Permission to Storages from Settings.</string>
+    <string name="label_path_spinner">Grant Permission to Write on External Storages. Click Add and Select Root of theStorage  </string>
+    <string name="up_icon_content_desc">Click to  to Parent Directory</string>
 </resources>

@@ -1,8 +1,8 @@
-<menu   xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context="com.shanekatear.appexplorer.AppDetails_Activity"
-        app:popupTheme="@style/FilePickerTheme">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:popupTheme="@style/FilePickerTheme"
+    tools:context="com.shanekatear.appexplorer.AppDetails_Activity">
 
 
     <item
@@ -10,21 +10,14 @@
         android:orderInCategory="100"
         android:title="@string/launch_app"
         app:showAsAction="never" />
+
+
     <item
-        android:id="@+id/uninstall_item"
+        android:id="@+id/keepdata_install_item"
         android:orderInCategory="100"
-        android:title="@string/uninstall_app"
+        android:title="@string/keepdata_uninstall"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/sys_appinfo_item"
-        android:orderInCategory="100"
-        android:title="@string/open_sys_appInfo"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/playstore_item"
-        android:orderInCategory="100"
-        android:title="@string/open_inPlaystore"
-        app:showAsAction="never" />
+
     <item
         android:id="@+id/extractApk_item"
         android:orderInCategory="100"
@@ -32,6 +25,60 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/sys_appinfo_item"
+        android:orderInCategory="100"
+        android:title="@string/open_sys_appInfo"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/playstore_item"
+        android:orderInCategory="100"
+        android:title="@string/open_inPlaystore"
+        app:showAsAction="never" />
+
+  <item android:title="Extreme Actions"
+        android:orderInCategory="100"
+        android:id="@+id/extreme_actions_item">
+
+      <menu>
+
+          <item
+              android:id="@+id/uninstall_item"
+              android:orderInCategory="100"
+              android:title="@string/uninstall_app"
+              app:showAsAction="never" />
+
+          <item
+              android:id="@+id/killapp_item"
+              android:orderInCategory="100"
+              android:title="Force Stop"
+              app:showAsAction="never" />
+
+          <item
+              android:id="@+id/reset_perm_item"
+              android:orderInCategory="100"
+              android:title="@string/revoke_perm"
+              app:showAsAction="never" />
+
+          <item
+              android:id="@+id/clear_data_item"
+              android:orderInCategory="100"
+              android:title="Clear Data"
+              app:showAsAction="never" />
+
+          <item
+              android:id="@+id/disable_app_item"
+              android:orderInCategory="100"
+              android:title="Disable/Freeze App"
+              app:showAsAction="never" />
+
+      </menu>
+
+
+
+  </item>
+
+  <item
         android:orderInCategory="100"
         android:title="@string/copy_submenu"
         app:showAsAction="never">

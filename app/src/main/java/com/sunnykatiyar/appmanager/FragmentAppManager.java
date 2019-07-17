@@ -33,11 +33,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
-import static com.sunnykatiyar.appmanager.ActivityMain.prefEditorAppList;
-import static com.sunnykatiyar.appmanager.ActivityMain.sharedPrefAppList;
+import static com.sunnykatiyar.appmanager.ActivityMain.prefEditAppSettings;
+import static com.sunnykatiyar.appmanager.ActivityMain.sharedPrefAppSettings;
 import static com.sunnykatiyar.appmanager.ActivityMain.toolbar_main;
 
-public class FragmentApps extends Fragment {
+public class FragmentAppManager extends Fragment {
 
     public static Context appContext;
     public static TextView progress_percent ;
@@ -100,7 +100,7 @@ public class FragmentApps extends Fragment {
         label_msgbox = v.findViewById(R.id.label_applist_msgbox);
         mainpm = getContext().getPackageManager();
 
-        sort_apps_by = sharedPrefAppList.getString(key_sorting, sort_apps_by_name);
+        sort_apps_by = sharedPrefAppSettings.getString(key_sorting, sort_apps_by_name);
         appContext = getContext();
 
         Log.e("in ApplistFragment : ","getInstalled Packages in "+((System.currentTimeMillis()-initFragmentTime)/1000)+"s");
@@ -121,7 +121,7 @@ public class FragmentApps extends Fragment {
             myAsyncTask = new MyAsyncTask(getActivity(), search_query);
             myAsyncTask.execute();
             adapter = new AdapterAppList(mainpm, launchable_apps_list, getActivity());
-         //   app_listview.setAdapter(adapter);
+         //   app_listview.setNewObjectFilesList(adapter);
         //    adapter.notifyDataSetChanged();
             showMsg(toast_msg,"Launching asynctask : query = "+search_query,false);
         }else{
@@ -204,7 +204,7 @@ public class FragmentApps extends Fragment {
         Log.i(TAG," onPrepareOptionsMenu : ");
 
 //-----------------------LOADING "SORT BY" FROM SHARED PREFERENCES---------------------------------------
-        value_sorting = sharedPrefAppList.getString(key_sorting, sort_apps_by_name);
+        value_sorting = sharedPrefAppSettings.getString(key_sorting, sort_apps_by_name);
         Log.i(TAG,"Sorting Setting in Shared Preferences: "+value_sorting);
 
         if(value_sorting.equals(sort_apps_by_name)){
@@ -231,7 +231,7 @@ public class FragmentApps extends Fragment {
 
 //--------------------------------LOADING "ORDER BY" FROM SHARED PREFERENCES---------------------------------------
 
-        value_order_by = sharedPrefAppList.getString(key_order_by, order_apps_increasing);
+        value_order_by = sharedPrefAppSettings.getString(key_order_by, order_apps_increasing);
         Log.i(TAG," Found Ordering Settings in SHARED PREFERENCES: "+ value_order_by);
 
         if(value_order_by.equals(order_apps_decreasing)){
@@ -267,54 +267,66 @@ public class FragmentApps extends Fragment {
             }
 
             case R.id.menuitem_sortbyname : {
-                item.setChecked(true);
+                if(!item.isChecked()){
+                    item.setChecked(true);
+                }
                 sort_apps_by = sort_apps_by_name;
                 Log.i(TAG,"Clicked sort by name");
-                prefEditorAppList.putString(key_sorting, sort_apps_by).commit();
+                prefEditAppSettings.putString(key_sorting, sort_apps_by).commit();
                 SortAppList();
                 break;
             }
 
             case R.id.menuitem_sortappsby_installtime: {
-                item.setChecked(true);
+                if(!item.isChecked()){
+                    item.setChecked(true);
+                }
                 Log.i(TAG,"Clicked sort by size");
                 sort_apps_by = sort_apps_by_update_time;
-                prefEditorAppList.putString(key_sorting, sort_apps_by).commit();
+                prefEditAppSettings.putString(key_sorting, sort_apps_by).commit();
                 SortAppList();
                 break;
             }
 
             case R.id.menuitem_sortappsby_updatetime: {
-                item.setChecked(true);
+                if(!item.isChecked()){
+                    item.setChecked(true);
+                }
                 Log.i(TAG,"Clicked sort by size");
                 sort_apps_by = sort_apps_by_update_time;
-                prefEditorAppList.putString(key_sorting, sort_apps_by).commit();
+                prefEditAppSettings.putString(key_sorting, sort_apps_by).commit();
                 SortAppList();
                 break;
             }
 
             case R.id.menuitem_sortappsby_size:{
-                item.setChecked(true);
+                if(!item.isChecked()){
+                    item.setChecked(true);
+                }
                 Log.i(TAG,"Clicked sort by size");
                 sort_apps_by = sort_apps_by_size;
-                prefEditorAppList.putString(key_sorting, sort_apps_by).commit();
+                prefEditAppSettings.putString(key_sorting, sort_apps_by).commit();
                 SortAppList();
                 break;
             }
 
             //-----------------------------------INVERSE SORTING-------------------------------------
             case R.id.menuitem_apps_decreasing:{
-                item.setChecked(true);
+                if(!item.isChecked()){
+                    item.setChecked(true);
+                }
                 order_apps_by = order_apps_decreasing;
-                prefEditorAppList.putString(key_order_by, order_apps_by).commit();
+                prefEditAppSettings.putString(key_order_by, order_apps_by).commit();
                 SortAppList();
                 break;
             }
 
             case R.id.menuitem_apps_increasing:{
-                item.setChecked(true);
+                if(!item.isChecked()){
+                    item.setChecked(true);
+                }
                 order_apps_by = order_apps_increasing;
-                prefEditorAppList.putString(key_order_by, order_apps_by).commit();
+                prefEditAppSettings.putString(key_order_by, order_apps_by).commit();
                 SortAppList();
                 break;
             }

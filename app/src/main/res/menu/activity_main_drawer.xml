@@ -9,30 +9,40 @@
             android:id="@+id/nav_applist"
             android:icon="@drawable/ic_apps_black_24dp"
             android:title="Apps Explorer" />
+
         <item
             android:id="@+id/nav_apklist"
             android:icon="@drawable/ic_android_black_24dp"
             android:title="APK Manager" />
 
         <item
+            android:id="@+id/nav_file_list"
+            android:icon="@drawable/ic_folder_black_24dp"
+            android:title="File Manager" />
+
+        <item
+            android:id="@+id/nav_root_browser"
+            android:icon="@drawable/ic_create_new_folder_black_24dp"
+            android:title="Root Browser" />
+        <item
             android:id="@+id/nav_apk_rename_format"
             android:icon="@drawable/ic_sort_by_alpha_black_24dp"
             android:title="Apk Renaming Settings" />
 
         <item
-            android:id="@+id/nav_file_list"
-            android:icon="@drawable/ic_note_add_black_24dp"
-            android:title="File Manager" />
+            android:id="@+id/nav_app_settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="General Settings" />
 
         <item
             android:id="@+id/nav_file_rename_format"
-            android:icon="@drawable/ic_sort_by_alpha_black_24dp"
-            android:title="Files Renaming Settings" />
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="Files Settings" />
 
         <item
-            android:id="@+id/nav_app_settings"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="App Settings" />
+            android:id="@+id/nav_operations"
+            android:icon="@drawable/ic_perm_device_information_black_24dp"
+            android:title="Task Details" />
 
     </group>
 

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/FilePickerTheme"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivityFileSelector">
+
+    <TextView
+        android:id="@+id/root_browser_path_textview"
+        android:layout_width="347dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeMinTextSize="14sp"
+        android:autoSizeTextType="uniform"
+        android:background="#202221"
+        android:ellipsize="start"
+        android:padding="2sp"
+        android:singleLine="true"
+        android:text="@string/root_browser_textview_path_hint"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/root_browser_image_button_up"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/root_browser_storage_spinner" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/root_browser_rview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:textAlignment="viewEnd"
+        app:layout_constraintBottom_toTopOf="@+id/root_browser_msg_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.533"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/root_browser_progress_bar" />
+
+    <Spinner
+        android:id="@+id/root_browser_storage_spinner"
+        android:layout_width="419dp"
+        android:layout_height="39dp"
+
+        android:background="@drawable/spinner_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/listitem_storage_spinner" />
+
+    <ImageButton
+        android:id="@+id/root_browser_image_button_up"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#FC0F0F0F"
+        android:contentDescription="@string/up_icon_content_desc"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/root_browser_path_textview"
+        app:layout_constraintTop_toBottomOf="@+id/root_browser_storage_spinner"
+        app:srcCompat="@drawable/ic_arrow_upward_teal_a700_24dp" />
+
+    <ProgressBar
+        android:id="@+id/root_browser_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="12dp"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/root_browser_path_textview" />
+
+    <!--<com.google.android.material.bottomnavigation.BottomNavigationView-->
+        <!--android:id="@+id/bottom_navigation_view"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="49dp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:visibility="visible"-->
+        <!--app:labelVisibilityMode="labeled"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintHorizontal_bias="0.0"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:menu="@menu/files_bottom_menu" />-->
+
+    <!--<androidx.appcompat.widget.Toolbar -->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:id="@+id/toolbar"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="53dp"-->
+    <!--android:background="?attr/colorPrimary"-->
+    <!--android:minHeight="?attr/actionBarSize"-->
+    <!--android:theme="?attr/actionBarTheme"-->
+    <!--app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_view_action"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintHorizontal_bias="0.0"-->
+    <!--app:layout_constraintStart_toStartOf="parent">-->
+
+    <!--<include layout="@layout/toolbar_layout" />-->
+
+
+    <!--</androidx.appcompat.widget.Toolbar>-->
+
+    <!--<com.google.android.material.bottomnavigation.BottomNavigationView-->
+    <!--android:id="@+id/bottom_navigation_view_option"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="49dp"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:background="@color/colorPrimary"-->
+    <!--android:visibility="gone"-->
+    <!--app:labelVisibilityMode="labeled"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:menu="@menu/files_bottom_menu" />-->
+
+    <!--<com.google.android.material.bottomnavigation.BottomNavigationView-->
+    <!--android:id="@+id/bottom_navigation_view_action"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="49dp"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:background="@color/colorPrimary"-->
+    <!--android:visibility="gone"-->
+    <!--app:labelVisibilityMode="labeled"-->
+    <!--app:layout_constraintBottom_toTopOf="@+id/root_browser_msg_text_view"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintHorizontal_bias="0.0"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:menu="@menu/files_bottom_menu" />-->
+
+    <TextView
+        android:id="@+id/root_browser_msg_text_view"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:autoSizeMaxTextSize="14sp"
+        android:autoSizeMinTextSize="10sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:lines="1"
+        android:maxLines="2"
+        android:minLines="1"
+        android:text="@string/textview_msg_hint"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/root_bottomAppBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/rootBrowser_fab_action"
+        android:layout_width="55dp"
+        android:layout_height="65dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="40dp"
+        android:background="#161515"
+        android:scaleType="center"
+        android:src="@drawable/ic_content_paste_amber_500_36dp"
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="@+id/root_browser_msg_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" />
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/root_bottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottomBarHeight"
+        android:layout_gravity="bottom"
+        android:foregroundTint="#991414"
+        app:backgroundTint="@color/colorPrimary"
+        app:buttonGravity="bottom|top"
+        app:fabAlignmentMode="center"
+        app:fabCradleMargin="2dp"
+        app:fabCradleRoundedCornerRadius="5dp"
+        app:fabCradleVerticalOffset="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/files_bottom_menu"
+        tools:ignore="BottomAppBar,MissingConstraints" />
+
+    <!--<Button-->
+        <!--android:id="@+id/root_browser_button_add_tree"-->
+        <!--android:layout_width="116dp"-->
+        <!--android:layout_height="38dp"-->
+        <!--android:background="#201F1F"-->
+        <!--android:text="Add Storage"-->
+        <!--android:textColor="#F8F3EEEE"-->
+        <!--android:textColorHint="#F8F7EFEF"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/root_browser_path_textview"-->
+        <!--app:layout_constraintStart_toEndOf="@+id/root_browser_storage_spinner" />-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

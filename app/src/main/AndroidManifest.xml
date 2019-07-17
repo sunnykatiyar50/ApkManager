@@ -20,15 +20,14 @@
         android:roundIcon="@drawable/ic_android"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.sunnykatiyar.appmanager.ActivityFileSelector"></activity>
-        <activity
-            android:name="com.sunnykatiyar.appmanager.ActivityMain"
+
+        <activity   android:name=".ActivityMain"
             android:label="App Explorer"
             android:theme="@style/FilePickerTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -36,11 +35,41 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        
+        <activity  android:name=".ActivityRootBrowser"
+            android:label="@string/title_activity_root_browser"
+            android:parentActivityName=".ActivityMain"
+            android:theme="@style/FilePickerTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sunnykatiyar.appmanager.ActivityMain" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            </intent-filter>
+        </activity>
+
+
+        <activity   android:name=".ActivityOperations"
+            android:label="@string/title_activity_operation"
+            android:parentActivityName=".ActivityMain"
+            android:theme="@style/FilePickerTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.sunnykatiyar.appmanager.ActivityMain" />
+        </activity>
+
+        <activity android:name=".ActivityFileSelector" >
+
+        </activity>
+
+
 
         <activity
-            android:name="com.sunnykatiyar.appmanager.ActivityAppDetails"
+            android:name=".ActivityAppDetails"
             android:label="@string/title_activity_app_details_"
-            android:parentActivityName="com.sunnykatiyar.appmanager.ActivityMain"
+            android:parentActivityName=".ActivityMain"
             android:theme="@style/FilePickerTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -48,28 +77,27 @@
         </activity>
 
         <provider
-        android:name="androidx.core.content.FileProvider"
-        android:authorities="${applicationId}.provider"
-        android:exported="false"
-        android:grantUriPermissions="true">
-        <meta-data
-            android:name="android.support.FILE_PROVIDER_PATHS"
-            android:resource="@xml/nnf_provider_paths" />
-    </provider>
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/nnf_provider_paths" />
+        </provider>
 
         <provider
-            android:name="com.sunnykatiyar.appmanager.FileProvider"
+            android:name=".FileProvider"
             android:authorities="${applicationId}.documents"
-            android:grantUriPermissions = "true"
             android:exported="true"
+            android:grantUriPermissions="true"
             android:permission="android.permission.MANAGE_DOCUMENTS">
             <intent-filter>
-                <action android:name="android.content.action.DOCUMENTS_PROVIDER"/>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
             </intent-filter>
         </provider>
 
-
-        <receiver android:name="com.sunnykatiyar.appmanager.ReceiverSetup">
+        <receiver android:name=".ReceiverSetup">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_INSTALL" />
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
@@ -77,6 +105,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.REBOOT" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
@@ -92,7 +121,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.sunnykatiyar.appmanager.ServiceSetup"></service>
+        <service android:name=".ServiceSetup" />
     </application>
 
 </manifest>

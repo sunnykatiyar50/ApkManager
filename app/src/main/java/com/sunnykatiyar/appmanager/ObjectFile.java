@@ -1,202 +1,192 @@
 package com.sunnykatiyar.appmanager;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.util.Log;
 
-import androidx.documentfile.provider.DocumentFile;
+import com.topjohnwu.superuser.Shell;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 public class ObjectFile {
 
-    File file;
-    DocumentFile file_doc;
-    String doc_id;
-    Uri uri;
-    Uri parent_uri;
-    String file_name;
-    String file_size;
-    String creation_time;
-    String flags;
-    String access_permission;
-    String icon_path;
-    final String TAG = "OBJECT_FILE :";
-    String modification_time;
-    String file_type;
-    boolean check_box_state = false;
-    Context context;
-    
-    
-    public ObjectFile(Cursor cursor, Uri uri,Context context){
+    public File file;
+    public String path="";
+    public String name="";
+    public String parent="";
+    public String perm="";
+    public boolean isDirecrtory;
+    public String mod_time="";
+//    public boolean isFileSystem;
+//    public String octal_perm="";
+//    public String mount_point="";
+//    public String access_time="";
+//    public String change_time="";
+//    public String birth_time="";
+//    public String group_id="";
+//    public String group_name="";
+//    public String user_id="";
+    public String user_name="";
+    public String size="";
+    public long long_size;
+    public String hard_links="";
+    public String inode="";
+    public String file_type="";
+    public int drawableIcon;
+    public boolean isSelected = false;
+    final String TAG = "OBJECT FILE : ";
 
-        this.context = context;
-        this.uri = uri;
-        this.file_doc = DocumentFile.fromTreeUri(context, uri);
-        this.doc_id = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DOCUMENT_ID));
-        this.file_name = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME));
-        this.file_type = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE));
-        icon_path = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_ICON));
-        this.flags = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_FLAGS));
-        this.file_size = convertSizeToFormat(cursor.getLong(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_SIZE)));
+//    String[] lslongHeaders = {"PERM","CHILD_COUNT","OWNER","GROUP","SIZE","TIME","NAME"};
 
-//        Bundle bundle  =     DocumentsContract.getDocu
+    public ObjectFile(File f){
 
-//        if(file_doc.isDirectory()){
-//            this.file_size = "Directory : "+file_doc.listFiles().length+" files";
-//        }
-        this.modification_time = convertTimeToFormat(cursor.getLong(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED)));
-//      this.parent_uri = Uri.parse(uri.toString().substring(0,uri.toString().lastIndexOf(file_name)));
-        this.parent_uri = Uri.parse(uri.toString().replace(Uri.encode(file_name),""));
-
-        if(this.doc_id.endsWith(":")){
-            this.parent_uri=null;
+        if(f.canRead()){
+            this.file = f;
+            this.perm = getPerm(f);
+            this.mod_time = convertTimeToFormat(f.lastModified());
+            if(f.isDirectory()){
+                this.drawableIcon = R.drawable.ic_folder_white_24dp;
+                this.file_type = "Folder";
+                if(null == f.listFiles()){
+                    size = "";
+                }else{
+                    this.size = f.list().length+ " files";
+                }
+            }else{
+                this.file_type = file.getName().substring(file.getName().lastIndexOf('.')+1);
+                this.drawableIcon = R.drawable.ic_insert_drive_file_white_24dp;
+                this.size = convertSizeToFormat(f.length());
+            }
         }
-        //this.access_permission = getPermissionFromDoc(this.file_doc);
-
-        Log.i(TAG,"-------------------------------------------------------------------------------------------------------------------");
-        Log.i(TAG,"NEW_DOCUMENT_CREATED : "+file_name);
-//      Log.i(TAG,"DOCUMENTID : "+doc_id);
-        Log.i(TAG,"URI : "+uri);
-        Log.i(TAG,"PAR : "+parent_uri);
-//        Log.i(TAG,"\nDisplayName : "+file_name);
-//        Log.i(TAG,"\nFLAGS : "+flags);
-//        Log.i(TAG,"\nicon path : "+icon_path);
-//        Log.i(TAG,"\ngetLastPathSegment : "+uri.getLastPathSegment());
-//        Log.i(TAG,"\ngetEncodedSchemeSpecificPart : "+uri.getEncodedSchemeSpecificPart());
-//        Log.i(TAG,"\ngetEncodedAuthority : "+uri.getEncodedAuthority());
-//       Log.i(TAG,"\ngetEncodedPath : "+uri.getEncodedPath());
-    }
-
-    public ObjectFile(Uri uri, Context c){
-
-        this.context = c;
-        this.uri = uri;
-        this.file = new File(uri.getPath())  ;
-        this.file_doc = DocumentFile.fromSingleUri(context, uri);
-        this.file_name = file_doc.getName();
-        this.file_type = file_doc.getType();
-        this.access_permission = getPermissionFromDoc(this.file_doc);
-        this.file_size = getSizeFromFile(this.file);
-        this.modification_time = convertTimeToFormat(file_doc.lastModified());
-
-        Log.i(TAG," New Document CREATED "+this.file_name);
-    }
-
-
-    public ObjectFile(DocumentFile doc, Context c){
-        this.context = c;
-        this.file_doc = doc;
-        this.uri = file_doc.getUri();
-        this.file = new File(uri.getPath());
-        this.file_name = file_doc.getName();
-        this.file_size = getSizeFromDoc(file_doc);
-        this.modification_time = convertTimeToFormat(file_doc.lastModified());
-        this.file_type = getFileTypeFromDoc(file_doc);
-        this.access_permission = getPermissionFromDoc(this.file_doc);
-
-        Log.i(TAG," New Document CREATED "+file_name);
+        Log.i(TAG,"NEW FILE CREATED BY FILE: "+file.getAbsolutePath());
 
     }
 
-    public ObjectFile(File file, Context c){
-        this.context = c;
-        this.file = file;
-        this.file_doc = DocumentFile.fromFile(file);
-        this.uri = file_doc.getUri();
-        this.file_name = file.getName();
-        this.file_size = getSizeFromFile(file);
-        this.modification_time = convertTimeToFormat(file.lastModified());
-        this.file_type = getFileTypeFromFile(file);
-        this.access_permission = getPermissionFromDoc(this.file_doc);
+    public ObjectFile(String path){
+        String command;
+        Shell.Result result;
+        String[] stats;
 
-        Log.i(TAG," New Document CREATED "+file_name);
+        path = Paths.get(path).toString();
 
-    }
+        command = "stat -c '%A~%U~%h~%.19y~%n~%s' \""+path+"\"";
+       //Log.i(TAG,"STAT COMMAND : "+command);
 
-    public String getFileTypeFromFile(File file){
+        try{
+            result = Shell.su(command).exec();
+           // Log.i(TAG,"STAT COMMAND OUTPUT : "+result.getOut().get(0));
+            stats = result.getOut().get(0).split("~");
+            //Log.i(TAG,"STAT ARRAY Size : "+stats.length);
+            this.perm = stats[0];
+            this.user_name = stats[1];
+            this.hard_links = stats[2];
+            this.mod_time = stats[3];
+            this.path = path;
+            this.name = Paths.get(this.path).getFileName().toString();
+            this.parent = Paths.get(this.path).getParent().toString();
 
-        String type = file.getName();
+//          Log.i(TAG,"NEW FILE Name at CREATED TIME: "+name);
+            this.size = convertSizeToFormat(Long.parseLong(stats[5]));
+            this.long_size = Long.parseLong(stats[5]);
 
-        type = (type.substring(type.lastIndexOf('.')+1,type.length()-1)).toUpperCase();
+            if(perm.startsWith("d")){
+                isDirecrtory = true;
+                this.size = hard_links;
+                file_type = "Folder";
+                this.drawableIcon = R.drawable.ic_folder_white_24dp;
+            }else if(perm.startsWith("-")){
+                 file_type = name.substring(name.lastIndexOf('.')+1);
+                 this.drawableIcon = R.drawable.ic_insert_drive_file_white_24dp;
+            }else if(perm.startsWith("l")){
+                file_type = "symlink";
+                this.drawableIcon = R.drawable.ic_link_white_24dp;
+            }else if(perm.startsWith("c")){
+                this.drawableIcon = R.drawable.ic_dns_white_24dp;
+                file_type = "character device";
+            }else if(perm.startsWith("b")){
+                this.drawableIcon = R.drawable.ic_sd_storage_white_24dp;
+                file_type = "block device";
+            }else if(perm.startsWith("n")){
+                this.drawableIcon = R.drawable.ic_cloud_upload_white_24dp;
+                file_type = "network file";
+            }else if(perm.startsWith("p")){
+                this.drawableIcon = R.drawable.ic_insert_drive_file_white_24dp;
+                file_type = "socket";
+            }else if(perm.startsWith("s")){
+                this.drawableIcon = R.drawable.ic_settings_input_composite_white_24dp;
+                file_type = "FIFO";
+            }
 
-        if(file.isDirectory()){
-            type = "Directory";
-        }else if(type ==null){
-            type = "Unknown";
+        }catch(Exception ex){
+            Log.e(TAG,"STAT COMMAND : "+command);
+            Log.e(TAG,"STAT COMMAND OUTPUT FAILED : ");
         }
-
-        return type;
+      //  Log.i(TAG,"NEW FILE CREATED BY STAT: "+name);
     }
 
-    public String getFileTypeFromDoc(DocumentFile df){
+    public ObjectFile(String[] ls_row){
 
-        String type = file_doc.getType();;
-
-        if(df.isDirectory()){
-            type = "Directory";
-        }else if(type==null){
-            type = "Unknown";
-        }
-
-        return type;
     }
 
-    public String getSizeFromFile(File file){
+    public void setAllProperties(){
 
-        String size = "Not Available";
+        String command;
+        Shell.Result result;
+        String[] stats;
 
-        if(file.isDirectory()){
-            size = file.listFiles().length+" items";
-        }else if(file.isFile()){
-            size = convertSizeToFormat(file.length());
-        }
-        return size;
-    }
+        command = "stat -c '%a~%A~%F~%g~%G~%h~%m~%n~%s~%u~%U~%w~%.19x~%.19y~%.19z' "+"\""+path+"\"";
+        Log.i(TAG,"STAT COMMAND : "+command);
 
-    public String getSizeFromDoc(DocumentFile doc){
-
-        String size = "Not Available";
-
-        if(doc.isDirectory()){
-            size = doc.listFiles().length+" files";
-        }else if(doc.isFile()){
-            size = convertSizeToFormat(doc.length());
-        }
-        return size;
-    }
-
-    public String getPermissionFromDoc(DocumentFile doc){
-
-        String file_perm = "Not Available";
-
-        if(doc.canRead() & !doc.canWrite()){
-            file_perm = "Read Only";
-        }else
-        if(doc.canWrite() & !doc.canRead()){
-            file_perm = "Write Only";
-        }else
-        if(doc.canRead() & doc.canWrite()){
-            file_perm = "Read/Write";
+        try{
+            result = Shell.su(command).exec();
+            Log.i(TAG,"STAT COMMAND OUTPUT : "+result.getOut().get(0));
+            stats = result.getOut().get(0).split("~");
+            Log.i(TAG,"STAT ARRAY Size : "+stats.length);
+//            this.octal_perm = stats[0];
+//            this.perm = stats[1];
+//            this.file_type = stats[2];
+//            this.group_id = stats[3];
+//            this.group_name= stats[4];
+//            this.hard_links = stats[5];
+//            this.mount_point = stats[6];
+//            this.name = stats[7];
+//            this.size = stats[8];
+//            this.user_id = stats[9];
+//            this.user_name = stats[10];
+//            this.birth_time = stats[11];
+//            this.access_time = stats[12];
+//            this.mod_time = stats[13];
+//            this.change_time = stats[14];
+        }catch(Exception ex){
+            Log.i(TAG,"STAT COMMAND OUTPUT FAILED : ");
         }
 
-        return file_perm;
+        Log.i(TAG,"ALL PRPERTIES SET : "+name);
+    }
 
+    public String getPerm(File f){
+        String perm = "";
+        if(f.canRead()){
+            perm = perm+"r";
+        }
+        if(f.canWrite()){
+            perm = perm+"w";
+        }
+        if(f.canExecute()){
+            perm = perm+"x";
+        }
+        return  perm;
     }
 
     public String convertSizeToFormat(long length) {
         final long MB = 1024 * 1024;
         final long KB = 1024;
         final long GB = 1024 * 1024 * 1024;
-        final DecimalFormat format = new DecimalFormat("#.##");
+        final DecimalFormat format = new DecimalFormat("#.###");
 
-        if(length>GB){
+        if (length > GB) {
             return format.format(length / GB) + " MB";
         }
         if (length > MB) {
@@ -209,10 +199,9 @@ public class ObjectFile {
         return format.format(length) + "Bytes";
     }
 
-    public String convertTimeToFormat(long time){
-        DateFormat dateFormat = new SimpleDateFormat("hh:mm a dd-MM-yy");
+    public String convertTimeToFormat(long time) {
+        DateFormat dateFormat = new SimpleDateFormat("hh:mm a dd~MM~yy");
         String strDate = dateFormat.format(time);
         return strDate;
     }
-
 }

@@ -3,11 +3,14 @@ package com.sunnykatiyar.appmanager;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
@@ -32,15 +35,17 @@ import java.util.HashMap;
 import java.util.List;
 
 import static android.content.Intent.createChooser;
-import static com.sunnykatiyar.appmanager.FragmentApps.activityManager;
-import static com.sunnykatiyar.appmanager.FragmentApps.clipboardManager;
-import static com.sunnykatiyar.appmanager.FragmentApps.mainpm;
+import static com.sunnykatiyar.appmanager.FragmentAppManager.activityManager;
+import static com.sunnykatiyar.appmanager.FragmentAppManager.appContext;
+import static com.sunnykatiyar.appmanager.FragmentAppManager.clipboardManager;
+import static com.sunnykatiyar.appmanager.FragmentAppManager.mainpm;
 import static com.sunnykatiyar.appmanager.AdapterAppList.clicked_pkg;
 import static com.sunnykatiyar.appmanager.AdapterAppList.clicked_pkg_label;
+import static com.topjohnwu.superuser.internal.InternalUtils.getContext;
 
 public class ActivityAppDetails extends AppCompatActivity {
 
-    private static final String TAG = "APPDETAILS ACTIVITY : ";
+    private static final String TAG = "MYAPP : APPDETAILS ACTIVITY : ";
 
     protected Activity activity = ActivityAppDetails.this;
     ImageView appinfo_icon;
@@ -91,7 +96,7 @@ public class ActivityAppDetails extends AppCompatActivity {
         appinfo_pkgname = findViewById(R.id.pkg_name);
         install_date = findViewById(R.id.install_date);
         app_size = findViewById(R.id.app_size);
-        rootAccess = ActivityMain.sharedPrefAppSettings.getBoolean(key_root_access,false);
+        rootAccess = ActivityMain.sharedPrefSettings.getBoolean(key_root_access,false);
         pm = this.getPackageManager();
 
         install_date.setText(new SimpleDateFormat().format(appinfo_clicked_pkg.firstInstallTime));
@@ -173,6 +178,7 @@ public class ActivityAppDetails extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
+
             case R.id.launch_item: {
                 showMsg("Launching " + applabel);
                 i = mainpm.getLaunchIntentForPackage(p.packageName);
@@ -216,16 +222,7 @@ public class ActivityAppDetails extends AppCompatActivity {
             }
 
             case R.id.extractApk_item: {
-
-                File apk = new File(clicked_pkg.applicationInfo.sourceDir);
-                if (apk == null) {
-                    Toast.makeText(this, "No Apk Available", Toast.LENGTH_SHORT);
-                } else {
-                    Log.i(TAG, "APk is not null");
-                    classApkOperationObject = new ClassApkOperation(new ObjectAppPackage(clicked_pkg.packageName, getBaseContext()), getBaseContext());
-                    classApkOperationObject.extractApk();
-                    showMsg("Package Extracted to - "+ classApkOperationObject.parent_folder.getAbsolutePath());
-                }
+               extract_apk(clicked_pkg.packageName);
                 break;
             }
 
@@ -256,85 +253,27 @@ public class ActivityAppDetails extends AppCompatActivity {
             }
 
             case R.id.killapp_item: {
-                if (!rootAccess) {
-                    activityManager.killBackgroundProcesses(clicked_pkg.packageName);
-                    showMsg("Force Stopped " + clicked_pkg_label);
-                } else if (rootAccess) {
-                    try {
-                        String command = "am force-stop " + clicked_pkg.packageName;
-                        Shell.su().exec();
-                        showMsg("Force Stopped " + clicked_pkg_label);
-                    } catch (Exception ex) {
-                        showMsg("Killing App Failed " + clicked_pkg_label);
-                    }
-                }
-
+                kill_app();
                 break;
             }
 
             case R.id.clear_data_item: {
-                if (!rootAccess) {
-                    activityManager.killBackgroundProcesses(clicked_pkg.packageName);
-                    showMsg("Data Cleared for  " + clicked_pkg_label);
-                } else if (rootAccess) {
-                    try {
-                        String command = "pm clear " + clicked_pkg.packageName;
-                        Shell.su().exec();
-                        showMsg("Data Cleared for  " + clicked_pkg_label);
-                    } catch (Exception ex) {
-                        showMsg("Data Cleared failed for  " + clicked_pkg_label);
-                    }
-                }
+               clear_data();
                 break;
             }
 
             case R.id.disable_app_item: {
-
-                if (clicked_pkg.applicationInfo.enabled) {
-                    if (!rootAccess) {
-                        pm.setApplicationEnabledSetting(clicked_pkg.packageName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
-                        showMsg("Disabled App " + clicked_pkg_label);
-                    } else if (rootAccess) {
-                        try {
-                            String command = "pm disable-user " + clicked_pkg.packageName;
-                            Shell.su().exec();
-                            showMsg("Disabled App " + clicked_pkg_label);
-                            item.setTitle(R.string.enable_app);
-                        } catch (Exception ex) {
-                            showMsg("Disable App Failed for " + clicked_pkg_label);
-                        }
-                    }
-                } else {
-                    if (!rootAccess) {
-                        pm.setApplicationEnabledSetting(clicked_pkg.packageName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, 0);
-                        showMsg("Enabled App " + clicked_pkg_label);
-                    } else if (rootAccess) {
-                        try {
-                            String command = "pm enable " + clicked_pkg.packageName;
-                            Shell.su().exec();
-                            showMsg("Enabled App " + clicked_pkg_label);
-                            item.setTitle(R.string.disable_app);
-                        } catch (Exception ex) {
-                            showMsg("Enabling Failed for " + clicked_pkg_label);
-                        }
-                    }
-                }
+                disable_app(item);
                 break;
             }
 
             case R.id.keepdata_install_item: {
-                if (!rootAccess) {
-                    activityManager.killBackgroundProcesses(clicked_pkg.packageName);
-                    showMsg("Uninstalling " + clicked_pkg_label + " App without Deleting Data.");
-                } else if (rootAccess) {
-                    try {
-                        String command = "pm uninstall -k " + clicked_pkg.packageName;
-                        Shell.su().exec();
-                        showMsg("Uninstalling " + clicked_pkg_label + " App without Deleting Data.");
-                    } catch (Exception ex) {
-                        showMsg("Uninstalling" + clicked_pkg_label + " App Failed.");
-                    }
-                }
+                keepdata_uninstall();
+                break;
+            }
+
+            case R.id.reset_perm_item:{
+                revokePermission();
                 break;
             }
 
@@ -343,13 +282,236 @@ public class ActivityAppDetails extends AppCompatActivity {
                 break;
             }
 
-
             default: {
                 Log.i(TAG, "unknown menu item clicked");
                 break;
             }
         }
         return true;
+    }
+
+    private void revokePermission(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
+        builder.setTitle("Confirm Revoking permissions for "+clicked_pkg_label);
+        builder.setMessage("Click Yes to Continue...");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    showMsg("Revoke permission via terminal :" + Shell.rootAccess());
+                   // Shell.sh("pm reset-permissions " + clicked_pkg.packageName).exec();
+                    Log.i(TAG, clicked_pkg.applicationInfo.loadLabel(mainpm).toString() + " permission revoked Successfully");
+                } catch (Exception ex) {
+                    Log.e(TAG, "Revoke Permission :" + ex);
+                }
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+
+    }
+
+    private void keepdata_uninstall(){
+
+        showMsg("Confirm to uninstall " + clicked_pkg_label);
+        AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
+        builder.setTitle("Confirm to uninstall but keep data " + clicked_pkg_label);
+        builder.setMessage("Click Yes to Continue...");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showMsg("Uninstalling without deleting data "+clicked_pkg_label);
+                try {
+                    String command = "pm uninstall -k "+clicked_pkg.packageName;
+                    Shell.sh(command).exec();
+                    showMsg("Uninstalling " + clicked_pkg_label + " App without Deleting Data.");
+                } catch (Exception ex) {
+                    Log.e(TAG, "Uninstalling App Failed For " + clicked_pkg_label);
+                }
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showMsg("Uninstallation Cancelled of " + clicked_pkg_label);
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+    private void disable_app(MenuItem item){
+        if (clicked_pkg.applicationInfo.enabled) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
+            builder.setTitle("Confirm to disable " + clicked_pkg_label);
+            builder.setMessage("Click Yes to Continue...");
+            builder.setCancelable(false);
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    showMsg("Confirmed Disabling "+clicked_pkg_label);
+
+                    if (!rootAccess) {
+                        pm.setApplicationEnabledSetting(clicked_pkg.packageName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+                        showMsg("Disabled App " + clicked_pkg_label);
+                    } else if (rootAccess) {
+                        try {
+                            String command = "pm disable-user " + clicked_pkg.packageName;
+                            Shell.su(command).exec();
+                            showMsg("Disabled App " + clicked_pkg_label);
+                            item.setTitle(R.string.enable_app);
+                        } catch (Exception ex) {
+                            Log.e(TAG, "Disabling App Failed For " + clicked_pkg_label);
+                        }
+                    }                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    showMsg(" Disabling Cancelled of " + clicked_pkg_label);
+
+                }
+            });
+            builder.show();
+
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Confirm to Enable " + clicked_pkg_label);
+            builder.setMessage("Click Yes to Continue...");
+            builder.setCancelable(false);
+
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    showMsg("Confirmed Enabling"+clicked_pkg_label);
+                    if (!rootAccess) {
+                        pm.setApplicationEnabledSetting(clicked_pkg.packageName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, 0);
+                        showMsg("Enabled App  " + clicked_pkg_label);
+                    } else if (rootAccess) {
+                        try {
+                            String command = "pm enable " + clicked_pkg.packageName;
+                            Shell.su().exec();
+                            showMsg("Enabled App " + clicked_pkg_label);
+                            item.setTitle(R.string.disable_app);
+                        } catch (Exception ex) {
+                            Log.e(TAG, "Enabling App Failed For " + clicked_pkg_label);
+                        }
+                    }
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    showMsg("Enabling Cancelled for " + clicked_pkg_label);
+
+                }
+            });
+            builder.show();
+        }
+    }
+
+    private void kill_app(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
+        builder.setTitle("Force Stop " + clicked_pkg_label);
+        builder.setMessage("Click Yes to Continue...");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showMsg("Confirmed Force Stopping "+clicked_pkg_label);
+                if (!rootAccess) {
+                    activityManager.killBackgroundProcesses(clicked_pkg.packageName);
+                    Toast.makeText(getContext(), "Stopping process by NOROOT method of " + clicked_pkg_label, Toast.LENGTH_SHORT).show();
+                } else if (rootAccess) {
+                    try {
+                        String command = "am force-stop " + clicked_pkg.packageName;
+                        Shell.su(command).exec();
+                        Log.e(TAG, "Force Stopped " + clicked_pkg_label);
+                    } catch (Exception ex) {
+                        Log.e(TAG, "Killing Cancelled" + clicked_pkg_label);
+                    }
+                }            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showMsg("Cancelled Stopping " + clicked_pkg_label);
+
+            }
+        });
+
+        builder.show();
+    }
+
+    private void clear_data(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
+        builder.setTitle("You will lose all settings/Data of " + clicked_pkg_label);
+        builder.setMessage("Click Yes to Continue...");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showMsg("Confirmed Clearing data"+clicked_pkg_label);
+                if (!rootAccess) {
+                    activityManager.killBackgroundProcesses(clicked_pkg.packageName);
+                    showMsg("Data Cleared by NOROOT method for  " + clicked_pkg_label);
+                } else if (rootAccess) {
+                    try {
+                        String command = "pm clear " + clicked_pkg.packageName;
+                        Shell.su(command).exec();
+                        showMsg("Cleared Data by ROOT method of  " + clicked_pkg_label);
+                    } catch (Exception ex) {
+                        Log.e(TAG, "Data Clear Failed by ROOT method For " + clicked_pkg_label);
+                    }
+                }            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showMsg("Clearing Data Cancelled for " + clicked_pkg_label);
+
+            }
+        });
+        builder.show();
+
+
+
+
+    }
+
+    private void extract_apk(String pkg_name){
+        ClassApkOperation classApkOperationObject;
+        Log.i(TAG, "Clicked Extract Apk of : "+pkg_name);
+
+        File apk = new File(clicked_pkg.applicationInfo.sourceDir);
+        if (apk == null) {
+            Toast.makeText(getContext(), "No Apk Available", Toast.LENGTH_SHORT);
+        } else {
+            Log.i(TAG, "found");
+            classApkOperationObject = new ClassApkOperation(new ObjectAppPackageName(pkg_name, getContext()), getContext());
+            classApkOperationObject.extractApk();
+            //  showMsg("Package Extracted to - " + apkOperationObject.parent_folder.getAbsolutePath());
+        }
+        Toast.makeText(getContext(), "Extracting Apk " + clicked_pkg_label, Toast.LENGTH_SHORT).show();
     }
 
     void showMsg(String str){

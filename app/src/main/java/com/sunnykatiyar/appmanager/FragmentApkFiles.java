@@ -45,9 +45,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
-import static com.sunnykatiyar.appmanager.ActivityMain.prefEditorApkManager;
+import static com.sunnykatiyar.appmanager.ActivityMain.prefEditApkManager;
 import static com.sunnykatiyar.appmanager.ActivityMain.prefEditRepository;
-import static com.sunnykatiyar.appmanager.ActivityMain.sharedPrefAppSettings;
+import static com.sunnykatiyar.appmanager.ActivityMain.sharedPrefSettings;
 import static com.sunnykatiyar.appmanager.ActivityMain.sharedPrefRepository;
 
 public class FragmentApkFiles extends Fragment {
@@ -60,6 +60,7 @@ public class FragmentApkFiles extends Fragment {
 
     private static final String TAG = "APKLIST FRAGMENT ACTIVITY : ";
     public static final String key_root_access = FragmentSettings.key_root_access;
+    private boolean rootAccess;
 
     Button btn_local_path;
     public static Menu option_menu;
@@ -74,7 +75,7 @@ public class FragmentApkFiles extends Fragment {
     RecyclerView recyclerView;
     public static PackageManager pm;
     public static List<ObjectApkFile> selected_files_list = new ArrayList<>();
-    private boolean rootAccess;
+
 
     public static final String key_local_path = "SEARCH_FOLDER";
     String value_local_path;
@@ -223,7 +224,6 @@ public class FragmentApkFiles extends Fragment {
                 startActivityForResult(i, REQUEST_CODE_BROWSE_LOCAL_PATH);
             }
         });
-
         return v;
     }
 
@@ -238,7 +238,7 @@ public class FragmentApkFiles extends Fragment {
                     Uri uri = data.getData();
                     File file = Utils.getFileForUri(uri);
 //                    File file = new File(uri.getPath());
-                    prefEditorApkManager.putString(key_local_path,file.getAbsolutePath()).commit();
+                    prefEditApkManager.putString(key_local_path,file.getAbsolutePath()).commit();
                     text_local_path.setText(file.getAbsolutePath());
 
                     msg_textview.setText("You Should Check RENAME Settings on files on different folder");
@@ -349,7 +349,7 @@ public class FragmentApkFiles extends Fragment {
         Log.i(TAG, " Value of order by : " + order_apks_by);
 
 //----------------------------------------------------------------------------------------------------------------------
-        rootAccess = sharedPrefAppSettings.getBoolean(key_root_access,false);
+        rootAccess = sharedPrefSettings.getBoolean(key_root_access,false);
         if(rootAccess){
             if(!Shell.rootAccess()){
                 rootAccess=false;
@@ -386,7 +386,7 @@ public class FragmentApkFiles extends Fragment {
         //-------------------------SEARCH_SUBFOLDERS-----------------------------------
         if (id == R.id.menuitem_subdir) {
             item.setChecked(!item.isChecked());
-            prefEditorApkManager.putBoolean(key_search_subfolders, item.isChecked()).commit();
+            prefEditApkManager.putBoolean(key_search_subfolders, item.isChecked()).commit();
         }
 
         //-------------------------REFRESH lIST-----------------------------------
@@ -450,8 +450,8 @@ public class FragmentApkFiles extends Fragment {
 
         //-------------------PREPARE_REPOSITORY----------------------
         if (id == R.id.menuitem_make_repository) {
-            File file1 = new File(sharedPrefAppSettings.getString(key_repository_folder, path_not_set));
-            Log.i(TAG,"Found Repository PAth : "+sharedPrefAppSettings.getString(key_repository_folder, path_not_set));
+            File file1 = new File(sharedPrefSettings.getString(key_repository_folder, path_not_set));
+            Log.i(TAG,"Found Repository PAth : "+ sharedPrefSettings.getString(key_repository_folder, path_not_set));
 
             builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Confirm Refreshing Repository Apks.\n This May take some time. ");
@@ -775,7 +775,6 @@ public class FragmentApkFiles extends Fragment {
             cla.notifyDataSetChanged();
         }
 
-
         //---------------------------UNSELECT_ALL-------------------------------------
         if (id == R.id.menuitem_unselect_all) {
             if (apkFilesList.size() > 0) {
@@ -790,10 +789,8 @@ public class FragmentApkFiles extends Fragment {
             recyclerView.setAdapter(cla);
             cla.notifyDataSetChanged();
             showMsgInTextView(true,"");
-
         }
-
-
+        
         //--------------------INVERT SELECTION------------------------------------
         if (id == R.id.menuitem_select_invert) {
 
@@ -817,42 +814,47 @@ public class FragmentApkFiles extends Fragment {
 
         //------------------------------------SORTING----------------------------------------
         if (id == R.id.menuitem_sortbyname) {
-            item.setChecked(true);
-            sort_apks_by = sort_apks_by_name;
-            prefEditorApkManager.putString(key_sorting, sort_apks_by).commit();
+            if(!item.isChecked()){
+                item.setChecked(true);
+            }            sort_apks_by = sort_apks_by_name;
+            prefEditApkManager.putString(key_sorting, sort_apks_by).commit();
             SortApkList(apkFilesList);
             cla.notifyDataSetChanged();
         }
 
         if (id == R.id.menuitem_sortbydate) {
-            item.setChecked(true);
-            sort_apks_by = sort_apks_by_date;
-            prefEditorApkManager.putString(key_sorting, sort_apks_by).commit();
+            if(!item.isChecked()){
+                item.setChecked(true);
+            }            sort_apks_by = sort_apks_by_date;
+            prefEditApkManager.putString(key_sorting, sort_apks_by).commit();
             SortApkList(apkFilesList);
             cla.notifyDataSetChanged();
         }
 
         if (id == R.id.menuitem_sortbysize) {
-            item.setChecked(true);
-            sort_apks_by = sort_apks_by_size;
-            prefEditorApkManager.putString(key_sorting, sort_apks_by).commit();
+            if(!item.isChecked()){
+                item.setChecked(true);
+            }            sort_apks_by = sort_apks_by_size;
+            prefEditApkManager.putString(key_sorting, sort_apks_by).commit();
             SortApkList(apkFilesList);
             cla.notifyDataSetChanged();
         }
 
         //----------------------------------ORDER BY-------------------------------------
         if (id == R.id.menuitem_decreasing) {
-            item.setChecked(true);
-            order_apks_by = order_apks_decreasing;
-            prefEditorApkManager.putString(key_order_by, order_apks_by).commit();
+            if(!item.isChecked()){
+                item.setChecked(true);
+            }            order_apks_by = order_apks_decreasing;
+            prefEditApkManager.putString(key_order_by, order_apks_by).commit();
             SortApkList(apkFilesList);
             cla.notifyDataSetChanged();
         }
 
         if (id == R.id.menuitem_increasing) {
-            item.setChecked(true);
-            order_apks_by = order_apks_increasing;
-            prefEditorApkManager.putString(key_order_by, order_apks_by).commit();
+            if(!item.isChecked()){
+                item.setChecked(true);
+            }            order_apks_by = order_apks_increasing;
+            prefEditApkManager.putString(key_order_by, order_apks_by).commit();
             SortApkList(apkFilesList);
             cla.notifyDataSetChanged();
         }
@@ -1243,7 +1245,7 @@ public class FragmentApkFiles extends Fragment {
         //--------------------------ROOT INSTALL---------------------------------------
         public void RootInstall(List<ObjectApkFile> files_list) {
             long apk_size;
-            String command;
+            String command="";
             int count_success=0;
             int count_failed=0;
 
@@ -1382,6 +1384,7 @@ public class FragmentApkFiles extends Fragment {
                         publishProgress(textview_msg,"Moved " + aldi.file_name + " to " + value_parent_folder+" Successfully",false);
                       //apkFilesList.remove(aldi);
                         count_moved++;
+                        apkFilesList.remove(aldi);
                     }catch(Exception ex){
                         Log.i(TAG,"Error Moving : "+ex);
                         publishProgress(textview_msg,"Failed Moving " + aldi.file_name + " to " + value_parent_folder,false);
@@ -1566,6 +1569,7 @@ public class FragmentApkFiles extends Fragment {
                     Shell.sh(command).exec();
                     count_deleted++;
                     publishProgress("label", "Deleted Successfully " + file.file_name + " : ",false );
+                    apkFilesList.remove(file);
                 }catch(Exception ex){
                     Log.i(TAG, "Deletion Failed " + file.file_name + " Error : "+ex );
                 }
@@ -1582,7 +1586,7 @@ public class FragmentApkFiles extends Fragment {
 
             for(ObjectApkFile f : files_list)
             {
-                ClassApkOperation classApkOperationObject = new ClassApkOperation(f,getContext(),getActivity());
+                ClassApkOperation classApkOperationObject = new ClassApkOperation(f,getContext());
                 classApkOperationObject.RenameThisApk();
                 if(classApkOperationObject.result == true){
                     count_rename_passed++;
@@ -1612,7 +1616,7 @@ public class FragmentApkFiles extends Fragment {
         Comparator<ObjectApkFile> modified_date_comparator = (ObjectApkFile l1, ObjectApkFile l2) -> Long.compare(l1.file.lastModified(), l2.file.lastModified());
         Comparator<ObjectApkFile> creation_date_comparator = (ObjectApkFile l1, ObjectApkFile l2) -> Long.compare(l1.file_creation_time, l2.file_creation_time);
 
-        Log.i(TAG, " In SortApkList : sort by = " + sort_apks_by + " ApkFilesList Count: " + apkFilesList.size());
+        Log.i(TAG, " In SortRootFileList : sort by = " + sort_apks_by + " ApkFilesList Count: " + apkFilesList.size());
 
         switch (sort_apks_by) {
             case sort_apks_by_name: {

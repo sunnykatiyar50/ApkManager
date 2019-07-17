@@ -20,11 +20,11 @@ public class AdapterFileSelector extends RecyclerView.Adapter<ViewHolderFileSele
 
     final String TAG = "ADAPTER_FILE_SELECTOR : ";
     Context context;
-    List<ObjectFile> files_list ;
-    List<ObjectFile> selected_files_list;
+    List<ObjectDocumentFile> files_list ;
+    List<ObjectDocumentFile> selected_files_list;
     LoadFilesTask loadFilesAsyncTask;
 
-    public AdapterFileSelector(Context c, List<ObjectFile> list) {
+    public AdapterFileSelector(Context c, List<ObjectDocumentFile> list) {
         context = c;
         files_list = list;
     }
@@ -43,7 +43,7 @@ public class AdapterFileSelector extends RecyclerView.Adapter<ViewHolderFileSele
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderFileSelector cflv, final int position) {
 
-        ObjectFile local_file = files_list.get(position);
+        ObjectDocumentFile local_file = files_list.get(position);
 
         Log.i(TAG, "Showing Document :"+local_file.file_name);
         cflv.selector_file_name.setText(local_file.file_name);
@@ -91,7 +91,7 @@ public class AdapterFileSelector extends RecyclerView.Adapter<ViewHolderFileSele
 
 
     public void getSelectedFiles(){
-        for(ObjectFile obj:files_list){
+        for(ObjectDocumentFile obj:files_list){
             if(obj.check_box_state){
                 selected_files_list.add(obj);
             }
@@ -107,7 +107,7 @@ public class AdapterFileSelector extends RecyclerView.Adapter<ViewHolderFileSele
 
     public class LoadFilesTask extends AsyncTask<Void,String,List>{
 
-        List<ObjectFile> child_doc_list = new ArrayList<>();
+        List<ObjectDocumentFile> child_doc_list = new ArrayList<>();
         DocumentFile local_doc;
         int count=0;
 
@@ -142,10 +142,10 @@ public class AdapterFileSelector extends RecyclerView.Adapter<ViewHolderFileSele
         }
 
         protected List getChildrenList(DocumentFile local_doc){
-            List<ObjectFile> local_list =  new ArrayList<>();
+            List<ObjectDocumentFile> local_list =  new ArrayList<>();
 
             for(DocumentFile f:local_doc.listFiles()){
-                local_list.add(new ObjectFile(f,context));
+                local_list.add(new ObjectDocumentFile(f,context));
                 publishProgress(f.getName());
                 if(!isCancelled()){
                     break;

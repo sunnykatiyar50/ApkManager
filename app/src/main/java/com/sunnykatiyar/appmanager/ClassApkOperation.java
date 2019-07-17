@@ -1,17 +1,22 @@
 package com.sunnykatiyar.appmanager;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
+
+import androidx.documentfile.provider.DocumentFile;
 
 import com.topjohnwu.superuser.Shell;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -19,19 +24,19 @@ import java.nio.channels.FileChannel;
 public class ClassApkOperation {
 
     Context context;
-    Activity activity;
+    //Activity activity;
     ObjectApkFile apkItem;
     String apk_formatted_name;
     String app_formatted_name;
     boolean result = false;
     public File parent_folder;
-    ObjectAppPackage appItem;
+    ObjectAppPackageName appItem;
     File source_file;
     File dest_file;
     String command;
     ContentResolver resolver;
 
-    final String TAG = "MOVE_APK  : ";
+    final String TAG = "MYAPP : MOVE_APK  : ";
 
     final String name_part_1 = FragmentApkSettings.name_part_1;
     final String name_part_2 = FragmentApkSettings.name_part_2;
@@ -45,9 +50,13 @@ public class ClassApkOperation {
 
     public static final String key_repository_folder = FragmentSettings.key_repository_folder;
     public static final String key_root_access = FragmentSettings.key_root_access;
-    public static boolean root_access;
+    public static final String path_not_set = FragmentSettings.path_not_set;
+    public static final String key_export_apk_enable = FragmentSettings.key_export_apk_enable;
+    public static final String key_export_apk_uri = FragmentSettings.key_export_apk_uri;
+    public String value_export_apk_path;
+    public boolean value_export_apk_enable;
 
-    final String path_not_set = FragmentSettings.path_not_set;
+    public static boolean root_access;
 
     static {
         Shell.Config.setFlags(Shell.FLAG_REDIRECT_STDERR);
@@ -57,20 +66,12 @@ public class ClassApkOperation {
 
     //------------------------------------RENAMING APK_____________________________________________________
 
-    public ClassApkOperation(ObjectApkFile item, Context c, Activity activity){
+    public ClassApkOperation(ObjectApkFile item, Context c){
 
         this.apkItem = item;
-
-//        Log.i(TAG," \nAPK file: "+apkItem.app_name);
-//        Log.i(TAG," APK file readable: "+apkItem.file.canRead());
-//        Log.i(TAG," APKITEM Filename : "+apkItem.file_name);
-//        Log.i(TAG," APKITEM Appname : "+apkItem.app_name);
-//        Log.i(TAG," APKITEM Size : "+apkItem.file_size);
-//        Log.i(TAG," APKITEM PKGname : "+apkItem.pkg_name);
-
         this.context = c ;
-        this.activity = activity;
-        root_access = ActivityMain.sharedPrefAppSettings.getBoolean(key_root_access,false);
+       //this.activity = activity;
+        root_access = ActivityMain.sharedPrefSettings.getBoolean(key_root_access,false);
         Log.i(TAG," ROOT_ACCESS : "+root_access);
         resolver = c.getContentResolver();
         source_file = apkItem.file;
@@ -178,15 +179,14 @@ public class ClassApkOperation {
         Log.i(TAG, "Renaming " + apkItem.file_name + " : \"" + dest_file + "\" - " + result);
     }
 
-
-
+    
 //------------------------------------EXTRACTING APK_____________________________________________________
 
-    public ClassApkOperation(ObjectAppPackage appitem, Context c){
+    public ClassApkOperation(ObjectAppPackageName appitem, Context c){
         this.appItem = appitem;
         this.context = c ;
-        this.activity = activity;
-        root_access = ActivityMain.sharedPrefAppSettings.getBoolean(key_root_access,false);
+       // this.activity = activity;
+        root_access = ActivityMain.sharedPrefSettings.getBoolean(key_root_access,false);
         Log.i(TAG," ROOT_ACCESS : "+root_access);
         resolver = c.getContentResolver();
     }
@@ -225,8 +225,7 @@ public class ClassApkOperation {
         Log.i(TAG," APP Formatted Name : "+this.app_formatted_name);
     }
 
-    private String getNameFromApp(ObjectAppPackage ld, int i) {
-
+    private String getNameFromApp(ObjectAppPackageName ld, int i) {
         switch (i) {
             case 0: {
                 return "";
@@ -277,13 +276,15 @@ public class ClassApkOperation {
         }
 
         private void extractApkOf(){
-            String parent = ActivityMain.sharedPrefAppSettings.getString(key_repository_folder,path_not_set);
+            String parent = ActivityMain.sharedPrefSettings.getString(key_repository_folder,path_not_set);
+
             Log.i(TAG, "\nParent value from preference : " + parent);
 
             parent_folder = new File(parent);
+            //DocumentFile parent_doc = DocumentFile.fromTreeUri(context, parent_uri);
 
             if(!parent_folder.exists() || !parent_folder.isDirectory()){
-                 publishProgress("\nParent value not exists : " + parent_folder);
+                publishProgress("\nParent value not exists : " + parent_folder);
                 parent_folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             }
 
@@ -305,6 +306,7 @@ public class ClassApkOperation {
                     //result = (source_file).renameTo(dest_file);
                     Log.i(TAG," : Renaming failed for \"" + source_file.getName() + "\". Cannot Write to "+parent_folder.getAbsolutePath());
                 }
+
             }
 //-----------------------------------ROOT EXTRACT APK-----------------------------------
             else if(root_access){
@@ -319,13 +321,29 @@ public class ClassApkOperation {
                      publishProgress("ROOT : Apk Extraction failed : "+app_formatted_name);
                 }
             }
+
+            //-------------------------------URI METHOD-----------------------------------------------------------
+            Uri parent_uri = Uri.parse(ActivityMain.sharedPrefSettings.getString(key_export_apk_uri,path_not_set));
+            Uri parentDocUri = DocumentsContract.buildDocumentUriUsingTree(parent_uri, DocumentsContract.getTreeDocumentId(parent_uri));
+            Uri base_apk_src_uri = DocumentFile.fromFile(source_file).getUri();
+            Uri target_uri;
+            ContentResolver resolver = context.getContentResolver();
+            String mime_type = MimeTypeMap.getSingleton().getMimeTypeFromExtension("apk");
+
+            try{
+                target_uri = DocumentsContract.createDocument(resolver, parentDocUri, mime_type, app_formatted_name);
+                DocumentsContract.copyDocument(ActivityMain.resolver, base_apk_src_uri, target_uri);
+                Log.i(TAG,"APK EXPORTED BY URI METHOD to: "+target_uri.getPath());
+            }catch (FileNotFoundException e) {
+                Log.i(TAG,"APK EXPORT ERROR URI METHOD : "+e);
+            }
         }
         
     }
 
 //    private void extractApkOf(){
 //
-//        String parent = ActivityMain.sharedPrefAppSettings.getString(key_repository_folder,path_not_set);
+//        String parent = ActivityMain.sharedPrefSettings.getString(key_repository_folder,path_not_set);
 //        Log.i(TAG, "\nParent value from preference : " + parent);
 //
 //        parent_folder = new File(parent);
@@ -362,9 +380,7 @@ public class ClassApkOperation {
 //            }
 //        }
 //    }
-
-  
-
+    
     private void showToast(String str){
         Toast.makeText(ActivityMain.context,str,Toast.LENGTH_LONG).show();
         Log.i(TAG, str);

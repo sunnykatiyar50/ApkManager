@@ -12,9 +12,9 @@
 //import java.io.File;
 //
 //import static android.content.Intent.createChooser;
-//import static com.sunnykatiyar.appmanager.FragmentApps.activityManager;
-//import static com.sunnykatiyar.appmanager.FragmentApps.clipboardManager;
-//import static com.sunnykatiyar.appmanager.FragmentApps.mainpm;
+//import static com.sunnykatiyar.appmanager.FragmentAppManager.activityManager;
+//import static com.sunnykatiyar.appmanager.FragmentAppManager.clipboardManager;
+//import static com.sunnykatiyar.appmanager.FragmentAppManager.mainpm;
 //import static com.sunnykatiyar.appmanager.AdapterAppList.clicked_pkg;
 //
 //
@@ -61,7 +61,7 @@
 //        this.pkg_info = pkginfo;
 //        this.applabel= applabel;
 //        this.context = context;
-//        rootAccess = ActivityMain.sharedPrefAppSettings.getBoolean(key_root_access,false);
+//        rootAccess = ActivityMain.sharedPrefSettings.getBoolean(key_root_access,false);
 //        dest_folder_name = ActivityMain.sharedPrefApkManager.getString(FragmentApkFiles.key_local_path,path_not_set);
 //        apkitem = new ObjectApkFile(new File(pkginfo.applicationInfo.sourceDir),context);
 //        Log.i(TAG," Constructor : ");

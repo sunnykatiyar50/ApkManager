@@ -143,5 +143,44 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/label_exsd_path" />
 
+    <Button
+        android:id="@+id/button_export_apk_folder"
+        android:layout_width="102dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Set Folder"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch_export_apk" />
+
+    <EditText
+        android:id="@+id/editText_apk_export_path"
+        android:layout_width="276dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Apks will be exported here"
+        android:inputType="textPersonName"
+        android:lines="2"
+        android:maxLines="2"
+        android:minLines="2"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch_export_apk" />
+
+    <Switch
+        android:id="@+id/switch_export_apk"
+        android:layout_width="390dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="Export Apks of Installed Apps to below folder "
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttton_add_extsd" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

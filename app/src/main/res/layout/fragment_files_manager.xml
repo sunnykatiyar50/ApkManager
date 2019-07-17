@@ -11,7 +11,8 @@
         android:id="@+id/files_path_textview"
         android:layout_width="0dp"
         android:layout_height="35dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="3dp"
         android:layout_marginEnd="2dp"
         android:autoSizeMaxTextSize="18sp"
         android:autoSizeMinTextSize="14sp"
@@ -28,49 +29,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/files_storage_spinner" />
 
-    <TextView
-        android:id="@+id/files_msg_textview"
-        android:layout_width="0dp"
-        android:layout_height="28dp"
-        android:autoSizeMaxTextSize="16dp"
-        android:autoSizeMinTextSize="12sp"
-        android:autoSizeTextType="uniform"
-        android:background="#AD1B1B1B"
-        android:text="@string/textview_msg_hint"
-        android:textAlignment="center"
-        android:textColor="#FFD740"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/files_rview"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="1dp"
         android:textAlignment="viewEnd"
-        app:layout_constraintBottom_toTopOf="@id/files_msg_textview"
+        app:layout_constraintBottom_toTopOf="@+id/files_msg_text_view"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/files_progress_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/files_progress_bar"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Spinner
         android:id="@+id/files_storage_spinner"
-        android:layout_width="407dp"
+        android:layout_width="0dp"
         android:layout_height="32dp"
-        android:layout_marginTop="2dp"
+
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@drawable/spinner_bg"
+        android:gravity="center"
+        android:textAlignment="inherit"
+        app:layout_constraintEnd_toStartOf="@+id/files_button_add_tree"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/listitem_storage_spinner" />
 
     <ImageButton
         android:id="@+id/files_image_button_up"
-        android:layout_width="43dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="2dp"
+        android:layout_width="41dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="2dp"
+        android:backgroundTint="@color/colorPrimaryDark"
         android:contentDescription="@string/up_icon_content_desc"
+        android:foregroundTint="#F3F0F0"
+        android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/files_path_textview"
@@ -88,5 +85,126 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/files_path_textview" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="307dp"
+        android:layout_height="65dp"
+        android:layout_marginStart="8dp"
+        android:background="@color/colorPrimary"
+        android:foregroundTint="@color/color_state"
+        android:foregroundTintMode="multiply"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/files_bottomAppBar"
+        app:layout_constraintStart_toStartOf="@+id/files_bottomAppBar">
+
+        <include layout="@layout/toolbar_layout" />
+    </androidx.appcompat.widget.Toolbar>
+
+
+    <TextView
+        android:id="@+id/files_msg_text_view"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:autoSizeMaxTextSize="14sp"
+        android:autoSizeMinTextSize="10sp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:lines="1"
+        android:maxLines="2"
+        android:minLines="1"
+        android:text="@string/textview_msg_hint"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/files_bottomAppBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/files_button_add_tree"
+        android:layout_width="86dp"
+        android:layout_height="30dp"
+        android:layout_margin="5dp"
+        android:layout_marginHorizontal="5dp"
+        android:layout_marginVertical="5dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="6dp"
+        android:background="#201F1F"
+        android:text="@string/add_storage"
+        android:textColor="#F8F3EEEE"
+        android:textColorHint="#F8F7EFEF"
+        app:layout_constraintBottom_toTopOf="@+id/files_path_textview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/files_storage_spinner"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <!--<androidx.coordinatorlayout.widget.CoordinatorLayout-->
+        <!--android:id="@+id/coordinatorLayout"-->
+        <!--android:layout_width="412dp"-->
+        <!--android:layout_height="61dp"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/files_msg_text_view"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintHorizontal_bias="0.0"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--tools:context="com.sunnykatiyar.appmanager.ActivityMain">-->
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/files_bottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottomBarHeight"
+        android:layout_gravity="bottom"
+        android:foregroundTint="#991414"
+        app:backgroundTint="@color/colorPrimary"
+        app:buttonGravity="bottom|top"
+        app:fabAlignmentMode="center"
+        app:fabCradleMargin="2dp"
+        app:fabCradleRoundedCornerRadius="5dp"
+        app:fabCradleVerticalOffset="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/files_bottom_menu"
+        tools:ignore="BottomAppBar,MissingConstraints" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_action"
+            android:layout_width="55dp"
+            android:layout_height="65dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            android:background="#161515"
+            android:scaleType="center"
+            android:src="@drawable/ic_content_paste_amber_500_36dp"
+            android:visibility="visible"
+            app:backgroundTint="@color/colorPrimaryDark"
+            app:fabSize="normal"
+            app:layout_anchor="@id/files_bottomAppBar"
+            app:layout_constraintBottom_toTopOf="@+id/files_bottomAppBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="30dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_grade_white_24dp" />
+
+
+    <!--</androidx.coordinatorlayout.widget.CoordinatorLayout>-->
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

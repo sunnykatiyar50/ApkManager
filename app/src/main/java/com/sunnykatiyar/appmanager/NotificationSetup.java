@@ -22,23 +22,25 @@ public class NotificationSetup extends Notification {
 
     final String SERVICE_NOTI_CHANNEL_ID = "FOREGROUND_SERVICE_CHANNEL";
     final String NORMAL_NOTI_CHANNEL_ID = "NORMAL_NOTIFICATION_CHANNEL";
+    final String TASKS_NOTI_CHANNEL_ID = "TASKS_NOTIFICATIONS_CHANNEL";
     final CharSequence SERVICE_NOTI_CHANNEL_NAME = "Foreground Service Notification Channel";
     final CharSequence NORMAL_NOTI_CHANNEL_NAME = "Normal Notification Channel";
+    final CharSequence TASKS_NOTI_CHANNEL_NAME = "Tasks Notification Channel";
     final int CHANNEL_IMPORTANCE = NotificationManager.IMPORTANCE_DEFAULT;
 
     Notification service_notification;
     Notification normal_notification;
-    String content = "You can disable from app_info";
-    String title = "Listening for Package Addition/removal";
-    String service_noti_description = "Disable this channel if you dont want it";
-    String normal_noti_description = "All important notifications from app will be shown in this channel";
+    Notification task_notification;
+//  String content = "You can disable from app_info";
+//  private String title = "Listening for Package Addition/removal";
+    private String service_noti_description = "Disable this channel if you dont want it";
+    private String normal_noti_description = "All important notifications from app will be shown in this channel";
+    private String tasks_noti_description = "All Tasks notifications from app will be shown in this channel";
 
 
-    public NotificationSetup(Context context, String content, String title) {
+    public NotificationSetup(Context context) {
         super();
         this.context = context;
-        this.title = title;
-        this.content = content;
         notiManager = context.getSystemService(NotificationManager.class);
     }
 
@@ -54,6 +56,27 @@ public class NotificationSetup extends Notification {
         }
     }
 
+    public void prepareServiceNotification(String content, String title){
+
+        createServiceNotiChannel();
+        Intent noti_click_intent = new Intent(context, ActivityMain.class);
+        noti_click_intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        PendingIntent pdi = PendingIntent.getActivity(context,0,noti_click_intent,0);
+
+        notiBuilder = new NotificationCompat.Builder(this.context,SERVICE_NOTI_CHANNEL_ID);
+
+        service_notification = notiBuilder.setOngoing(true)
+                .setSmallIcon(R.drawable.ic_android)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setContentIntent(pdi)
+                .setStyle(new NotificationCompat.BigTextStyle())
+                .setAutoCancel(false)
+                .build();
+
+    }
+
     private void createNormalNotiChannel(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
             Log.i(TAG,"IN CREATE CHANNEL : ");
@@ -66,28 +89,7 @@ public class NotificationSetup extends Notification {
         }
     }
 
-    public void prepareServiceNotification(){
-
-        createServiceNotiChannel();
-        Intent noti_click_intent = new Intent(context, ActivityMain.class);
-        noti_click_intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-        PendingIntent pdi = PendingIntent.getActivity(context,0,noti_click_intent,0);
-
-        notiBuilder = new NotificationCompat.Builder(this.context,SERVICE_NOTI_CHANNEL_ID);
-
-        service_notification = notiBuilder.setOngoing(true)
-                .setSmallIcon(R.drawable.ic_android)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentTitle(this.title)
-                .setContentText(this.content)
-                .setContentIntent(pdi)
-                .setStyle(new NotificationCompat.BigTextStyle())
-                .setAutoCancel(false)
-                .build();
-
-    }
-
-    public void prepareNormalNotification(){
+    public void prepareNormalNotification(String content, String title){
 
         createNormalNotiChannel();
         Intent noti_click_intent = new Intent(context, ActivityMain.class);
@@ -99,12 +101,44 @@ public class NotificationSetup extends Notification {
         normal_notification = notiBuilder.setOngoing(true)
                 .setSmallIcon(R.drawable.ic_android)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentTitle(this.title)
-                .setContentText(this.content)
+                .setContentTitle(title)
+                .setContentText(content)
                 .setContentIntent(pdi)
                 .setAutoCancel(true)
                 .build();
     }
+    
+    private void createTaskNotiChannel(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+            Log.i(TAG,"IN CREATE CHANNEL : ");
+            notiChannel = new NotificationChannel(TASKS_NOTI_CHANNEL_ID,TASKS_NOTI_CHANNEL_NAME,CHANNEL_IMPORTANCE);
+            notiChannel.setDescription(tasks_noti_description);
+            notiChannel.setLightColor(Color.GREEN);
+            notiChannel.setSound(null,null);
+            notiChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+            notiManager.createNotificationChannel(notiChannel);
+        }
+    }
 
+    public void prepareTaskNotification(String content, String title){
+
+        createTaskNotiChannel();
+        Intent noti_click_intent = new Intent(context, ActivityOperations.class);
+        noti_click_intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        PendingIntent pdi = PendingIntent.getActivity(context,0,noti_click_intent,0);
+
+        notiBuilder = new NotificationCompat.Builder(this.context,TASKS_NOTI_CHANNEL_ID);
+
+        task_notification = notiBuilder.setOngoing(true)
+                .setSmallIcon(R.drawable.ic_android)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setContentIntent(pdi)
+                .setAutoCancel(true)
+                .setStyle(new NotificationCompat.BigTextStyle())
+                .addAction(R.drawable.ic_cancel_white_24dp,"Cancel",pdi)
+                .build();
+    }
 
 }

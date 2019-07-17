@@ -10,7 +10,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.io.File;
 
-public class ObjectAppPackage {
+public class ObjectAppPackageName {
 
         private final String TAG = "ObjectApkFile :";
 
@@ -27,17 +27,18 @@ public class ObjectAppPackage {
         long app_install_time;
         long app_update_time;
         Context context;
-        PackageManager pm = FragmentApps.mainpm;
+        PackageManager pm;
 
         private static final DecimalFormat format = new DecimalFormat("#.##");
         private static final long MB = 1024 * 1024;
         private static final long KB = 1024;
         private static final long GB = 1024 * 1024 * 1024;
 
-        public ObjectAppPackage(String pkg_name, Context context){
+        public ObjectAppPackageName(String pkg_name, Context context){
 
             super();
             this.context=context;
+            pm = context.getPackageManager();
             this.pkg_name = pkg_name;
 
             try{

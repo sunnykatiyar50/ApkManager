@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <item
         android:id="@+id/menuitem_load"
@@ -194,6 +195,8 @@
         <menu>
 
             <group
+                android:title="Sort Apps By"
+                android:id="@+id/apkmenugroup_sort_by"
                 android:checkableBehavior="single"
                 android:menuCategory="secondary">
                 <item
@@ -221,6 +224,8 @@
 
 
             <group
+                android:title="Order Apps By"
+                android:id="@+id/apkmenugroup_order_by"
                 android:checkableBehavior="single"
                 android:menuCategory="secondary">
                 <item

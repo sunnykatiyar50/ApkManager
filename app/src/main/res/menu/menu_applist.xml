@@ -20,13 +20,17 @@
         app:showAsAction="never" />
 
 
-    <item android:title="Sort Apps By"
+    <item
+        android:title="Sort Apps By"
         android:orderInCategory="101"
         android:icon="@drawable/ic_sort_black_24dp">
 
         <menu>
 
-            <group android:checkableBehavior="single"
+            <group
+                android:title="Order Apps By"
+                android:id="@+id/appmenugroup_sort_by"
+                android:checkableBehavior="single"
                 android:menuCategory="secondary">
                 <item
                     android:id="@+id/menuitem_sortappsby_name"
@@ -59,7 +63,10 @@
             </group>
 
 
-            <group android:checkableBehavior="single"
+            <group
+                android:title="Order Apps By"
+                android:id="@+id/appmenugroup_order_by"
+                android:checkableBehavior="single"
                 android:menuCategory="secondary">
                 <item
                     android:id="@+id/menuitem_apps_increasing"

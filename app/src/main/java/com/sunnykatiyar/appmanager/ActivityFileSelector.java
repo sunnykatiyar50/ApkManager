@@ -23,8 +23,8 @@ public class ActivityFileSelector extends AppCompatActivity {
     RecyclerView selecter_rview;
     public static TextView selector_textview_msgbox;
     public static TextView selector_textview_path;
-    List<ObjectFile> files_list;
-    final String TAG = "ACTIVITY_FILE_SELECTOR";
+    List<ObjectDocumentFile> files_list;
+    final String TAG = "MYAPP : ACTIVITY_FILE_SELECTOR";
     Uri tree_uri;
     String string_uri_tree;
     DocumentFile file_doc;
@@ -32,8 +32,8 @@ public class ActivityFileSelector extends AppCompatActivity {
 
     Spinner storage_spinner;
     List<HashMap<String,Uri>> storage_paths;
-    List<ObjectFile> external_dir_list;
-    List<ObjectFile> file_list;
+    List<ObjectDocumentFile> external_dir_list;
+    List<ObjectDocumentFile> file_list;
     List<DocumentFile> doc_files_list;
     DocumentFile tree_doc_file;
     Context context;
@@ -58,7 +58,7 @@ public class ActivityFileSelector extends AppCompatActivity {
         selector_textview_path = findViewById(R.id.selector_activity_path_textview);
         storage_spinner = findViewById(R.id.selector_activity_storage_spinner);
         context = getApplicationContext();
-        string_uri_tree = ActivityMain.sharedPrefAppSettings.getString(key_extsd_uri,path_not_set);
+        string_uri_tree = ActivityMain.sharedPrefSettings.getString(key_extsd_uri,path_not_set);
         Uri tree_uri = Uri.parse(string_uri_tree);
 
         tree_doc_file = DocumentFile.fromTreeUri(this,tree_uri);
@@ -81,10 +81,10 @@ public class ActivityFileSelector extends AppCompatActivity {
     }
 
     private List getChildrenList(DocumentFile local_doc){
-        List<ObjectFile> local_list =  new ArrayList<>();
+        List<ObjectDocumentFile> local_list =  new ArrayList<>();
 
         for(DocumentFile f:local_doc.listFiles()){
-            local_list.add(new ObjectFile(f,context));
+            local_list.add(new ObjectDocumentFile(f,context));
             showMsg(TEXTVIEW_MSG,f.getName());
         }
 

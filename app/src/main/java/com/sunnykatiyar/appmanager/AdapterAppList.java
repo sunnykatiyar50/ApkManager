@@ -31,10 +31,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.Intent.createChooser;
-import static com.sunnykatiyar.appmanager.FragmentApps.activityManager;
-import static com.sunnykatiyar.appmanager.FragmentApps.appContext;
-import static com.sunnykatiyar.appmanager.FragmentApps.clipboardManager;
-import static com.sunnykatiyar.appmanager.FragmentApps.mainpm;
+import static com.sunnykatiyar.appmanager.FragmentAppManager.activityManager;
+import static com.sunnykatiyar.appmanager.FragmentAppManager.appContext;
+import static com.sunnykatiyar.appmanager.FragmentAppManager.clipboardManager;
+import static com.sunnykatiyar.appmanager.FragmentAppManager.mainpm;
 import static com.topjohnwu.superuser.internal.InternalUtils.getContext;
 
 public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
@@ -64,7 +64,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         this.pm = pkgmgr;
         this.activity = activity;
         this.myAppList = myAppList;
-        this.rootAccess = ActivityMain.sharedPrefAppSettings.getBoolean(key_root_access,false);
+        this.rootAccess = ActivityMain.sharedPrefSettings.getBoolean(key_root_access,false);
         //this.filteredAppList = myAppList;
     }
 
@@ -258,6 +258,14 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
                             return true;
                         }
                     });
+
+                    menu.findItem(R.id.reset_perm_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            revokePermission();
+                            return false;
+                        }
+                    });
                 }
                 else {
                     showMsg("Clicked Pkg = null.");
@@ -267,9 +275,38 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
 
     }
 
+    private void revokePermission(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
+        builder.setTitle("Confirm Revoking permissions for "+clicked_pkg_label);
+        builder.setMessage("Click Yes to Continue...");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        showMsg("Revoke permission via terminal :" + Shell.rootAccess());
+                      //  Shell.sh("pm reset-permissions " + clicked_pkg.packageName).exec();
+                        Log.i(TAG, clicked_pkg.applicationInfo.loadLabel(mainpm).toString() + " permission revoked Successfully");
+                    } catch (Exception ex) {
+                        Log.e(TAG, "Revoke Permission :" + ex);
+                    }
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+
+    }
+
     private void uninstall(){
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
         builder.setTitle("Confirm to uninstall " + clicked_pkg_label);
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
@@ -279,15 +316,13 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
             public void onClick(DialogInterface dialog, int which) {
                 showMsg("Confirmed Uninstalling"+clicked_pkg_label);
                 if (!rootAccess) {
-                    Intent i = new Intent(Intent.ACTION_DELETE);
-                    i.setData(Uri.parse(clicked_pkg.packageName));
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    //i.putExtra(EXTRA_PACKAGE_NAME, pkg_info.packageName);
-                    getContext().startActivity(i);
+                    Intent intent = new Intent("android.intent.action.DELETE");
+                    intent.setData(Uri.parse("package:" + clicked_pkg.packageName));
+                    appContext.startActivity(intent);
                 } else {
                     try {
                         showMsg("Uninstallation by RootAccess :" + Shell.rootAccess());
-                        Shell.su("pm uninstall " + clicked_pkg.packageName).exec();
+                        Shell.sh("pm uninstall " + clicked_pkg.packageName).exec();
                         Log.i(TAG, clicked_pkg.applicationInfo.loadLabel(mainpm).toString() + " uninstalled Successfully by ROOT method.");
                     } catch (Exception ex) {
                         Log.i(TAG, "Uninstallation Failed by ROOT method :" + ex);
@@ -300,7 +335,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 showMsg("Uninstallation Cancelled of " + clicked_pkg_label);
-
+                dialog.dismiss();
             }
         });
         builder.show();
@@ -315,7 +350,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
             Toast.makeText(getContext(), "No Apk Available", Toast.LENGTH_SHORT);
         } else {
             Log.i(TAG, "found");
-            classApkOperationObject = new ClassApkOperation(new ObjectAppPackage(pkg_name, getContext()), getContext());
+            classApkOperationObject = new ClassApkOperation(new ObjectAppPackageName(pkg_name, getContext()), getContext());
             classApkOperationObject.extractApk();
           //  showMsg("Package Extracted to - " + apkOperationObject.parent_folder.getAbsolutePath());
         }
@@ -325,7 +360,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
     private void keepdata_uninstall(){
 
         showMsg("Confirm to uninstall " + clicked_pkg_label);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
         builder.setTitle("Confirm to uninstall but keep data " + clicked_pkg_label);
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
@@ -333,34 +368,29 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 showMsg("Uninstalling without deleting data "+clicked_pkg_label);
-                if (!rootAccess) {
-                    activityManager.killBackgroundProcesses(clicked_pkg.packageName);
-                    showMsg("Uninstalled without deleting data " + clicked_pkg_label);
-                } else if (rootAccess) {
-                    try {
-                        String command = "pm uninstall -k " + clicked_pkg.packageName;
-                        Shell.su().exec();
-                        showMsg("Uninstalling " + clicked_pkg_label + " App without Deleting Data.");
-                    } catch (Exception ex) {
-                        Log.e(TAG, "Uninstalling App Failed For " + clicked_pkg_label);
-                    }
-                }            }
+                try {
+                    String command = "pm uninstall -k "+clicked_pkg.packageName;
+                    Shell.sh(command).exec();
+                    showMsg("Uninstalling " + clicked_pkg_label + " App without Deleting Data.");
+                } catch (Exception ex) {
+                    Log.e(TAG, "Uninstalling App Failed For " + clicked_pkg_label);
+                }
+            }
         });
 
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 showMsg("Uninstallation Cancelled of " + clicked_pkg_label);
-
+                 dialog.dismiss();
             }
         });
         builder.show();
-
     }
 
     private void kill_app(){
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
         builder.setTitle("Force Stop " + clicked_pkg_label);
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
@@ -375,7 +405,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
                 } else if (rootAccess) {
                     try {
                         String command = "am force-stop " + clicked_pkg.packageName;
-                        Shell.su().exec();
+                        Shell.su(command).exec();
                         Log.e(TAG, "Force Stopped " + clicked_pkg_label);
                     } catch (Exception ex) {
                         Log.e(TAG, "Killing Cancelled" + clicked_pkg_label);
@@ -396,7 +426,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
 
     private void clear_data(){
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
         builder.setTitle("You will lose all settings/Data of " + clicked_pkg_label);
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
@@ -411,7 +441,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
                 } else if (rootAccess) {
                     try {
                         String command = "pm clear " + clicked_pkg.packageName;
-                        Shell.su().exec();
+                        Shell.su(command).exec();
                         showMsg("Cleared Data by ROOT method of  " + clicked_pkg_label);
                     } catch (Exception ex) {
                         Log.e(TAG, "Data Clear Failed by ROOT method For " + clicked_pkg_label);
@@ -452,7 +482,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
                     } else if (rootAccess) {
                         try {
                             String command = "pm disable-user " + clicked_pkg.packageName;
-                            Shell.su().exec();
+                            Shell.su(command).exec();
                             showMsg("Disabled App " + clicked_pkg_label);
                             item.setTitle(R.string.enable_app);
                         } catch (Exception ex) {

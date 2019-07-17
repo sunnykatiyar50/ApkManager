@@ -16,7 +16,7 @@ import java.util.List;
 
 public class AdapterApkList extends RecyclerView.Adapter<ViewHolderApkList> {
 
-    private String TAG = " Custom List Adapter : ";
+    private String TAG = "MYAPP : Custom List Adapter : ";
     List<ObjectApkFile> list ;
     Context context;
     ObjectApkFile temp;
@@ -42,7 +42,6 @@ public class AdapterApkList extends RecyclerView.Adapter<ViewHolderApkList> {
         LayoutInflater in = LayoutInflater.from(context);
         View view = in.inflate(R.layout.listitem_apk_list,viewGroup,false);
         ViewHolderApkList cst = new ViewHolderApkList(view);
-      //Log.i(TAG , "On create view Holder");
         return cst;
     }
 
@@ -92,7 +91,6 @@ public class AdapterApkList extends RecyclerView.Adapter<ViewHolderApkList> {
         cst.app_icon.setImageDrawable(temp.app_info.loadIcon(temp.pm));
         cst.select_box.setOnCheckedChangeListener(null);
         cst.select_box.setChecked(temp.select_box_state);
-
 
 //------------------------------------------------TOOLTIP------------------------------------------
         cst.file_size.setTooltipText("File Size : " + temp.file_size);

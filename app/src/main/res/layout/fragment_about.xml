@@ -17,7 +17,7 @@
         android:layout_marginTop="8dp"
         android:layout_weight="0.02"
         android:padding="5dp"
-        android:text="@string/about_title_text"
+        android:text="@string/about_fragment_name"
         android:textAlignment="center"
         android:textSize="@dimen/text_size_large"
         android:textStyle="bold"
@@ -34,7 +34,7 @@
         android:layout_marginTop="8dp"
         android:layout_weight="0.79"
         android:padding="5dp"
-        android:text="@string/about_text_string"
+        android:text="@string/about_content"
         android:textSize="@dimen/text_size_medium"
         app:layout_constraintTop_toBottomOf="@+id/about_title" />
 

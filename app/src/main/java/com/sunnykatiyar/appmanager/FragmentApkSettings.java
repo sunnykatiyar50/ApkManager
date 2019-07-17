@@ -72,7 +72,6 @@ public class FragmentApkSettings extends Fragment implements
         // Required empty public constructor
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,39 +222,38 @@ public class FragmentApkSettings extends Fragment implements
         spinner5.setAdapter(spin_adapter5);
         spinner7.setAdapter(spin_adapter7);
 
-        ActivityMain.prefEditorApkManager.putBoolean(spinner_items_set,true).commit();
+        ActivityMain.prefEditApkManager.putBoolean(spinner_items_set,true).commit();
         Log.i(TAG,"Spinners Data is Set ... ");
     }
 
     public void clearFormat(){
-        ActivityMain.prefEditorApkManager.remove(name_part_1);
-        ActivityMain.prefEditorApkManager.remove(name_part_2);
-        ActivityMain.prefEditorApkManager.remove(name_part_3);
-        ActivityMain.prefEditorApkManager.remove(name_part_4);
-        ActivityMain.prefEditorApkManager.remove(name_part_5);
-        ActivityMain.prefEditorApkManager.remove(name_part_6);
-        ActivityMain.prefEditorApkManager.remove(name_part_7);
-        ActivityMain.prefEditorApkManager.remove(name_part_8);
-        ActivityMain.prefEditorApkManager.remove(name_format_data_saved);
-        ActivityMain.prefEditorApkManager.commit();
+        ActivityMain.prefEditApkManager.remove(name_part_1);
+        ActivityMain.prefEditApkManager.remove(name_part_2);
+        ActivityMain.prefEditApkManager.remove(name_part_3);
+        ActivityMain.prefEditApkManager.remove(name_part_4);
+        ActivityMain.prefEditApkManager.remove(name_part_5);
+        ActivityMain.prefEditApkManager.remove(name_part_6);
+        ActivityMain.prefEditApkManager.remove(name_part_7);
+        ActivityMain.prefEditApkManager.remove(name_part_8);
+        ActivityMain.prefEditApkManager.remove(name_format_data_saved);
+        ActivityMain.prefEditApkManager.commit();
 
         Log.i(TAG,"Cleared Name Format Data");
-
 
         setNewSpinnerData();
     }
 
     public void saveFormat(){
-        ActivityMain.prefEditorApkManager.putInt(name_part_1,spinner1.getSelectedItemPosition());
-        ActivityMain.prefEditorApkManager.putString(name_part_2,edit2.getText().toString());
-        ActivityMain.prefEditorApkManager.putInt(name_part_3,spinner3.getSelectedItemPosition());
-        ActivityMain.prefEditorApkManager.putString(name_part_4,edit4.getText().toString());
-        ActivityMain.prefEditorApkManager.putInt(name_part_5,spinner5.getSelectedItemPosition());
-        ActivityMain.prefEditorApkManager.putString(name_part_6,edit6.getText().toString());
-        ActivityMain.prefEditorApkManager.putInt(name_part_7,spinner7.getSelectedItemPosition());
-        ActivityMain.prefEditorApkManager.putString(name_part_8,edit8.getText().toString());
-        ActivityMain.prefEditorApkManager.putBoolean(name_format_data_saved,true);
-        ActivityMain.prefEditorApkManager.commit();
+        ActivityMain.prefEditApkManager.putInt(name_part_1,spinner1.getSelectedItemPosition());
+        ActivityMain.prefEditApkManager.putString(name_part_2,edit2.getText().toString());
+        ActivityMain.prefEditApkManager.putInt(name_part_3,spinner3.getSelectedItemPosition());
+        ActivityMain.prefEditApkManager.putString(name_part_4,edit4.getText().toString());
+        ActivityMain.prefEditApkManager.putInt(name_part_5,spinner5.getSelectedItemPosition());
+        ActivityMain.prefEditApkManager.putString(name_part_6,edit6.getText().toString());
+        ActivityMain.prefEditApkManager.putInt(name_part_7,spinner7.getSelectedItemPosition());
+        ActivityMain.prefEditApkManager.putString(name_part_8,edit8.getText().toString());
+        ActivityMain.prefEditApkManager.putBoolean(name_format_data_saved,true);
+        ActivityMain.prefEditApkManager.commit();
 
         setNameFormatLabel();
 
@@ -283,7 +281,7 @@ public class FragmentApkSettings extends Fragment implements
         Log.i(TAG,"retrieveSpinnerData()");
 
 
-        if(sharedPrefApkManager.contains(name_format_data_saved)){
+       // if(sharedPrefApkManager.contains(name_format_data_saved)){
             Log.i(TAG,"Getting Data from SharedPreferences ... ");
 
             spinner1.setSelection(sharedPrefApkManager.getInt(name_part_1,1),true);
@@ -305,10 +303,10 @@ public class FragmentApkSettings extends Fragment implements
             Log.i(TAG,String.valueOf(sharedPrefApkManager.getInt(name_part_7,0)));
 
             edit8.setText(sharedPrefApkManager.getString(name_part_8,""));
-        }
-        else{
-            Log.i(TAG,"NO FORMAT DATA SAVED IN SHARED_PREFERENCES");
-        }
+//        }
+//        else{
+//            Log.i(TAG,"NO FORMAT DATA SAVED IN SHARED_PREFERENCES");
+//        }
     }
 
 }

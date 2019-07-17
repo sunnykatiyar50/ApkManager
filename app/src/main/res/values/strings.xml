@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">App Manager</string>
+
+    <!-- ACTIVITY & FRAGMENT TITLES -->
     <string name="app_explorer_activity_name">App Explorer</string>
+    <string name="title_activity_operation">OperationActivity</string>
+    <string name="root_browser_textview_path_hint"> ...No Path Set... </string>
+    <string name="title_activity_root_browser">Root Browser</string>g>
     <string name="apk_renamer_fragment_name">Apk Naming Format</string>
     <string name="apk_manager_activity_name">Apk Manager</string>
     <string name="file_format_fragment_name">File Renaming Options</string>
@@ -8,6 +13,20 @@
     <string name="app_settings_fragment_name">General Settings</string>
     <string name="about_fragment_name">About</string>
     <string name="help_fragment_name">Help</string>
+    <string name="title_activity_app_details_">App Details</string>
+
+
+
+    <!-- PREFERENCE EDITOR FILE NAMES -->
+    <string name="sharedPref_settings">com.sunnykatiyar.appmanager.SETTINGS</string>
+    <string name="sharedPref_apkSettings">com.sunnykatiyar.appmanager.APK_EXPLORER_SETTINGS</string>
+    <string name="sharedPref_repository">com.sunnykatiyar.appmanager.APK_REPOSITORY</string>
+    <string name="sharedPref_appsSettings">com.sunnykatiyar.appmanager.APP_MANAGER_SETTINGS</string>
+    <string name="sharedPref_filesSettings">com.sunnykatiyar.appmanager.FILE_MANAGER_SETTINGS</string>
+    <string name="sharedPref_externalPaths">com.sunnykatiyar.appmanager.EXTERNAL_PATHS</string>
+    <string name="sharedPref_rootBrowser">com.sunnykatiyar.appmanager.ROOT_BROWSER</string>
+    <string name="sharedPref_rootBrowser_bookmarks">com.sunnykatiyar.appmanager.ROOT_BROWSER_BOOKMARKS</string>
+
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -18,9 +37,8 @@
     <string name="search_hint">Type here to search files</string>
 
     <!---->
-
-    <string name="apk_size">Apk Size </string>
-    <string name="app_size">App Size </string>
+    <string name="apk_size">Apk Size</string>
+    <string name="app_size">App Size</string>
     <string name="copy_appName">Copy App Name</string>
     <string name="copy_pkgName">Copy Package Name</string>
     <string name="copy_link">Copy Market Link</string>
@@ -37,15 +55,14 @@
     <string name="revoke_perm">Revoke Permissions</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_app_details_">App Details</string>
-    <string name="about_title_text">This is title text</string>
-    <string name="about_text_string">This app is the parting of android learning experience. This is also my first app. after learning enough, I would like to develop the app professionally and make this app available for others.</string>
+    <string name="about_content">This app contain APK Explorer, App Manager, File Manager. This is also my first app and part og my androi learning experience. after learning enough, I would like to develop the app professionally and make this app available for others.</string>
     <string name="copy_submenu"><![CDATA[Copy & Share]]></string>
-    <string name="title_activity_files">FilesActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
     <string name="textview_msg_hint">Important msg will be shown Here</string>
-    <string name="files_textview_path_hint">Please Grant Permission to Storages from Settings.</string>
+    <string name="files_textview_path_hint">If you See Nothing.Go to Settings..</string>
     <string name="label_path_spinner">Grant Permission to Write on External Storages. Click Add and Select Root of theStorage  </string>
     <string name="up_icon_content_desc">Click to  to Parent Directory</string>
+    <string name="add_storage">Storage + </string>
+
 </resources>

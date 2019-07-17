@@ -210,6 +210,25 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         DividerItemDecoration mdivider = new DividerItemDecoration(context, llm.getOrientation());
         root_browser_rview.addItemDecoration(mdivider);
 
+
+        String rootPath = "/";
+        rootObjectFile = new ObjectFile(rootPath);
+        prefEditRootBookmarks.putString(rootPath, rootPath).commit();
+
+        showMsg(log_msg, " -CONTEXT.GETEXTERNALFILESDIRS : -------------");
+        for (File f : context.getExternalFilesDirs(Environment.DIRECTORY_DOWNLOADS)) {
+            showMsg(log_msg, " ---- " + f.getAbsolutePath());
+            String path = f.getParentFile().getParentFile().getParentFile().getParentFile().getParent();
+            showMsg(log_msg, "Extracted Parent " + path);
+            prefEditRootBookmarks.putString(path, path).commit();
+        }
+
+        File internalSD = Environment.getExternalStorageDirectory();
+        String internalSDPath = internalSD.getAbsolutePath();
+        if(internalSD.exists()){
+            prefEditRootBookmarks.putString(internalSDPath, internalSDPath).commit();
+        }
+
         setSpinnerData();
 
         pageViewModel.getText().observe(this, new Observer<String>() {
@@ -237,12 +256,13 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         root_browser_upButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String parent = selectedObjectFile.parent;
-                if(null!=parent & new File(parent).exists()){
-                    showMsg(log_msg, " UP BUTTON CLICK : New Parent Directory : "+parent);
+                selectedPath = selectedObjectFile.parent;
+                if(null!=selectedPath & new File(selectedPath).exists()){
+                    showMsg(log_msg, " UP BUTTON CLICK : New Parent Directory : "+selectedPath);
                    // selectedObjectFile = new ObjectFile(parent);
-                    getSetFolderFiles(new ObjectFile(parent));
+                    getSetFolderFiles(new ObjectFile(selectedPath));
                 }else{
+                    selectedPath = selectedObjectFile.path;
                     showMsg(toast_msg, " Cannot go Up... \nAlready at the root of the tree...");
                 }
             }
@@ -328,6 +348,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
 
                     case R.id.files_bottom_nav_cancel:{
                         resetSelection();
+                        fab_action.hide();
                         break;
                     }
 
@@ -359,17 +380,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
 
     private void setSpinnerData(){
 
-        prefEditRootBookmarks.clear().commit();
-
-        String rootPath = "/";
-        rootObjectFile = new ObjectFile(rootPath);
-        prefEditRootBookmarks.putString("root", rootPath).commit();
-
-        File internalSDPath = Environment.getExternalStorageDirectory();
-        if(internalSDPath.exists()){
-            prefEditRootBookmarks.putString("Internal Storage", internalSDPath.getAbsolutePath()).commit();
-        }
-        
+       // prefEditRootBookmarks.clear().commit();
         String tempPath;
         spinnerPathItems = new ArrayList<>();
         Set<? extends Map.Entry<String, ?>> set = sharedPrefRootBookMarks.getAll().entrySet();
@@ -526,7 +537,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
                 OPERATION_ID = OPERATION_DELETE;
                 NEW_TASKS_ID++;
                 rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context,notifyUIContext,NEW_TASKS_ID);
-                rootOperationsArray[NEW_TASKS_ID].deleteFiles(selectedFilesList);
+                rootOperationsArray[NEW_TASKS_ID].deleteFiles(new ArrayList<>(selectedFilesList));
             }
         });
         builder.setNegativeButton("No", new AlertDialog.OnClickListener(){
@@ -536,7 +547,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
             }
         });
         builder.show();
-        resetSelection();
+     //  resetSelection();
     }
 
     protected void launchPasteFilesTask(){
@@ -550,7 +561,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
                     public void onClick(DialogInterface dialog, int which) {
                         NEW_TASKS_ID++;
                         rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context, notifyUIContext, NEW_TASKS_ID);
-                        rootOperationsArray[NEW_TASKS_ID].rootCopy(selectedFilesList, selectedObjectFile.path);
+                        rootOperationsArray[NEW_TASKS_ID].rootCopy(new ArrayList<>(selectedFilesList), selectedObjectFile.path);
                     }
                 });
 
@@ -562,7 +573,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
                     public void onClick(DialogInterface dialog, int which) {
                         NEW_TASKS_ID++;
                         rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context, notifyUIContext, NEW_TASKS_ID);
-                        rootOperationsArray[NEW_TASKS_ID].rootMove(selectedFilesList, selectedObjectFile.path);
+                        rootOperationsArray[NEW_TASKS_ID].rootMove(new ArrayList<>(selectedFilesList), selectedObjectFile.path);
                     }
                 });
             }
@@ -574,10 +585,9 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
                 }
             });
 
-
         builder.show();
         fab_action.hide();
-        resetSelection();
+      // resetSelection();
     }
 
     protected void launchInstallApksTask(){
@@ -589,7 +599,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
             public void onClick(DialogInterface dialog, int which) {
                 NEW_TASKS_ID++;
                 rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context, notifyUIContext,NEW_TASKS_ID);
-                rootOperationsArray[NEW_TASKS_ID].installApksList(selectedFilesList);
+                rootOperationsArray[NEW_TASKS_ID].installApksList(new ArrayList<>(selectedFilesList));
             }
         });
         builder.setNegativeButton("Cancel Operation", new AlertDialog.OnClickListener(){
@@ -599,7 +609,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
             }
         });
         builder.show();
-        resetSelection();
+      //  resetSelection();
     }
 
     protected  void launchRenameFilesTask(){
@@ -619,7 +629,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
             }
         });
         builder.show();
-        resetSelection();
+      //  resetSelection();
     }
 
     public List<ObjectFile> SortRootFileList(List to_sort_list) {
@@ -737,6 +747,16 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
     }
 
     @Override
+    public void taskCompletedAction(int type, String path) {
+        if(selectedObjectFile.path.equals(path)){
+          launchNewSearchTask(path);
+        }
+        if(cacheList.containsKey(path)){
+            cacheList.remove(path);
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_files, menu);
@@ -747,6 +767,19 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         super.onPrepareOptionsMenu(menu);
 
         menu.findItem(R.id.menuitem_files_hidden).setChecked(sharedPrefRootBrowser.getBoolean(key_show_hidden,true));
+
+        if(null!=sharedPrefRootBookMarks & null!=selectedObjectFile){
+            if(sharedPrefRootBookMarks.contains(selectedObjectFile.path)){
+                showMsg(log_msg, "DIRECTORY ALREADY BOOKMARKED");
+                menu.findItem(R.id.menuitem_remove_bookmark).setVisible(true);
+                menu.findItem(R.id.menuitem_add_bookmark).setVisible(false);
+            }else{
+                showMsg(log_msg, "DIRECTORY NOT BOOKMARKED");
+                menu.findItem(R.id.menuitem_remove_bookmark).setVisible(false);
+                menu.findItem(R.id.menuitem_add_bookmark).setVisible(true);
+            }
+        }
+
 
         if(null!=selectedFilesList && null!=adapterRootBrowser){
             selectedFilesList =  adapterRootBrowser.getSelectedFileList();
@@ -875,7 +908,13 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
             }
 
             case R.id.menuitem_add_bookmark:{
-                prefEditRootBookmarks.putString(selectedObjectFile.name,selectedObjectFile.path).commit();
+                prefEditRootBookmarks.putString(selectedObjectFile.path,selectedObjectFile.path).commit();
+                setSpinnerData();
+                break;
+            }
+
+            case R.id.menuitem_remove_bookmark:{
+                prefEditRootBookmarks.remove(selectedObjectFile.path).commit();
                 setSpinnerData();
                 break;
             }

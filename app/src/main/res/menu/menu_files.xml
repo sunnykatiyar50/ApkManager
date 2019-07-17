@@ -251,6 +251,13 @@
         android:title="Bookmark Folder"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menuitem_remove_bookmark"
+        android:icon="@drawable/ic_grade_black_24dp"
+        android:orderInCategory="100"
+        android:title="Remove Bookmark"
+        app:showAsAction="never" />
+
 </menu>
 
 

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 
@@ -113,13 +114,39 @@ public class FragmentSettings extends Fragment {
         value_repository_folder = sharedPrefSettings.getString(key_repository_folder,path_not_set);
         value_extsd_uri = sharedPrefSettings.getString(key_extsd_uri,path_not_set);
         value_export_apk_enable =   sharedPrefSettings.getBoolean(key_export_apk_enable,false);
+
 //        Log.i(TAG,"Env.GETEXTERNALSTORAGEDIRECTORY() : "+Environment.getExternalStorageDirectory().getAbsolutePath());
 //        Log.i(TAG,"Env.GETEXTERNALSTORAGESTATE() : "+Environment.getExternalStorageState());
 //        Log.i(TAG,"Env.GETEXTERNALSTORAGEPUBLICDIRECTORY(DIRECTORY_DOCUMENTS) : "+ Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath());
 //        Log.i(TAG,"Env.GETEXTERNALSTORAGESTATE(value_repository_folder) : "+Environment.getExternalStorageState(new File(value_repository_folder)));
 //        Log.i(TAG,"Env.GETDATADIRECTORY(): "+Environment.getDataDirectory());
 //        Log.i(TAG,"Env.GETDOWNLOADCACHEDIRECTORY() : "+ Environment.getDownloadCacheDirectory().getAbsolutePath());
-
+//
+//        showMsg(log_msg," ---- ContextCompat.getExternalFilesDirs : ------------------------------");
+//
+//        for(File f:ContextCompat.getExternalFilesDirs(context,Environment.DIRECTORY_DOWNLOADS)){
+//            showMsg(log_msg," ---- "+f.getAbsolutePath());
+//        }
+//
+//        showMsg(log_msg," -CONTEXT.GETEXTERNALFILESDIRS : -------------");
+//        for(File f:context.getExternalFilesDirs(Environment.DIRECTORY_DOWNLOADS)){
+//            showMsg(log_msg," ---- "+f.getAbsolutePath());
+//        }
+//
+//        showMsg(log_msg," -CONTEXT.GETEXTERNALMEDIADIRS : -------------");
+//        for(File f:context.getExternalMediaDirs()){
+//            showMsg(log_msg," ---- "+f.getAbsolutePath());
+//        }
+//
+//        showMsg(log_msg," -CONTEXT.GETEXTERNALCACHEDIRS() : -------------");
+//        for(File f:context.getExternalCacheDirs()){
+//            showMsg(log_msg," ---- "+f.getAbsolutePath());
+//        }
+//
+//        showMsg(log_msg," -CONTEXT.GETOBBDIRS() : -------------");
+//        for(File f:context.getObbDirs()){
+//            showMsg(log_msg," ---- "+f.getAbsolutePath());
+//        }
     }
 
     @Override

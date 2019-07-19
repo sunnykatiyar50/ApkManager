@@ -58,8 +58,8 @@ public class ClassSetAppDetails {
                 split_apks_names = Arrays.asList(pkg.splitNames);
             }else{
                 split_apks_names.add("No Split APKs");
-
             }
+
         expandable_list.put("Split Apk Names", split_apks_names);
 
 

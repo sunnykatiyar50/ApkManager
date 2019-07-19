@@ -280,6 +280,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             case R.id.nav_operations: {
                 Intent i =  new Intent(this, ActivityOperations.class);
                 startActivity(i);
+              //  prefEditSettings.putInt(key_last_fragment,id).commit();
+              //  navigationView.getMenu().findItem(id).setChecked(true);
                 Log.i(TAG,": onresume : OPERATIONS ACTIVITY");
                 break;
             }
@@ -287,6 +289,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             case R.id.nav_root_browser: {
                 Intent i =  new Intent(this, ActivityRootBrowser.class);
                 startActivity(i);
+              //  prefEditSettings.putInt(key_last_fragment,id).commit();
+              //  navigationView.getMenu().findItem(id).setChecked(true);
                 Log.i(TAG,": onresume : ROOTBROWSER ACTIVITY");
                 break;
             }
@@ -309,6 +313,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     public void onBackPressed() {
         if(fm.getBackStackEntryCount()>0)
             fm.popBackStack();
-      else super.onBackPressed();
+        else
+          super.onBackPressed();
     }
+    
 }

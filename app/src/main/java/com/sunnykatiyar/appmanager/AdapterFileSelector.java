@@ -49,7 +49,7 @@ public class AdapterFileSelector extends RecyclerView.Adapter<ViewHolderFileSele
         cflv.selector_file_name.setText(local_file.file_name);
         cflv.selector_file_time.setText(local_file.modification_time);
         cflv.selector_file_type.setText(local_file.file_type);
-        cflv.selector_file_perm.setText(local_file.access_permission);
+        cflv.selector_file_perm.setText(local_file.perm);
 
         cflv.itemView.setOnClickListener(null);
         cflv.itemView.setOnClickListener(new View.OnClickListener() {

@@ -3,13 +3,9 @@ package com.sunnykatiyar.appmanager;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.CancellationSignal;
 import android.provider.DocumentsContract;
-import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import androidx.documentfile.provider.DocumentFile;
 
@@ -31,7 +27,7 @@ public class ObjectDocumentFile {
     long time_long;
     String creation_time;
     String flags;
-    String access_permission;
+    String perm;
     String summary;
     String icon_path;
     boolean isDirectory = false;
@@ -52,15 +48,20 @@ public class ObjectDocumentFile {
         this.file_name = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME));
         this.mime_type = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE));
         this.flags = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_FLAGS));
+        this.perm = Integer.toBinaryString(Integer.valueOf(flags))+" ("+flags+")";
         this.size_long =cursor.getLong(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_SIZE));
         this.file_size = convertSizeToFormat(this.size_long);
 
         if(this.mime_type.equals(DocumentsContract.Document.MIME_TYPE_DIR)) {
-            this.file_type = "FOLDER";
+            this.file_type = "Folder";
             this.isDirectory = true;
             this.file_size = "" ;
         }else{
-            this.file_type = mime_type.substring(mime_type.lastIndexOf('/')+1).toLowerCase();
+//            if(null==MimeTypeMap.getSingleton().getExtensionFromMimeType(mime_type)) {
+                this.file_type = file_name.substring(file_name.lastIndexOf('.') + 1);
+//            }else{
+//                this.file_type = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime_type);
+//            }
         }
 //      this.icon_path = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_ICON));
 //      this.summary = DocumentsContract.Document.COLUMN_SUMMARY;
@@ -82,8 +83,8 @@ public class ObjectDocumentFile {
             this.parent_uri = null;
         }
 
-//        this.access_permission = ;
-//          this.access_permission = getPermissionFromDoc(this.file_doc);
+//        this.perm = ;
+//          this.perm = getPermissionFromDoc(this.file_doc);
 //        DocumentsContract.Document.FLAG_SUPPORTS_THUMBNAIL;
 //        Log.i(TAG, "-------------------------------------------------------------------------------------------------------------------");
 //        Log.i(TAG, "NEW_DOCUMENT_CREATED : " + file_name);
@@ -108,7 +109,7 @@ public class ObjectDocumentFile {
         this.file_size = getSizeFromDoc(file_doc);
         this.modification_time = convertTimeToFormat(file_doc.lastModified());
         this.file_type = getFileTypeFromDoc(file_doc);
-        this.access_permission = getPermissionFromDoc(this.file_doc);
+        this.perm = getPermissionFromDoc(this.file_doc);
 
        // Log.i(TAG, " New Document CREATED " + file_name);
 

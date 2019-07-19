@@ -192,7 +192,7 @@ public class FragmentApkFiles extends Fragment {
         cla = new AdapterApkList(apkFilesList, getContext());
         recyclerView.setAdapter(cla);
         cla.notifyDataSetChanged();
-//        showMsgInTextView(true,"");
+//        showMsgDefault("");
 
         registerForContextMenu(recyclerView);
 
@@ -788,7 +788,7 @@ public class FragmentApkFiles extends Fragment {
             cla = new AdapterApkList(apkFilesList, getContext());
             recyclerView.setAdapter(cla);
             cla.notifyDataSetChanged();
-            showMsgInTextView(true,"");
+            showMsgDefault("");
         }
         
         //--------------------INVERT SELECTION------------------------------------
@@ -807,7 +807,7 @@ public class FragmentApkFiles extends Fragment {
             cla = new AdapterApkList(apkFilesList, getContext());
             recyclerView.setAdapter(cla);
             cla.notifyDataSetChanged();
-            showMsgInTextView(true,"");
+            showMsgDefault("");
         }
 
 //########################################################################################################################
@@ -866,7 +866,7 @@ public class FragmentApkFiles extends Fragment {
                 cla.SelectUpdatable();
                 cla.notifyDataSetChanged();
             }
-            showMsgInTextView(true,"");
+            showMsgDefault("");
         }
 
         //-----------------------------------SELECT NEW VERSIONS-------------------------------------
@@ -875,15 +875,16 @@ public class FragmentApkFiles extends Fragment {
                 SelectNewVersionsApks(apkFilesList);
             }
             cla.notifyDataSetChanged();
-            showMsgInTextView(false,"Warning : If Version Code is equal, old files will be selected.");        }
+        //showMsgDefault(false,"");        }
+        showMsgDefault("");        }
 
-        //-----------------------------------SELECT OLD VERSIONS-------------------------------------
+    //-----------------------------------SELECT OLD VERSIONS-------------------------------------
         if (id == R.id.menuitem__duplicate_old_version) {
             if (cla != null & apkFilesList != null){
                 SelectOldVersionsApks(apkFilesList);
             }
             cla.notifyDataSetChanged();
-            showMsgInTextView(false,"Warning : If Version Code is equal, old files will be selected.");
+            showMsgDefault("");
 
         }
 
@@ -893,7 +894,7 @@ public class FragmentApkFiles extends Fragment {
                 SelectSmallerSizeApks(apkFilesList);
             }
             cla.notifyDataSetChanged();
-            showMsgInTextView(true,"");        }
+            showMsgDefault("");        }
 
         //-----------------------------------SELECT BIGGER APKS-------------------------------------
         if (id == R.id.menuitem_duplicate_size_larger) {
@@ -902,7 +903,7 @@ public class FragmentApkFiles extends Fragment {
             }
             cla.notifyDataSetChanged();
             label_reset = true;
-            showMsgInTextView(true,"");        }
+            showMsgDefault("");        }
 
         //-----------------------------------SELECT NEWER APKS-------------------------------------
         if(id == R.id.menuitem_duplicate_time_new) {
@@ -911,7 +912,7 @@ public class FragmentApkFiles extends Fragment {
             }
             cla.notifyDataSetChanged();
             label_reset = true;
-            showMsgInTextView(true,"");        }
+            showMsgDefault("");        }
 
         //-----------------------------------SELECT OLDER APKS-------------------------------------
         if(id == R.id.menuitem_duplicate_time_old) {
@@ -920,7 +921,7 @@ public class FragmentApkFiles extends Fragment {
             }
             cla.notifyDataSetChanged();
             label_reset = true;
-            showMsgInTextView(true,""); }
+            showMsgDefault(""); }
 
         return true;
     }
@@ -955,7 +956,7 @@ public class FragmentApkFiles extends Fragment {
         };
         Collections.sort(apkFilesList,duplicate_file_name_finder);
         label_reset = true;
-        showMsgInTextView(true,"");    }
+        showMsgDefault("");    }
 
     public void SelectNewVersionsApks(List<ObjectApkFile> list){
         Comparator<ObjectApkFile> duplicate_file_name_finder = new Comparator<ObjectApkFile>() {
@@ -983,7 +984,7 @@ public class FragmentApkFiles extends Fragment {
         };
         Collections.sort(apkFilesList,duplicate_file_name_finder);
         label_reset = true;
-        showMsgInTextView(true,"");
+        showMsgDefault("");
     }
 
     public void SelectSmallerSizeApks(List<ObjectApkFile> list){
@@ -1001,7 +1002,7 @@ public class FragmentApkFiles extends Fragment {
         };
         Collections.sort(apkFilesList,duplicate_file_name_finder);
         label_reset = true;
-        showMsgInTextView(true,"");    }
+        showMsgDefault("");    }
 
     public void SelectBiggerSizeApks(List<ObjectApkFile> list){
         Comparator<ObjectApkFile> duplicate_file_name_finder = new Comparator<ObjectApkFile>() {
@@ -1018,7 +1019,7 @@ public class FragmentApkFiles extends Fragment {
         };
         Collections.sort(apkFilesList,duplicate_file_name_finder);
         label_reset = true;
-        showMsgInTextView(true,"");    }
+        showMsgDefault("");    }
 
     public void SelectNewerApks(List<ObjectApkFile> list){
         Comparator<ObjectApkFile> duplicate_file_name_finder = new Comparator<ObjectApkFile>() {
@@ -1034,7 +1035,7 @@ public class FragmentApkFiles extends Fragment {
             }
         };
         Collections.sort(list,duplicate_file_name_finder);
-        showMsgInTextView(true,"");    }
+        showMsgDefault("");    }
 
     public void SelectOlderApks(List<ObjectApkFile> list){
         Comparator<ObjectApkFile> duplicate_file_name_finder = new Comparator<ObjectApkFile>() {
@@ -1050,24 +1051,25 @@ public class FragmentApkFiles extends Fragment {
             }
         };
         Collections.sort(list,duplicate_file_name_finder);
-        showMsgInTextView(true,"");
+        showMsgDefault("");
     }
 
-    private void showMsg(String display_as, String msg, boolean isempty){
+    private void showMsg(String msg_type, String msg, boolean isempty){
 
-        if(display_as.equals(toast_msg)){
+        if(msg_type.equals(toast_msg)){
             Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+            Log.v(TAG, msg);
         }
-        else if(display_as.equals(textview_msg)) {
-            showMsgInTextView(isempty,msg);
-        }else if(display_as.equals(log_only)){
-
+        else if(msg_type.equals(textview_msg)) {
+            showMsgDefault(msg);
+            Log.v(TAG, msg);
+        }else if(msg_type.equals(log_only)){
+            Log.i(TAG, msg);
         }
-        Log.i(TAG, msg);
     }
 
-    public void showMsgInTextView(boolean empty_string, String str) {
-        if(empty_string) {
+    public void showMsgDefault(String str) {
+        if(str.isEmpty()) {
             String default_string = "Total : " + apkFilesList.size() + "\t Selected : " + cla.getSelectedItemsList().size();
             msg_textview.setText(default_string);
         }else{
@@ -1164,9 +1166,9 @@ public class FragmentApkFiles extends Fragment {
             }
             else if(str0.equals(textview_msg)) {
                 if(str1.equals("")){
-                    showMsgInTextView(true,str1);
+                    showMsgDefault("");
                 }else{
-                    showMsgInTextView(false,str1);
+                    showMsgDefault(str1);
                 }
             }
 
@@ -1529,8 +1531,12 @@ public class FragmentApkFiles extends Fragment {
                 result=false;
             }finally {
                 try {
-                    src_channel.close();
-                    dest_channel.close();
+                    if(null!=src_channel){
+                        src_channel.close();
+                    }
+                    if(null!=dest_channel){
+                        dest_channel.close();
+                    }
                     Log.i(TAG,"Streams Closed Succesfully.");
                 } catch (IOException ex) {
                     Log.e(TAG, "Error Closing Streams : " + ex);

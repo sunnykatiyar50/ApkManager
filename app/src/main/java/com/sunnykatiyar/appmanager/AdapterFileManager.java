@@ -36,12 +36,16 @@ public class AdapterFileManager extends RecyclerView.Adapter<ViewHolderFilesList
         this.context = c;
         this.objectDocumentFileList = list;
         selected_count=getSelectedFilesCount();
-        if(selected_count>0){
-            selection_mode=true;
-        }
         Log.i(TAG,"List Size to Load : "+list.size());
         this.myCallBack = act;
         this.vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if(selected_count > 0) {
+            selection_mode = true;
+            myCallBack.enableActionOptionsInBottombar(true);
+        }else{
+            selection_mode = false;
+            myCallBack.enableActionOptionsInBottombar(false);
+        }
     }
 
     @NonNull
@@ -61,7 +65,7 @@ public class AdapterFileManager extends RecyclerView.Adapter<ViewHolderFilesList
         cflv.file_name.setText(obj.file_name);
         cflv.file_time.setText(obj.modification_time);
         cflv.file_type.setText(obj.file_type);
-        cflv.file_perm.setText(obj.flags);
+        cflv.file_perm.setText(obj.perm);
         cflv.file_size.setText(obj.file_size);
 
         //---------------------------------------FILE_TYPE----------------------------------------------

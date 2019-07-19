@@ -64,7 +64,7 @@
 
     <TextView
         android:id="@+id/file_item_perm"
-        android:layout_width="0dp"
+        android:layout_width="180dp"
         android:layout_height="18dp"
         android:layout_marginStart="4dp"
         android:text="File Permissions"

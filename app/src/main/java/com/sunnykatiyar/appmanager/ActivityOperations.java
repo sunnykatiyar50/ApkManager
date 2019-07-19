@@ -2,6 +2,7 @@ package com.sunnykatiyar.appmanager;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -85,5 +86,19 @@ public class ActivityOperations extends AppCompatActivity implements AdapterOper
     @Override
     public void cancelOperation(int id) {
         myCancelOperation.cancelOperationById(id);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+
+         switch(item.getItemId()){
+             case android.R.id.home: {
+                 finish();
+                 break;
+             }
+         }
+
+        return true;
     }
 }

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorAccent">#E4D81B60</color>
+    <color name="colorAccent">#D81B60</color>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
 
+    <color name="spinner_text_color">#FDD835</color>
+    <color name="path_textview_color">#BDF35A5A</color>
 
     <color name="black">#000000</color>
     <color name="dark_grey">#333333</color>
@@ -24,12 +26,9 @@
     <color name="cyan">#00ACC1</color>
     <color name="yellow_green">#ABE91A</color>
 
-
-
-
     <color name="Updatable">#E68D07</color>
-    <color name="InstalledOnly">#04EB13</color>
-    <color name="Not_Installed">#789963</color>
+    <color name="InstalledOnly">#30C03A</color>
+    <color name="Not_Installed">#8F6D75</color>
 
     <color name= "tint_item_selected">#7ADD61A1</color>
     <color name= "tint_menuitem_selected">#7AF8F7F7</color>

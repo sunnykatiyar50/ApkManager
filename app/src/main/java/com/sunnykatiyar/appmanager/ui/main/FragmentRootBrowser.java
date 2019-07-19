@@ -125,7 +125,8 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
 
     List<String> spinnerPathItems = new ArrayList<>();
     List<ObjectFile> objectFileList = new ArrayList<>();
-    HashMap<String,List<ObjectFile>> cacheList = new HashMap<>();
+    
+    static HashMap<String,List<ObjectFile>> cacheList = new HashMap<>();
     static List<ObjectFile> selectedFilesList = new ArrayList<>();
 
     String mount_system_ro = "mount -o ro,remount /system";
@@ -209,8 +210,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         root_browser_rview.setLayoutManager(llm);
         DividerItemDecoration mdivider = new DividerItemDecoration(context, llm.getOrientation());
         root_browser_rview.addItemDecoration(mdivider);
-
-
+        
         String rootPath = "/";
         rootObjectFile = new ObjectFile(rootPath);
         prefEditRootBookmarks.putString(rootPath, rootPath).commit();
@@ -529,8 +529,8 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
 
     protected void launchDeleteFilesTask(){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Confirm Deleting Files");
-        builder.setMessage("Are You Sure to Delete "+selectedFilesList.size()+selectedObjectFile.name);
+        builder.setTitle("Confirm Delete Operation");
+        builder.setMessage("Delete "+selectedFilesList.size()+" files from "+selectedObjectFile.name);
         builder.setPositiveButton("Yes", new AlertDialog.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -592,7 +592,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
 
     protected void launchInstallApksTask(){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Confirm Apk Installation.");
+        builder.setTitle("Confirm the Operation");
         builder.setMessage("Are You Sure to install "+selectedFilesList.size()+" files.");
         builder.setPositiveButton("Confirm", new AlertDialog.OnClickListener(){
             @Override

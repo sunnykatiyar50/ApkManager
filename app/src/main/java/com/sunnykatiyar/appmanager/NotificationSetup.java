@@ -80,7 +80,7 @@ public class NotificationSetup extends Notification {
     private void createNormalNotiChannel(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
             Log.i(TAG,"IN CREATE CHANNEL : ");
-            notiChannel = new NotificationChannel(NORMAL_NOTI_CHANNEL_ID,NORMAL_NOTI_CHANNEL_NAME,CHANNEL_IMPORTANCE);
+            notiChannel = new NotificationChannel(NORMAL_NOTI_CHANNEL_ID,NORMAL_NOTI_CHANNEL_NAME,NotificationManager.IMPORTANCE_LOW);
             notiChannel.setDescription(normal_noti_description);
             notiChannel.setLightColor(Color.GREEN);
             notiChannel.setSound(null,null);
@@ -111,7 +111,7 @@ public class NotificationSetup extends Notification {
     private void createTaskNotiChannel(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
             Log.i(TAG,"IN CREATE CHANNEL : ");
-            notiChannel = new NotificationChannel(TASKS_NOTI_CHANNEL_ID,TASKS_NOTI_CHANNEL_NAME,CHANNEL_IMPORTANCE);
+            notiChannel = new NotificationChannel(TASKS_NOTI_CHANNEL_ID,TASKS_NOTI_CHANNEL_NAME,NotificationManager.IMPORTANCE_LOW);
             notiChannel.setDescription(tasks_noti_description);
             notiChannel.setLightColor(Color.GREEN);
             notiChannel.setSound(null,null);

@@ -21,8 +21,23 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/tabBarHeight"
-            android:background="?attr/colorPrimary" />
+            android:layout_height="30dp"
+            android:background="?attr/colorPrimaryDark"
+            app:tabIndicator="@color/colorAccent"
+            app:tabRippleColor="#68AD20"
+            app:tabSelectedTextColor="#FB8C00"
+            app:tabTextAppearance="@style/TextAppearance.AppCompat.Body1"
+            app:tabTextColor="#FCF7F6F6">
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_add_white_24dp"
+            android:contentDescription="TODO" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

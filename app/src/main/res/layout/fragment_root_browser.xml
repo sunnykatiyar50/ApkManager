@@ -9,24 +9,28 @@
 
     <TextView
         android:id="@+id/root_browser_path_textview"
-        android:layout_width="347dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="2dp"
-        android:autoSizeMaxTextSize="18sp"
-        android:autoSizeMinTextSize="14sp"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:autoSizeMaxTextSize="14sp"
+        android:autoSizeMinTextSize="12sp"
         android:autoSizeTextType="uniform"
-        android:background="#202221"
+        android:background="#0C0C0C"
         android:ellipsize="start"
+        android:lines="2"
+        android:maxLines="2"
+        android:minLines="1"
         android:padding="2sp"
+        android:paddingHorizontal="5dp"
         android:singleLine="true"
         android:text="@string/root_browser_textview_path_hint"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/root_browser_image_button_up"
+        android:textAlignment="viewStart"
+        android:textColor="@color/path_textview_color"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/root_browser_storage_spinner" />
+        app:layout_constraintTop_toBottomOf="@+id/root_browser_image_button_up" />
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -36,33 +40,42 @@
         android:textAlignment="viewEnd"
         app:layout_constraintBottom_toTopOf="@+id/root_browser_msg_text_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.533"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/root_browser_progress_bar" />
 
     <Spinner
         android:id="@+id/root_browser_storage_spinner"
-        android:layout_width="419dp"
-        android:layout_height="39dp"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
 
-        android:background="@drawable/spinner_bg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:background="@color/colorPrimaryDark"
+        android:clipToPadding="false"
+        android:hapticFeedbackEnabled="true"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/root_browser_path_textview"
+        app:layout_constraintEnd_toStartOf="@+id/root_browser_image_button_up"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/listitem_storage_spinner" />
 
     <ImageButton
         android:id="@+id/root_browser_image_button_up"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#FC0F0F0F"
+        android:layout_width="40dp"
+        android:layout_height="0dp"
+        android:background="@color/colorPrimaryDark"
+        android:backgroundTintMode="multiply"
         android:contentDescription="@string/up_icon_content_desc"
-        android:scaleType="fitCenter"
+        android:foreground="@drawable/ic_arrow_upward_white_24dp"
+        android:foregroundGravity="center_vertical|center_horizontal"
+        android:hapticFeedbackEnabled="true"
+        android:scaleType="center"
+        app:layout_constraintBottom_toTopOf="@+id/root_browser_path_textview"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/root_browser_path_textview"
-        app:layout_constraintTop_toBottomOf="@+id/root_browser_storage_spinner"
-        app:srcCompat="@drawable/ic_arrow_upward_teal_a700_24dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/root_browser_progress_bar"
@@ -179,7 +192,7 @@
         android:layout_height="@dimen/bottomBarHeight"
         android:layout_gravity="bottom"
         android:foregroundTint="#991414"
-        app:backgroundTint="@color/colorPrimary"
+        app:backgroundTint="@color/colorPrimaryDark"
         app:buttonGravity="bottom|top"
         app:fabAlignmentMode="center"
         app:fabCradleMargin="2dp"
@@ -191,6 +204,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/files_bottom_menu"
         tools:ignore="BottomAppBar,MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="40dp"
+        android:layout_height="35dp"
+        android:background="@color/colorPrimaryDark"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/root_browser_path_textview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/ic_star_white_24dp" />
 
     <!--<Button-->
         <!--android:id="@+id/root_browser_button_add_tree"-->

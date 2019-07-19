@@ -501,11 +501,14 @@ public class ClassRootUtils {
                         notifyUI.updateTextView(log_msg, " Output Size :" + oup.size());
                         //Log.i(TAG,"OUP : "+oup.get(0));
                         for(String str : oup){
-                            shellFileList.add(new ObjectFile(searchPath+'/'+str));
-                            publishProgress(count++ +" : "+ str);
-                            if(isCancelled()){
-                                break;
+                            if(!str.contains("denied")){
+                                shellFileList.add(new ObjectFile(searchPath+'/'+str));
+                                publishProgress(count++ +" : "+ str);
+                                if(isCancelled()){
+                                    break;
+                                }
                             }
+
                         }
                     }else{
                         String command = "ls \""+searchPath+"\"";
@@ -514,10 +517,12 @@ public class ClassRootUtils {
                         //Log.i(TAG,"OUP : "+oup.get(0));
                         notifyUI.updateTextView(log_msg, "Output Size :" + oup.size());
                         for (String str : oup) {
-                            shellFileList.add(new ObjectFile(searchPath+'/'+str));
-                            publishProgress(count++ + " : "+str);
-                            if(isCancelled()){
-                                break;
+                            if(!str.contains("denied")){
+                                shellFileList.add(new ObjectFile(searchPath+'/'+str));
+                                publishProgress(count++ + " : "+str);
+                                if(isCancelled()){
+                                    break;
+                                }
                             }
                         }
                     }

@@ -4,7 +4,7 @@
     <!-- ACTIVITY & FRAGMENT TITLES -->
     <string name="app_explorer_activity_name">App Explorer</string>
     <string name="title_activity_operation">OperationActivity</string>
-    <string name="root_browser_textview_path_hint"> ...No Path Set... </string>
+    <string name="root_browser_textview_path_hint"> Grant Permission by Adding Storages </string>
     <string name="title_activity_root_browser">Root Browser</string>g>
     <string name="apk_renamer_fragment_name">Apk Naming Format</string>
     <string name="apk_manager_activity_name">Apk Manager</string>
@@ -54,15 +54,18 @@
     <string name="enable_app">Enable App</string>
     <string name="revoke_perm">Revoke Permissions</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="about_content">This app contain APK Explorer, App Manager, File Manager. This is also my first app and part og my androi learning experience. after learning enough, I would like to develop the app professionally and make this app available for others.</string>
+    <string name="hello_blank_fragment">Hello there...</string>
+    <string name="about_content">This app contain APK Manager, App Explorer, Root File Manager etc. This is also my first app and part og my androi learning experience. after learning enough, I would like to develop the app professionally and make this app available for others.</string>
     <string name="copy_submenu"><![CDATA[Copy & Share]]></string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
-    <string name="textview_msg_hint">Important msg will be shown Here</string>
-    <string name="files_textview_path_hint">If you See Nothing.Go to Settings..</string>
-    <string name="label_path_spinner">Grant Permission to Write on External Storages. Click Add and Select Root of theStorage  </string>
+    <string name="tab_text_3">Tab 3</string>
+    <string name="tab_text_4">Tab 4</string>
+    <string name="textview_msg_hint">in app notifications will be shown Here</string>
+    <string name="files_textview_path_hint">Grant Permission By Adding Storages Here. Click (+)</string>
+    <string name="label_path_spinner">Grant Permission to Write to Storages. Click Add and Select Root of theStorage  </string>
     <string name="up_icon_content_desc">Click to  to Parent Directory</string>
     <string name="add_storage">Storage + </string>
 
+   <string name ="Document_Flags"></string>
 </resources>

@@ -72,11 +72,11 @@ public class ObjectFile {
         path = Paths.get(path).toString();
 
         command = "stat -c '%A~%U~%h~%.19y~%n~%s' \""+path+"\"";
-       //Log.i(TAG,"STAT COMMAND : "+command);
+     //   Log.i(TAG,"STAT COMMAND : "+command);
 
         try{
             result = Shell.su(command).exec();
-           // Log.i(TAG,"STAT COMMAND OUTPUT : "+result.getOut().get(0));
+         //   Log.i(TAG,"STAT COMMAND OUTPUT : "+result.getOut().get(0));
             stats = result.getOut().get(0).split("~");
             //Log.i(TAG,"STAT ARRAY Size : "+stats.length);
             this.perm = stats[0];

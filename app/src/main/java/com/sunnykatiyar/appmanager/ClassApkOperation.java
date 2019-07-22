@@ -10,6 +10,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.topjohnwu.superuser.Shell;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
+import java.nio.file.Paths;
 
 import static com.sunnykatiyar.appmanager.ActivityOperations.adapter_operations_list;
 
@@ -40,7 +42,9 @@ class ClassApkOperation {
     private File source_file;
     File dest_file;
     private ContentResolver resolver;
-
+    private String offline_installer = "com.google.android.packageinstaller";
+    private String playstore_installer = "com.android.vending";
+    
     private final String TAG = "MYAPP : APK OPERATION  : ";
 
     private final String name_part_1 = FragmentApkSettings.name_part_1;
@@ -184,7 +188,6 @@ class ClassApkOperation {
         Log.i(TAG, "Renaming " + apkItem.file_name + " : \"" + dest_file + "\" - " + result);
     }
 
-    
 //------------------------------------EXTRACTING APK_____________________________________________________
 
     public ClassApkOperation(ObjectAppPackageName appitem, Context c){
@@ -261,9 +264,23 @@ class ClassApkOperation {
     }
 
     public void extractApk(){
-        setNameFormatFromApp();
-        source_file = this.appItem.apk_file;
-        new ExtractTask().execute();
+
+        if(null!=appItem.insaller_pkg){
+            Log.i(TAG," APP INSTALLER "+appItem.insaller_pkg);
+            if(appItem.insaller_pkg.equals(playstore_installer)){
+                setNameFormatFromApp();
+                source_file = this.appItem.apk_file;
+                Log.i(TAG," EXTRACTING APK "+appItem.app_name);
+                new ExtractTask().execute();
+            }else if(!appItem.insaller_pkg.equals(offline_installer)){
+                setNameFormatFromApp();
+                source_file = this.appItem.apk_file;
+                Log.i(TAG," EXTRACTING APK "+appItem.app_name);
+                new ExtractTask().execute();
+            }
+        }else{
+            Log.i(TAG," APP INSTALLER found is null.");
+        }
     }
 
     private class ExtractTask extends AsyncTask<Void,String,Void>{
@@ -277,53 +294,46 @@ class ClassApkOperation {
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-             showToast(values[0]);
+            showToast(values[0]);
         }
 
         private void extractApkOf(){
-            String parent = ActivityMain.sharedPrefSettings.getString(key_repository_folder,path_not_set);
-
-            Log.i(TAG, "\nParent value from preference : " + parent);
-
-            parent_folder = new File(parent);
-            //DocumentFile parent_doc = DocumentFile.fromTreeUri(context, parent_uri);
-
-            if(!parent_folder.exists() || !parent_folder.isDirectory()){
-                publishProgress("\nParent value not exists : " + parent_folder);
-                parent_folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            }
-
+//            String parent = ActivityMain.sharedPrefSettings.getString(key_repository_folder,path_not_set);
+//
+//            Log.i(TAG, "\nParent value from preference : " + parent);
+//
+//            parent_folder = new File(parent);
+//            //DocumentFile parent_doc = DocumentFile.fromTreeUri(context, parent_uri);
+//
+//            if(!parent_folder.exists() || !parent_folder.isDirectory()){
+//                publishProgress("\nParent value not exists : " + parent_folder);
+//                parent_folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+//            }
+            Uri parent_uri;
 //--------------------------------EXTRACT APK WITHOUT ROOT-----------------------------------
-//            if(!root_access){
-                Uri parent_uri = Uri.parse(ActivityMain.sharedPrefSettings.getString(key_export_apk_uri,path_not_set));
-                if(!parent_uri.toString().equals(path_not_set)){
-                    //-------------------------------URI METHOD-----------------------------------------------------------
-                    ContentResolver resolver = context.getContentResolver();
-                    Uri base_apk_src_uri = DocumentFile.fromFile(source_file).getUri();
-                    Log.i(TAG,"parent_uri : "+parent_uri);
-                    Uri parentDocUri = DocumentsContract.buildDocumentUriUsingTree(parent_uri, DocumentsContract.getTreeDocumentId(parent_uri));
-                    copyDocFile(base_apk_src_uri, parentDocUri);
-                    Log.i(TAG,"APK EXPORTED BY URI METHOD to: "+parent_uri.getPath());
-                }else{
-                    showToast("Please specify Folder to extract apk in Settings ");
-//                }
-//                    if(!parent_folder.canWrite()){
-//                        publishProgress("\n Default Parent Folder not Writable : " + parent_folder);
-//                        parent_folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-//                    }
 //
-//                    dest_file = new File(parent_folder + "/" + app_formatted_name);
-//                    publishProgress(" Apk will be extracted as : " + dest_file);
-//
-//                    if(parent_folder.canWrite()){
-//                        copyTo(source_file, dest_file);
-//                    }
-//                    else{
-//                        Log.i(TAG," : Renaming failed for \"" + source_file.getName() + "\". Cannot Write to "+parent_folder.getAbsolutePath());
-//                    }
-//                }
+            parent_uri = Uri.parse(ActivityMain.sharedPrefSettings.getString(key_export_apk_uri,path_not_set));
 
+            if(parent_uri.toString().equals(path_not_set)){
+                File parentFolder = new File(Paths.get(Environment.getExternalStorageDirectory().getAbsolutePath(),
+                        context.getResources().getString(R.string.app_name),
+                        "Extracted Apks").toString());
+                parentFolder.mkdirs();
+                parent_uri = Uri.fromFile(parentFolder);
+                Log.i(TAG,"No path set. Default path :"+parent_uri.getPath());
             }
+
+            //-------------------------------URI METHOD-----------------------------------------------------------
+            Uri base_apk_src_uri = DocumentFile.fromFile(source_file).getUri();
+            Log.i(TAG,"parent_uri : "+parent_uri);
+            Uri parentDocUri;
+            if(parent_uri.getScheme().contains("file")){
+                parentDocUri = parent_uri;
+            }else{
+                parentDocUri = DocumentsContract.buildDocumentUriUsingTree(parent_uri, DocumentsContract.getTreeDocumentId(parent_uri));
+            }
+            copyDocFile(base_apk_src_uri, parentDocUri);
+            Log.i(TAG,"APK EXPORTED BY URI METHOD to: "+parent_uri.getPath());
 //-----------------------------------ROOT EXTRACT APK-----------------------------------
 //            else if(root_access){
 //                dest_file = new File(parent_folder + "/" + app_formatted_name);
@@ -397,17 +407,30 @@ class ClassApkOperation {
         OutputStream out = null;
         Uri targetFileUri = null;
 
-        BufferedInputStream buf_in;
-        BufferedOutputStream buf_out;
-
-        boolean result ;
-
+        BufferedInputStream buf_in = null;
+        BufferedOutputStream buf_out = null;
+        
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension("apk");
 
-        try{
-            targetFileUri = DocumentsContract.createDocument(resolver, targetFolder, mimeType, app_formatted_name);
-        }catch (FileNotFoundException e) {
-            Log.i(TAG," Unable create target document uri");
+        if(targetFolder.getScheme().contains("file")){
+           File targetFile = new File(Paths.get(targetFolder.getPath(),app_formatted_name).toString());
+           Log.i(TAG,"File Created path"+targetFile.getAbsolutePath());
+           try{
+                if(!targetFile.exists()){
+                    targetFile.createNewFile();
+                }
+                Log.i(TAG,"File Created path"+targetFile.getAbsolutePath());
+            }catch(IOException e) {
+                Log.i(TAG,"Unable to create empty File");
+            }
+            targetFileUri =  Uri.fromFile(targetFile);
+
+        }else{
+            try{
+                targetFileUri = DocumentsContract.createDocument(resolver, targetFolder, mimeType, app_formatted_name);
+            }catch (FileNotFoundException e) {
+                Log.i(TAG," Unable create target document uri");
+            }
         }
 
         try{
@@ -425,17 +448,26 @@ class ClassApkOperation {
                 buf_out.write(data);
             }
 
-            out.flush();
-            result=true;
+            buf_out.flush();
+
             Log.i(TAG, "Extraction of apk successfull : "+targetFileUri.getPath());
 
         }catch(Exception e) {
-            result=true;
             Log.i(TAG, "Extraction of apk  file failed : "+e);
         }finally{
             try {
-                in.close();
-                out.close();
+                if(null!=buf_in){
+                    buf_in.close();
+                }
+                if(null!=buf_out){
+                    buf_out.close();
+                }
+                if(null!=in){
+                    in.close();
+                }
+                if(null!=out){
+                    out.close();
+                }
                 Log.i(TAG, "Streams Closed successfully.");
             } catch(Exception e) {
                 e.printStackTrace();

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">App Manager</string>
+    <string name="app_name">SK Manager</string>
 
     <!-- ACTIVITY & FRAGMENT TITLES -->
     <string name="app_explorer_activity_name">App Explorer</string>
@@ -15,8 +15,6 @@
     <string name="help_fragment_name">Help</string>
     <string name="title_activity_app_details_">App Details</string>
 
-
-
     <!-- PREFERENCE EDITOR FILE NAMES -->
     <string name="sharedPref_settings">com.sunnykatiyar.appmanager.SETTINGS</string>
     <string name="sharedPref_apkSettings">com.sunnykatiyar.appmanager.APK_EXPLORER_SETTINGS</string>
@@ -25,13 +23,12 @@
     <string name="sharedPref_externalPaths">com.sunnykatiyar.appmanager.EXTERNAL_PATHS</string>
     <string name="sharedPref_rootBrowser">com.sunnykatiyar.appmanager.ROOT_BROWSER</string>
     <string name="sharedPref_rootBrowser_bookmarks">com.sunnykatiyar.appmanager.ROOT_BROWSER_BOOKMARKS</string>
-
-
+    
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">APK Manager</string>
+    <string name="nav_header_title">SK Manager</string>
     <string name="nav_header_subtitle">com.sunnykatiyar</string>
-    <string name="nav_header_desc">Install, Delete, Rename Update Apks</string>
+    <string name="nav_header_desc"> Organize Apks, Explore Apps, Manage Files and a Root Browser for Rooted Phones </string>
     <string name="hint_separator">"Enter any character or word"</string>
     <string name="search_hint">Type here to search files</string>
 

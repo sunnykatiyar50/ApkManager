@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sunnykatiyar.appmanager"
     android:installLocation="preferExternal">
 
@@ -15,15 +16,15 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_android_24dp"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_android"
+        android:roundIcon="@drawable/ic_android_24dp"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
         <activity
             android:name=".ActivityMain"
-            android:label="App Explorer"
+            android:label="SK Manager"
             android:theme="@style/FilePickerTheme">
 
             <intent-filter>

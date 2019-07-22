@@ -42,6 +42,7 @@ class ClassSetAppDetails {
                             List<String> targetSdk = new ArrayList<>();
                             List<String> minSdk = new ArrayList<>();
                             List<String> configs = new ArrayList<>();
+                            List<String> category = new ArrayList<>();
                             List<String> uids = new ArrayList<>();
                             List<String> processName = new ArrayList<>();
                             List<String> sharedLibs = new ArrayList<>();
@@ -89,6 +90,10 @@ class ClassSetAppDetails {
         //-----------------------ADD VERSION-----------------------------
         version_code.add(pkg.versionName+"_"+ pkg.versionCode);
         expandable_list.put("Version ",version_code);
+
+//        //-----------------------ADD Category-----------------------------
+//        category.add(pkg.applicationInfo.category);
+//        expandable_list.put("Category ",category);
 
 
         // --------------------ADD PERMISSIONS-----------------------------------

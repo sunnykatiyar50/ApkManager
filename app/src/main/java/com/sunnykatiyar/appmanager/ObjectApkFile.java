@@ -104,7 +104,7 @@ class ObjectApkFile {
             this.app_info.publicSourceDir = file.getAbsolutePath();
 ///---------------------------------------------------------------------
             this.app_name = (String) this.app_info.loadLabel(pm);
-            this.file_size = getSize(file);
+            this.file_size = getSize(file.length());
             this.isInstalled = false;
             this.isUpdatable = false;
             this.select_box_state=false;
@@ -141,24 +141,25 @@ class ObjectApkFile {
 
     }
 
-    private String getSize(File file) {
+    private String getSize(long length) {
 
-        if (!file.isFile()) {
-            throw new IllegalArgumentException("Expected a file");
-        }
-        final double length = file.length();
+        final long KB = 1024;
+        final long MB = 1024 * 1024;
+        final long GB = 1024 * 1024 * 1024;
 
-        if(length>GB){
-            return format.format(length / GB) + " MB";
+        final DecimalFormat format = new DecimalFormat("###.##");
+
+        if (length > GB) {
+            return format.format((float)length / GB) + " GB";
         }
         if (length > MB) {
-            return format.format(length / MB) + " MB";
+            return format.format((float)length / MB) + " MB";
         }
         if (length > KB) {
-            return format.format(length / KB) + " KB";
+            return format.format((float)length / KB) + " KB";
         }
 
-        return format.format(length) + "Bytes";
+        return format.format(length) + " Bytes";
     }
 
     private String getTime(long time){

@@ -14,11 +14,14 @@ class ObjectAppPackageName {
 
     final String pkg_name;
     String app_name ;
-        String app_version_name;
-        String app_version_code;
+    String app_version_name;
+    String app_version_code;
     boolean select_box_state ;
-        String apk_size;
-        File apk_file;
+    String apk_size;
+    String insaller_pkg;
+    File apk_file;
+    PackageInfo app_pkg_info;
+    ApplicationInfo app_info;
 
     private static final DecimalFormat format = new DecimalFormat("#.##");
         private static final long MB = 1024 * 1024;
@@ -33,8 +36,9 @@ class ObjectAppPackageName {
             this.pkg_name = pkg_name;
 
             try{
-                PackageInfo app_pkg_info = pm.getPackageInfo(this.pkg_name, 0);
-                ApplicationInfo app_info = app_pkg_info.applicationInfo;
+                this.app_pkg_info = pm.getPackageInfo(this.pkg_name, 0);
+                this.insaller_pkg = pm.getInstallerPackageName(this.pkg_name);
+                this.app_info = app_pkg_info.applicationInfo;
                 this.app_name = pm.getApplicationLabel(app_info).toString();
                 this.apk_file = new File(app_info.sourceDir);
                 long app_install_time = app_pkg_info.firstInstallTime;
@@ -51,18 +55,24 @@ class ObjectAppPackageName {
 
         private String getSize(long length) {
 
-            if(length>GB){
-                return format.format(length / GB) + " MB";
-            }
-            if (length > MB) {
-                return format.format(length / MB) + " MB";
-            }
-            if (length > KB) {
-                return format.format(length / KB) + " KB";
-            }
+                final long KB = 1024;
+                final long MB = 1024 * 1024;
+                final long GB = 1024 * 1024 * 1024;
 
-            return format.format(length) + "Bytes";
-        }
+                final DecimalFormat format = new DecimalFormat("###.##");
+
+                if (length > GB) {
+                    return format.format((float)length / GB) + " GB";
+                }
+                if (length > MB) {
+                    return format.format((float)length / MB) + " MB";
+                }
+                if (length > KB) {
+                    return format.format((float)length / KB) + " KB";
+                }
+
+                return format.format(length) + " Bytes";
+            }
 
         private String getTime(long time){
             DateFormat dateFormat = new SimpleDateFormat("hh:mm a dd-MM-yy");

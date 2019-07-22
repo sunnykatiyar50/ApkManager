@@ -70,6 +70,9 @@ public class FragmentAppManager extends Fragment {
     private static final String key_order_by = "ORDER_APPS_BY";
 
     private final String toast_msg = "show_as_toast";
+    private final String textview_msg = "show_in_textview";
+    private final String log_msg = "show_as_toast";
+
     Activity context = getActivity();
 
     @Override
@@ -114,16 +117,16 @@ public class FragmentAppManager extends Fragment {
             adapter = new AdapterAppList(mainpm, launchable_apps_list, getActivity());
          //   app_listview.setNewObjectFilesList(adapter);
         //    adapter.notifyDataSetChanged();
-            showMsg(toast_msg,"Launching asynctask : query = "+search_query,false);
+            showMsg(log_msg,"Launching asynctask : query = "+search_query,false);
         }else{
-            showMsg(toast_msg,"Using old aynctask for applist : query = "+search_query,false);
+            showMsg(log_msg,"Using old aynctask for applist : query = "+search_query,false);
             adapter = new AdapterAppList(mainpm, launchable_apps_list, getActivity());
             app_listview.setAdapter(adapter);
             adapter.notifyDataSetChanged();
 
         }
 
-        showMsgInTextView(true,"");
+        showMsgInTextView("");
         //MyAsyncTaskLoader m = new MyAsyncTaskLoader(getActivity(),"Fetching Apps");
         registerForContextMenu(app_listview);
         return v;
@@ -319,23 +322,21 @@ public class FragmentAppManager extends Fragment {
 
     private void showMsg(String display_as, String msg, boolean isempty){
 
-        String log_only = "show_in_log_only";
-        String textview_msg = "show_in_textview";
         if(display_as.equals(toast_msg)){
             Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
             Log.v(TAG, msg);
         }
         else if(display_as.equals(textview_msg)) {
-            showMsgInTextView(isempty,msg);
+            showMsgInTextView(msg);
             Log.v(TAG, msg);
-        }else if(display_as.equals(log_only)){
+        }else if(display_as.equals(log_msg)){
             Log.i(TAG, msg);
         }
         
     }
 
-    private void showMsgInTextView(boolean empty_string, String str) {
-        if(empty_string) {
+    private void showMsgInTextView(String str) {
+        if(str.isEmpty()) {
             String default_string = "Total Apps : " + launchable_apps_list.size();
             label_msgbox.setText(default_string);
         }else{
@@ -408,7 +409,7 @@ public class FragmentAppManager extends Fragment {
 
             SortAppList();
 
-            showMsgInTextView(true,"");
+            showMsgInTextView("");
             showMsg(toast_msg,"in onPostExecute : "+launchable_apps_list.size()+" apps in "+((System.currentTimeMillis() - initFragmentTime) / 1000) + "s",false);
             Toast.makeText(activity, launchable_apps_list.size() + " Apps Loaded in " + ((System.currentTimeMillis() - initFragmentTime) / 1000) + "s", Toast.LENGTH_LONG).show();
         }
@@ -483,7 +484,6 @@ public class FragmentAppManager extends Fragment {
     private void setLabelTextMsg(String str){
             label_msgbox.setText(str);
     }
-
 
     @Override
     public void onResume() {

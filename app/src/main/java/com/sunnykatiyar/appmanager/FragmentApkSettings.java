@@ -61,6 +61,8 @@ class FragmentApkSettings extends Fragment implements
 
     private final static String spinner_items_set= "SPINNER_ITEMS_SET";
     public final static String name_format_data_saved = "FORMAT_DATA_SAVED";
+
+
     public FragmentApkSettings() {
         // Required empty public constructor
     }
@@ -79,8 +81,6 @@ class FragmentApkSettings extends Fragment implements
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_apk_settings, container, false);
-
-
 
         spinner_items = new ArrayList<>();
 

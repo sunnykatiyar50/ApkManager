@@ -17,10 +17,10 @@ class ObjectOperation {
     private final NotificationManager notimgr;
     private Notification myNotification;
     
-    public ObjectOperation(Context c, int id, String type, int totalFiles) {
+    public ObjectOperation(Context c, int id, String noti_title, int totalFiles) {
         Context context = c;
         this.operationID = id;
-        this.operationTitle = type;
+        this.operationTitle = noti_title;
         this.totalFiles = totalFiles;
         this.notimgr = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationSetup = new NotificationSetup(context);

@@ -113,14 +113,27 @@ public class ActivityAppDetails extends AppCompatActivity {
             Intent activityIntent = new Intent();
             Log.e("in Appdetails","i can detect a childclick");
             //Toast.makeText(v.getContext(),"i can detect a childclick", Toast.LENGTH_SHORT).show();
-            String clicked_activity = exp_adapter.getChild(groupPosition,childPosition).toString();
-            activityIntent.setComponent(new ComponentName(appinfo_clicked_pkg.packageName,clicked_activity) );
-            if (exp_adapter.getGroup(groupPosition).toString().equals("Activities"))
+
+
+            if(exp_adapter.getGroup(groupPosition).toString().equals("Activities"))
             {
+                String clicked_activity = exp_adapter.getChild(groupPosition,childPosition).toString();
+                activityIntent.setComponent(new ComponentName(appinfo_clicked_pkg.packageName,clicked_activity) );
                 Toast.makeText(v.getContext(), clicked_activity, Toast.LENGTH_SHORT).show();
                 startActivity(activityIntent);
 
             }
+
+            if(exp_adapter.getGroup(groupPosition).toString().equals("Permissions- Requested"))
+            {
+                String clicked_perm= exp_adapter.getChild(groupPosition,childPosition).toString();
+                Toast.makeText(v.getContext(),clicked_perm , Toast.LENGTH_SHORT).show();
+
+               // if(ActivityMain.)
+
+            }
+
+
             return true;
         });
 

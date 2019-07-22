@@ -445,17 +445,24 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
     }
 
     private String getSize(long length) {
-        if(length>GB){
-            return format.format(length / GB) + " MB";
+
+        final long KB = 1024;
+        final long MB = 1024 * 1024;
+        final long GB = 1024 * 1024 * 1024;
+
+        final DecimalFormat format = new DecimalFormat("###.##");
+
+        if (length > GB) {
+            return format.format((float)length / GB) + " GB";
         }
         if (length > MB) {
-            return format.format(length / MB) + " MB";
+            return format.format((float)length / MB) + " MB";
         }
         if (length > KB) {
-            return format.format(length / KB) + " KB";
+            return format.format((float)length / KB) + " KB";
         }
 
-        return format.format(length) + "Bytes";
+        return format.format(length) + " Bytes";
     }
 
     private void showMsg(String str){

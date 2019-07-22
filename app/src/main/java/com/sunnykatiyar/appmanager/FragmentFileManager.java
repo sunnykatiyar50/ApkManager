@@ -50,6 +50,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static android.app.Activity.RESULT_OK;
 import static android.provider.DocumentsContract.Document.COLUMN_DISPLAY_NAME;
@@ -1110,9 +1111,11 @@ public class FragmentFileManager extends Fragment implements AdapterFileManager.
         switch(global_sort_by) {
             case sort_by_name:{
                 Collections.sort(to_sort_list, file_name_comparator);
+
                 if (global_order_by.equals(order_decreasing)) {
                     Collections.reverse(to_sort_list);
                 }
+
                 Log.i(TAG, "in sort_by_name");
                 break;
             }

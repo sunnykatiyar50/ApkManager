@@ -48,7 +48,7 @@ class AdapterExpandableList extends BaseExpandableListAdapter {
         property_value.setText(property_fetched);
       //  view.setClickable(false);
 
-        view.setTooltipText(property_fetched);
+       // view.setTooltipText(property_fetched);
         return view;
     }
 
@@ -61,6 +61,8 @@ class AdapterExpandableList extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int i, int i1) {
         return true;
     }
+
+
     @Override
     public boolean hasStableIds() {
         return false;

@@ -146,9 +146,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             }
         }
 
-
-
-        fm = this.getSupportFragmentManager();
+        fm = getSupportFragmentManager();
 
         CURRENT_FRAGMENT = sharedPrefSettings.getInt(key_last_fragment,0);
         setFragment(CURRENT_FRAGMENT);
@@ -175,6 +173,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     private void setFragment(int id){
 
         FragmentTransaction ft;
+
         switch(id){
             case R.id.nav_apklist:{
                 Log.e(TAG,"NavBar ApkList Fragment ");

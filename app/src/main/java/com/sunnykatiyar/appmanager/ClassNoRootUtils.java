@@ -513,8 +513,8 @@ public class ClassNoRootUtils {
             OutputStream out = null;
             Uri targetFileUri = null;
 
-            BufferedInputStream buf_in;
-            BufferedOutputStream buf_out;
+            BufferedInputStream buf_in = null;
+            BufferedOutputStream buf_out = null;
 
             boolean result ;
             int currSize=0;
@@ -522,7 +522,6 @@ public class ClassNoRootUtils {
 
             try{
                 targetFileUri = DocumentsContract.createDocument(resolver,targetFolder.uri,srcFile.mime_type, srcFile.file_name);
-               //showMsg(log_msg," Target file Document Uri : "+targetFileUri);
             }catch (FileNotFoundException e) {
                 showMsg(log_msg," Unable create target document uri");
             }
@@ -556,13 +555,11 @@ public class ClassNoRootUtils {
                         if(adapter_operations_list != null){
                             ActivityOperations.adapter_operations_list.notifyDataSetChanged();
                         }
-                     //   showMsg(log_msg, "temp Size : "+tempSize);
-
                         tempSize=0;
                     }
                 }
 
-                out.flush();
+                buf_out.flush();
                 result=true;
 //                showMsg(log_msg, "Total Size : "+totalSize);
 //                showMsg(log_msg, "Size Copied : "+currSize);
@@ -570,13 +567,22 @@ public class ClassNoRootUtils {
 
 
             }catch(Exception e) {
-                result=true;
                 showMsg(log_msg, "copy file : "+e);
             }finally{
                 try {
-                    in.close();
-                    out.close();
-                    showMsg(log_msg, "Streams Closed successfully.");
+                    if(null!=buf_in){
+                        buf_in.close();
+                    }
+                    if(null!=buf_out){
+                        buf_out.close();
+                    }
+                    if(null!=in){
+                        in.close();
+                    }
+                    if(null!=out){
+                        out.close();
+                    }
+                    Log.i(TAG, "Streams Closed successfully.");
                 } catch(Exception e) {
                     e.printStackTrace();
                 }

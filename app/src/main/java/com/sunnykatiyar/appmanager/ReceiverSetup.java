@@ -42,7 +42,7 @@ public class ReceiverSetup extends BroadcastReceiver {
                     ClassApkOperation apkOperationObject = new ClassApkOperation(appItem, context);
                         Log.i(TAG,"Extracting Apk of size :"+ appItem.apk_size);
                         apkOperationObject.extractApk();
-                        showLog(context,"Package Extracted to - "+ apkOperationObject.parent_folder.getAbsolutePath());
+                      //  showLog(context,"Package Extracted to - "+ apkOperationObject);
                 }catch(Exception ex) {
                     showLog(context,"Error Extracting. Exception :  "+ex);
                 }

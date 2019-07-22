@@ -9,13 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class FragmentHelp extends Fragment {
+class FragmentHelp extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
-    TextView help_text ;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -23,7 +22,7 @@ public class FragmentHelp extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_help,container,false);
 
-        help_text = v.findViewById(R.id.help_textview);
+        TextView help_text = v.findViewById(R.id.help_textview);
 
         help_text.setText(" " +
                             "DOCUMENT_FLAGS : \n" +

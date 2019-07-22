@@ -37,8 +37,7 @@
         app:showAsAction="never" />
 
   <item android:title="Extreme Actions"
-        android:orderInCategory="100"
-        android:id="@+id/extreme_actions_item">
+        android:orderInCategory="100">
 
       <menu>
 

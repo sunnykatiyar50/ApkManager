@@ -1,37 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorAccent">#D81B60</color>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimary">#00897B</color>
+    <color name="colorPrimaryDark">#027467</color>
 
     <color name="spinner_text_color">#FDD835</color>
     <color name="path_textview_color">#BDF35A5A</color>
 
     <color name="black">#000000</color>
     <color name="dark_grey">#333333</color>
-    <color name="light_gray">#A2A2A2</color>
     <color name="white">#FFFFFF</color>
     <color name="cream_white">#FAC3E6</color>
-
-    <color name="red">#BDF35A5A</color>
-    <color name="yellow">#FDD835</color>
-    <color name="dark_yellow">#FFB300</color>
-    <color name="orange">#F76A3D</color>
-    <color name="pink">#F3365C</color>
-    <color name="green">#1DA51D</color>
-    <color name="dark_green">#115A11</color>
-    <color name="dark_red">#69121C</color>
-    <color name="violet">#492992</color>
-    <color name="blue">#2648B6</color>
-    <color name="cyan">#00ACC1</color>
-    <color name="yellow_green">#ABE91A</color>
 
     <color name="Updatable">#E68D07</color>
     <color name="InstalledOnly">#30C03A</color>
     <color name="Not_Installed">#8F6D75</color>
 
     <color name= "tint_item_selected">#7ADD61A1</color>
-    <color name= "tint_menuitem_selected">#7AF8F7F7</color>
     <color name= "tint_item_unselected">#00BD6A87</color>
 
     <color name="my_divider_color">#232527</color>

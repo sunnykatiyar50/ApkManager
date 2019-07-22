@@ -18,18 +18,17 @@ import java.util.LinkedHashMap;
 public class ActivityOperations extends AppCompatActivity implements AdapterOperations.OperationOptions{
 
 
-    RecyclerView operation_rview;
+    private RecyclerView operation_rview;
     public static AdapterOperations adapter_operations_list;
-    static ActivityOperations activityOperations ;
-    public static LinkedHashMap<Integer, ObjectOperation> operationsHashMapList = new LinkedHashMap<>();
-    CancelOperation myCancelOperation;
-    Context context;
+    private static ActivityOperations activityOperations ;
+    public static final LinkedHashMap<Integer, ObjectOperation> operationsHashMapList = new LinkedHashMap<>();
+    private CancelOperation myCancelOperation;
     final String TAG = "MYAPP : ACTIVITY OPERATIOSN";
     public static ActivityOperations getInstanceOf(){
         return activityOperations;
     }
-    TextView noview_Text;
-    ImageView noview_Image;
+    private TextView noview_Text;
+    private ImageView noview_Image;
       public interface CancelOperation{
         void cancelOperationById(int id);
       }
@@ -47,7 +46,7 @@ public class ActivityOperations extends AppCompatActivity implements AdapterOper
         noview_Image = findViewById(R.id.operation_noview_image);
         noview_Text = findViewById(R.id.operation_noview_textview);
         activityOperations = this;
-        context =this;
+        Context context = this;
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(RecyclerView.VERTICAL);
@@ -68,7 +67,6 @@ public class ActivityOperations extends AppCompatActivity implements AdapterOper
         operationsHashMapList.put(id, obj);
         adapter_operations_list = new AdapterOperations(this,operationsHashMapList);
         enablelistView();
-
     }
 
     private void enablelistView(){
@@ -92,12 +90,9 @@ public class ActivityOperations extends AppCompatActivity implements AdapterOper
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
 
-         switch(item.getItemId()){
-             case android.R.id.home: {
-                 finish();
-                 break;
-             }
-         }
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
 
         return true;
     }

@@ -9,13 +9,13 @@ import android.widget.TextView;
 
 public class ViewHolderAppList extends RecyclerView.ViewHolder {
     
-    TextView appname;
-    TextView pkgname;
-    ImageView applogo;
-    TextView app_size;
-    TextView install_date;
-    TextView version;
-    TextView text_extra;
+    final TextView appname;
+    final TextView pkgname;
+    final ImageView applogo;
+    final TextView app_size;
+    final TextView install_date;
+    final TextView version;
+    final TextView text_extra;
     View v;
 
     public ViewHolderAppList(@NonNull View itemView) {

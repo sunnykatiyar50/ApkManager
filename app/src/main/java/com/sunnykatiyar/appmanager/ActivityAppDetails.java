@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import static android.content.Intent.createChooser;
 import static com.sunnykatiyar.appmanager.FragmentAppManager.activityManager;
@@ -47,25 +48,17 @@ public class ActivityAppDetails extends AppCompatActivity {
 
     private static final String TAG = "MYAPP : APPDETAILS ACTIVITY : ";
 
-    protected Activity activity = ActivityAppDetails.this;
-    ImageView appinfo_icon;
-    TextView appinfo_appname;
-    TextView app_version;
-    TextView appinfo_pkgname;
-    TextView install_date;
-    TextView app_size;
-    PackageManager appinfo_pm = mainpm;
-    PackageInfo appinfo_clicked_pkg = AdapterAppList.clicked_pkg;
-    protected static Toolbar toolbar;
-    ExpandableListView expandableListView;
-    HashMap<String, List<String>> Detailed_Exp_List;
-    List<String> headers;
-    ExpandableListAdapter exp_adapter;
+    private final Activity activity = ActivityAppDetails.this;
+    private final PackageManager appinfo_pm = mainpm;
+    private final PackageInfo appinfo_clicked_pkg = AdapterAppList.clicked_pkg;
+    private ExpandableListView expandableListView;
+    private List<String> headers;
+    private ExpandableListAdapter exp_adapter;
     //AppMenu appinfo_optionmenu;
-    boolean rootAccess;
-    public static final String key_root_access = FragmentSettings.key_root_access;
+    private boolean rootAccess;
+    private static final String key_root_access = FragmentSettings.key_root_access;
     final String path_not_set = "PATH NOT SET";
-    PackageManager pm;
+    private PackageManager pm;
     ClassApkOperation classApkOperationObject;
 
     static {
@@ -83,19 +76,19 @@ public class ActivityAppDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_details);
-        toolbar = findViewById(R.id.toolbar_app_details);
+        Toolbar toolbar = findViewById(R.id.toolbar_app_details);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(clicked_pkg_label);
         getSupportActionBar().setElevation(5);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        appinfo_icon = findViewById(R.id.app_info_icon);
-        appinfo_appname =  findViewById(R.id.app_name);
-        app_version = findViewById(R.id.version_num);
-        appinfo_pkgname = findViewById(R.id.pkg_name);
-        install_date = findViewById(R.id.install_date);
-        app_size = findViewById(R.id.app_size);
+        ImageView appinfo_icon = findViewById(R.id.app_info_icon);
+        TextView appinfo_appname = findViewById(R.id.app_name);
+        TextView app_version = findViewById(R.id.version_num);
+        TextView appinfo_pkgname = findViewById(R.id.pkg_name);
+        TextView install_date = findViewById(R.id.install_date);
+        TextView app_size = findViewById(R.id.app_size);
         rootAccess = ActivityMain.sharedPrefSettings.getBoolean(key_root_access,false);
         pm = this.getPackageManager();
 
@@ -108,35 +101,27 @@ public class ActivityAppDetails extends AppCompatActivity {
 
         ClassSetAppDetails appDetails = new ClassSetAppDetails(mainpm, appinfo_clicked_pkg);
         expandableListView = findViewById(R.id.expandable_list);
-        Detailed_Exp_List = appDetails.setListData();
-        headers = new ArrayList<>(Detailed_Exp_List.keySet());
+        HashMap<String, List<String>> detailed_Exp_List = appDetails.setListData();
+        headers = new ArrayList<>(detailed_Exp_List.keySet());
 
-        Collections.sort(headers, new Comparator<String>() {
-            @Override
-            public int compare(String s, String t1) {
-                return s.compareToIgnoreCase(t1);
-            }
-        });
+        Collections.sort(headers, (s, t1) -> s.compareToIgnoreCase(t1));
 
-        exp_adapter = new AdapterExpandableList(this, headers, Detailed_Exp_List);
+        exp_adapter = new AdapterExpandableList(this, headers, detailed_Exp_List);
         expandableListView.setAdapter(exp_adapter);
 
-        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Intent activityIntent = new Intent();
-                Log.e("in Appdetails","i can detect a childclick");
-                //Toast.makeText(v.getContext(),"i can detect a childclick", Toast.LENGTH_SHORT).show();
-                String clicked_activity = exp_adapter.getChild(groupPosition,childPosition).toString();
-                activityIntent.setComponent(new ComponentName(appinfo_clicked_pkg.packageName,clicked_activity) );
-                if (exp_adapter.getGroup(groupPosition).toString()=="Activities")
-                {
-                    Toast.makeText(v.getContext(), clicked_activity, Toast.LENGTH_SHORT).show();
-                    startActivity(activityIntent);
+        expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+            Intent activityIntent = new Intent();
+            Log.e("in Appdetails","i can detect a childclick");
+            //Toast.makeText(v.getContext(),"i can detect a childclick", Toast.LENGTH_SHORT).show();
+            String clicked_activity = exp_adapter.getChild(groupPosition,childPosition).toString();
+            activityIntent.setComponent(new ComponentName(appinfo_clicked_pkg.packageName,clicked_activity) );
+            if (exp_adapter.getGroup(groupPosition).toString().equals("Activities"))
+            {
+                Toast.makeText(v.getContext(), clicked_activity, Toast.LENGTH_SHORT).show();
+                startActivity(activityIntent);
 
-                }
-                return true;
             }
+            return true;
         });
 
         expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
@@ -151,12 +136,7 @@ public class ActivityAppDetails extends AppCompatActivity {
             }
         });
 
-        expandableListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-            @Override
-            public void onGroupCollapse(int position) {
-                Toast.makeText(getApplication(), headers.get(position), Toast.LENGTH_SHORT);
-            }
-        });
+        expandableListView.setOnGroupCollapseListener(position -> Toast.makeText(getApplication(), headers.get(position), Toast.LENGTH_SHORT));
     }
 
     @Override
@@ -296,25 +276,17 @@ public class ActivityAppDetails extends AppCompatActivity {
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
 
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    showMsg("Revoke permission via terminal :" + Shell.rootAccess());
-                   // Shell.sh("pm reset-permissions " + clicked_pkg.packageName).exec();
-                    Log.i(TAG, clicked_pkg.applicationInfo.loadLabel(mainpm).toString() + " permission revoked Successfully");
-                } catch (Exception ex) {
-                    Log.e(TAG, "Revoke Permission :" + ex);
-                }
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            try {
+                showMsg("Revoke permission via terminal :" + Shell.rootAccess());
+               // Shell.sh("pm reset-permissions " + clicked_pkg.packageName).exec();
+                Log.i(TAG, clicked_pkg.applicationInfo.loadLabel(mainpm).toString() + " permission revoked Successfully");
+            } catch (Exception ex) {
+                Log.e(TAG, "Revoke Permission :" + ex);
             }
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
         builder.show();
 
     }
@@ -326,26 +298,20 @@ public class ActivityAppDetails extends AppCompatActivity {
         builder.setTitle("Confirm to uninstall but keep data " + clicked_pkg_label);
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Uninstalling without deleting data "+clicked_pkg_label);
-                try {
-                    String command = "pm uninstall -k "+clicked_pkg.packageName;
-                    Shell.sh(command).exec();
-                    showMsg("Uninstalling " + clicked_pkg_label + " App without Deleting Data.");
-                } catch (Exception ex) {
-                    Log.e(TAG, "Uninstalling App Failed For " + clicked_pkg_label);
-                }
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            showMsg("Uninstalling without deleting data "+clicked_pkg_label);
+            try {
+                String command = "pm uninstall -k "+clicked_pkg.packageName;
+                Shell.sh(command).exec();
+                showMsg("Uninstalling " + clicked_pkg_label + " App without Deleting Data.");
+            } catch (Exception ex) {
+                Log.e(TAG, "Uninstalling App Failed For " + clicked_pkg_label);
             }
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Uninstallation Cancelled of " + clicked_pkg_label);
-                dialog.dismiss();
-            }
+        builder.setNegativeButton("No", (dialog, which) -> {
+            showMsg("Uninstallation Cancelled of " + clicked_pkg_label);
+            dialog.dismiss();
         });
         builder.show();
     }
@@ -356,33 +322,25 @@ public class ActivityAppDetails extends AppCompatActivity {
             builder.setTitle("Confirm to disable " + clicked_pkg_label);
             builder.setMessage("Click Yes to Continue...");
             builder.setCancelable(false);
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    showMsg("Confirmed Disabling "+clicked_pkg_label);
+            builder.setPositiveButton("Yes", (dialog, which) -> {
+                showMsg("Confirmed Disabling "+clicked_pkg_label);
 
-                    if (!rootAccess) {
-                        pm.setApplicationEnabledSetting(clicked_pkg.packageName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+                if (!rootAccess) {
+                    pm.setApplicationEnabledSetting(clicked_pkg.packageName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+                    showMsg("Disabled App " + clicked_pkg_label);
+                } else {
+                    try {
+                        String command = "pm disable-user " + clicked_pkg.packageName;
+                        Shell.su(command).exec();
                         showMsg("Disabled App " + clicked_pkg_label);
-                    } else if (rootAccess) {
-                        try {
-                            String command = "pm disable-user " + clicked_pkg.packageName;
-                            Shell.su(command).exec();
-                            showMsg("Disabled App " + clicked_pkg_label);
-                            item.setTitle(R.string.enable_app);
-                        } catch (Exception ex) {
-                            Log.e(TAG, "Disabling App Failed For " + clicked_pkg_label);
-                        }
-                    }                }
-            });
-
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    showMsg(" Disabling Cancelled of " + clicked_pkg_label);
-
+                        item.setTitle(R.string.enable_app);
+                    } catch (Exception ex) {
+                        Log.e(TAG, "Disabling App Failed For " + clicked_pkg_label);
+                    }
                 }
             });
+
+            builder.setNegativeButton("No", (dialog, which) -> showMsg(" Disabling Cancelled of " + clicked_pkg_label));
             builder.show();
 
         }
@@ -392,33 +350,24 @@ public class ActivityAppDetails extends AppCompatActivity {
             builder.setMessage("Click Yes to Continue...");
             builder.setCancelable(false);
 
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    showMsg("Confirmed Enabling"+clicked_pkg_label);
-                    if (!rootAccess) {
-                        pm.setApplicationEnabledSetting(clicked_pkg.packageName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, 0);
-                        showMsg("Enabled App  " + clicked_pkg_label);
-                    } else if (rootAccess) {
-                        try {
-                            String command = "pm enable " + clicked_pkg.packageName;
-                            Shell.su().exec();
-                            showMsg("Enabled App " + clicked_pkg_label);
-                            item.setTitle(R.string.disable_app);
-                        } catch (Exception ex) {
-                            Log.e(TAG, "Enabling App Failed For " + clicked_pkg_label);
-                        }
+            builder.setPositiveButton("Yes", (dialog, which) -> {
+                showMsg("Confirmed Enabling"+clicked_pkg_label);
+                if (!rootAccess) {
+                    pm.setApplicationEnabledSetting(clicked_pkg.packageName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, 0);
+                    showMsg("Enabled App  " + clicked_pkg_label);
+                } else {
+                    try {
+                        String command = "pm enable " + clicked_pkg.packageName;
+                        Shell.su().exec();
+                        showMsg("Enabled App " + clicked_pkg_label);
+                        item.setTitle(R.string.disable_app);
+                    } catch (Exception ex) {
+                        Log.e(TAG, "Enabling App Failed For " + clicked_pkg_label);
                     }
                 }
             });
 
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    showMsg("Enabling Cancelled for " + clicked_pkg_label);
-
-                }
-            });
+            builder.setNegativeButton("No", (dialog, which) -> showMsg("Enabling Cancelled for " + clicked_pkg_label));
             builder.show();
         }
     }
@@ -430,31 +379,23 @@ public class ActivityAppDetails extends AppCompatActivity {
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
 
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Confirmed Force Stopping "+clicked_pkg_label);
-                if (!rootAccess) {
-                    activityManager.killBackgroundProcesses(clicked_pkg.packageName);
-                    Toast.makeText(getContext(), "Stopping process by NOROOT method of " + clicked_pkg_label, Toast.LENGTH_SHORT).show();
-                } else if (rootAccess) {
-                    try {
-                        String command = "am force-stop " + clicked_pkg.packageName;
-                        Shell.su(command).exec();
-                        Log.e(TAG, "Force Stopped " + clicked_pkg_label);
-                    } catch (Exception ex) {
-                        Log.e(TAG, "Killing Cancelled" + clicked_pkg_label);
-                    }
-                }            }
-        });
-
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Cancelled Stopping " + clicked_pkg_label);
-
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            showMsg("Confirmed Force Stopping "+clicked_pkg_label);
+            if (!rootAccess) {
+                activityManager.killBackgroundProcesses(clicked_pkg.packageName);
+                Toast.makeText(getContext(), "Stopping process by NOROOT method of " + clicked_pkg_label, Toast.LENGTH_SHORT).show();
+            } else {
+                try {
+                    String command = "am force-stop " + clicked_pkg.packageName;
+                    Shell.su(command).exec();
+                    Log.e(TAG, "Force Stopped " + clicked_pkg_label);
+                } catch (Exception ex) {
+                    Log.e(TAG, "Killing Cancelled" + clicked_pkg_label);
+                }
             }
         });
+
+        builder.setNegativeButton("No", (dialog, which) -> showMsg("Cancelled Stopping " + clicked_pkg_label));
 
         builder.show();
     }
@@ -466,31 +407,23 @@ public class ActivityAppDetails extends AppCompatActivity {
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
 
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Confirmed Clearing data"+clicked_pkg_label);
-                if (!rootAccess) {
-                    activityManager.killBackgroundProcesses(clicked_pkg.packageName);
-                    showMsg("Data Cleared by NOROOT method for  " + clicked_pkg_label);
-                } else if (rootAccess) {
-                    try {
-                        String command = "pm clear " + clicked_pkg.packageName;
-                        Shell.su(command).exec();
-                        showMsg("Cleared Data by ROOT method of  " + clicked_pkg_label);
-                    } catch (Exception ex) {
-                        Log.e(TAG, "Data Clear Failed by ROOT method For " + clicked_pkg_label);
-                    }
-                }            }
-        });
-
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Clearing Data Cancelled for " + clicked_pkg_label);
-
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            showMsg("Confirmed Clearing data"+clicked_pkg_label);
+            if (!rootAccess) {
+                activityManager.killBackgroundProcesses(clicked_pkg.packageName);
+                showMsg("Data Cleared by NOROOT method for  " + clicked_pkg_label);
+            } else {
+                try {
+                    String command = "pm clear " + clicked_pkg.packageName;
+                    Shell.su(command).exec();
+                    showMsg("Cleared Data by ROOT method of  " + clicked_pkg_label);
+                } catch (Exception ex) {
+                    Log.e(TAG, "Data Clear Failed by ROOT method For " + clicked_pkg_label);
+                }
             }
         });
+
+        builder.setNegativeButton("No", (dialog, which) -> showMsg("Clearing Data Cancelled for " + clicked_pkg_label));
         builder.show();
 
 
@@ -503,18 +436,14 @@ public class ActivityAppDetails extends AppCompatActivity {
         Log.i(TAG, "Clicked Extract Apk of : "+pkg_name);
 
         File apk = new File(clicked_pkg.applicationInfo.sourceDir);
-        if (apk == null) {
-            Toast.makeText(getContext(), "No Apk Available", Toast.LENGTH_SHORT);
-        } else {
-            Log.i(TAG, "found");
-            classApkOperationObject = new ClassApkOperation(new ObjectAppPackageName(pkg_name, getContext()), getContext());
-            classApkOperationObject.extractApk();
-            //  showMsg("Package Extracted to - " + apkOperationObject.parent_folder.getAbsolutePath());
-        }
+        Log.i(TAG, "found");
+        classApkOperationObject = new ClassApkOperation(new ObjectAppPackageName(pkg_name, getContext()), getContext());
+        classApkOperationObject.extractApk();
+        //  showMsg("Package Extracted to - " + apkOperationObject.parent_folder.getAbsolutePath());
         Toast.makeText(getContext(), "Extracting Apk " + clicked_pkg_label, Toast.LENGTH_SHORT).show();
     }
 
-    void showMsg(String str){
+    private void showMsg(String str){
         Log.i(TAG,str);
         Toast.makeText(activity,str,Toast.LENGTH_SHORT).show();
     }
@@ -530,7 +459,7 @@ public class ActivityAppDetails extends AppCompatActivity {
         clipboardManager.setPrimaryClip(clipData);
     }
 
-    public String getSize(File file) {
+    private String getSize(File file) {
 
         if (!file.isFile()) {
             throw new IllegalArgumentException("Expected a file");

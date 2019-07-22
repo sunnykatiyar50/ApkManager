@@ -13,7 +13,7 @@ import android.view.ViewGroup;
  * Created by Sunny Katiyar on 13-06-2017.
  */
 
-public class FragmentAbout extends Fragment {
+class FragmentAbout extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

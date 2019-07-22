@@ -10,19 +10,17 @@
             android:id="@+id/files_bottom_av_refresh"
             android:icon="@drawable/ic_refresh_white_24dp"
             android:title="Refresh"
-            app:showAsAction="ifRoom" />
+            app:showAsAction="always" />
 
         <item
-            android:id="@+id/files_bottom_nav_search"
             android:icon="@drawable/ic_search_white_24dp"
             android:title="Search"
             app:showAsAction="never" />
 
         <item
-            android:id="@+id/files_bottom_nav_properties"
             android:icon="@drawable/ic_perm_device_information_white_24dp"
             android:title="Properties"
-            app:showAsAction="always" />
+            app:showAsAction="ifRoom" />
 
     </group>
 
@@ -101,7 +99,7 @@
             android:checkable="false"
             android:icon="@drawable/ic_sort_by_alpha_white_24dp"
             android:title="Rename"
-            app:showAsAction="withText" />
+            app:showAsAction="always|withText" />
 
     </group>
 

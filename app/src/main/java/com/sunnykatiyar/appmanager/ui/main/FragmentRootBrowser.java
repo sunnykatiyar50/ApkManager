@@ -63,88 +63,79 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         ClassRootUtils.notifyUIAboutOperation, ActivityOperations.CancelOperation {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-    static final String TAG = "MYAPP : ROOT_BROWSER_FRAGMENT";
+    private static final String TAG = "MYAPP : ROOT_BROWSER_FRAGMENT";
     private PageViewModel pageViewModel;
-    public static final String key_root_access = FragmentSettings.key_root_access;
-    private boolean rootAccess;
+    private static final String key_root_access = FragmentSettings.key_root_access;
     private final String textview_msg ="textview_msg";
     private final String log_msg = "log_msg";
     private final String toast_msg ="toast_msg";
 
-    final String key_sorting = "SORT BY";
-    String value_sorting;
+    private final String key_sorting = "SORT BY";
     final String key_order_by = "INVERSE SORTING";
-    String value_order_by;
+    private String value_order_by;
 
     final String PREF_NAME_APP_SETTINGS = "com.sunnykatiyar.appmanager.SETTINGS";
-    public static SharedPreferences sharedPrefSettings;
-    public static SharedPreferences.Editor prefAppSettings;
 
     private static final String PREF_NAME_ROOT_BROWSER = "com.sunnykatiyar.appmanager.ROOT_BROWSER";
     public static SharedPreferences sharedPrefRootBrowser;
-    public static SharedPreferences.Editor prefEditRootBrowser;
+    private static SharedPreferences.Editor prefEditRootBrowser;
     
     private static final String PREF_NAME_ROOT_BOOKMARKS = "com.sunnykatiyar.appmanager.ROOT_BOOKMARK_PATHS";
-    public static SharedPreferences sharedPrefRootBookMarks;
-    public static SharedPreferences.Editor prefEditRootBookmarks;
+    private static SharedPreferences sharedPrefRootBookMarks;
+    private static SharedPreferences.Editor prefEditRootBookmarks;
 
-    final String key_spinner_position = "LAST_SELECTED_BOOKMARK";
-    int value_spinner_position;
+    private final String key_spinner_position = "LAST_SELECTED_BOOKMARK";
 
     final String path_not_set = "PATH NOT SET";
 
-    final String sort_by_name = "SORT_BY_NAME";
-    final String sort_by_date = "SORT_BY_DATE";
-    final String sort_by_size = "SORT_BY_SIZE";
-    final String sort_by_type = "SORT_BY_TYPE";
+    private final String sort_by_name = "SORT_BY_NAME";
+    private final String sort_by_date = "SORT_BY_DATE";
+    private final String sort_by_size = "SORT_BY_SIZE";
+    private final String sort_by_type = "SORT_BY_TYPE";
 
     boolean sort_folder_first = true ;
 
-    final String order_increasing = "ORDER_INCREASING";
-    final String order_decreasing = "ORDER_DECREASING";
+    private final String order_increasing = "ORDER_INCREASING";
+    private final String order_decreasing = "ORDER_DECREASING";
 
-    public String sort_by;
-    public String order_by;
+    private String sort_by;
+    private String order_by;
 
-    Context context;
-    TextView root_browser_textview_msgs;
-    TextView root_browser_textview_path;
-    RecyclerView root_browser_rview;
-    ImageView root_browser_upButton;
-    SpinnerAdapter spinnerAdapter_rootBrowser;
-    Spinner spinner_root_browser;
-    ProgressBar progressBar_rootBrowser;
-    AdapterRootBrowser adapterRootBrowser;
-    AdapterRootBrowser.MyRootBrowserCallBack myRootBrowserCallBack;
-    ClassRootUtils.notifyUIAboutOperation notifyUIContext;
-    BottomAppBar root_bottomAppBar;
-    FloatingActionButton fab_action;
-    ObjectFile rootObjectFile ;
-    ObjectFile selectedObjectFile;
-    String selectedPath;
+    private Context context;
+    private TextView root_browser_textview_msgs;
+    private TextView root_browser_textview_path;
+    private RecyclerView root_browser_rview;
+    private Spinner spinner_root_browser;
+    private ProgressBar progressBar_rootBrowser;
+    private AdapterRootBrowser adapterRootBrowser;
+    private AdapterRootBrowser.MyRootBrowserCallBack myRootBrowserCallBack;
+    private ClassRootUtils.notifyUIAboutOperation notifyUIContext;
+    private BottomAppBar root_bottomAppBar;
+    private FloatingActionButton fab_action;
+    private ObjectFile selectedObjectFile;
+    private String selectedPath;
 
-    List<String> spinnerPathItems = new ArrayList<>();
-    List<ObjectFile> objectFileList = new ArrayList<>();
+    private List<String> spinnerPathItems = new ArrayList<>();
+    private List<ObjectFile> objectFileList = new ArrayList<>();
     
-    static HashMap<String,List<ObjectFile>> cacheList = new HashMap<>();
-    static List<ObjectFile> selectedFilesList = new ArrayList<>();
+    private static final HashMap<String,List<ObjectFile>> cacheList = new HashMap<>();
+    private static List<ObjectFile> selectedFilesList = new ArrayList<>();
 
     String mount_system_ro = "mount -o ro,remount /system";
     String mount_system_rw = "mount -o rw,remount /system";
-    int NEW_TASKS_ID = 0;
-    int OPERATION_ID=0;
-    int NO_OPERATION=0;
-    boolean showHidden = false;
+    private int NEW_TASKS_ID = 0;
+    private int OPERATION_ID=0;
+    private boolean showHidden = false;
     final public static String key_show_hidden = "SHOW_HIDDEN_FILES";
     String value_show_hidden;
-    final int OPERATION_COPY = 201;
-    final int OPERATION_MOVE  = 204;
+    private final int OPERATION_COPY = 201;
+    private final int OPERATION_MOVE  = 204;
     final int OPERATION_RENAME = 209;
-    final int OPERATION_DELETE = 212;
+    private final int OPERATION_DELETE = 212;
     final int OPERATION_INSTALL_APKS = 215;
 
-    ClassRootUtils[] rootOperationsArray = new ClassRootUtils[20];
-    ClassRootUtils searchTask ;
+    private final ClassRootUtils[] rootOperationsArray = new ClassRootUtils[20];
+    private ClassRootUtils searchTask ;
     static{
         Shell.Config.setFlags(Shell.FLAG_REDIRECT_STDERR);
         Shell.Config.verboseLogging(BuildConfig.DEBUG);
@@ -175,10 +166,10 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
     public View onCreateView( @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_root_browser, container, false);
 
-        root_browser_textview_msgs = view.findViewById(R.id.root_browser_msg_text_view);
+        root_browser_textview_msgs = view.findViewById(R.id.rootBrowser_msgTextView);
         root_browser_textview_path = view.findViewById(R.id.root_browser_path_textview);
         root_browser_rview = view.findViewById(R.id.root_browser_rview);
-        root_browser_upButton = view.findViewById(R.id.root_browser_image_button_up);
+        ImageView root_browser_upButton = view.findViewById(R.id.root_browser_image_button_up);
         progressBar_rootBrowser =view.findViewById(R.id.root_browser_progress_bar);
         spinner_root_browser = view.findViewById(R.id.root_browser_storage_spinner);
         fab_action = view.findViewById(R.id.rootBrowser_fab_action);
@@ -186,9 +177,9 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         context = getContext();
         notifyUIContext=this;
 
-        sharedPrefSettings = getContext().getSharedPreferences(context.getResources().getString(R.string.sharedPref_settings),
+        SharedPreferences sharedPrefSettings = getContext().getSharedPreferences(context.getResources().getString(R.string.sharedPref_settings),
                 MODE_PRIVATE);
-        prefAppSettings = sharedPrefSettings.edit();
+        SharedPreferences.Editor prefAppSettings = sharedPrefSettings.edit();
 
         sharedPrefRootBrowser = getContext().getSharedPreferences(context.getResources().getString(R.string.sharedPref_rootBrowser),
                 MODE_PRIVATE);
@@ -200,7 +191,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
 
         root_bottomAppBar = view.findViewById(R.id.root_bottomAppBar) ;
         root_bottomAppBar.replaceMenu(R.menu.files_bottom_menu);
-        rootAccess = sharedPrefSettings.getBoolean(key_root_access, false);
+        boolean rootAccess = sharedPrefSettings.getBoolean(key_root_access, false);
         sort_by = sharedPrefRootBrowser.getString(key_sorting, sort_by_name);
         order_by = sharedPrefRootBrowser.getString(value_order_by, order_increasing);
         showHidden = sharedPrefRootBrowser.getBoolean(key_show_hidden, false);
@@ -212,37 +203,34 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         root_browser_rview.addItemDecoration(mdivider);
         
         String rootPath = "/";
-        rootObjectFile = new ObjectFile(rootPath);
-        prefEditRootBookmarks.putString(rootPath, rootPath).commit();
+        ObjectFile rootObjectFile = new ObjectFile(rootPath);
+        prefEditRootBookmarks.putString(rootPath, rootPath).apply();
 
         showMsg(log_msg, " -CONTEXT.GETEXTERNALFILESDIRS : -------------");
         for (File f : context.getExternalFilesDirs(Environment.DIRECTORY_DOWNLOADS)) {
             showMsg(log_msg, " ---- " + f.getAbsolutePath());
             String path = f.getParentFile().getParentFile().getParentFile().getParentFile().getParent();
             showMsg(log_msg, "Extracted Parent " + path);
-            prefEditRootBookmarks.putString(path, path).commit();
+            prefEditRootBookmarks.putString(path, path).apply();
         }
 
         File internalSD = Environment.getExternalStorageDirectory();
         String internalSDPath = internalSD.getAbsolutePath();
         if(internalSD.exists()){
-            prefEditRootBookmarks.putString(internalSDPath, internalSDPath).commit();
+            prefEditRootBookmarks.putString(internalSDPath, internalSDPath).apply();
         }
 
         setSpinnerData();
 
-        pageViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-               
-            }
+        pageViewModel.getText().observe(this, s -> {
+
         });
 
         spinner_root_browser.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 showMsg(log_msg, "Spinner Item Selected :"+position);
-                prefEditRootBrowser.putInt(key_spinner_position,position).commit();
+                prefEditRootBrowser.putInt(key_spinner_position,position).apply();
                 selectedPath =  spinnerPathItems.get(sharedPrefRootBrowser.getInt(key_spinner_position, 0));
                 getSetFolderFiles(new ObjectFile(selectedPath));
             }
@@ -253,127 +241,113 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
             }
         });
 
-        root_browser_upButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedPath = selectedObjectFile.parent;
-                if(null!=selectedPath & new File(selectedPath).exists()){
-                    showMsg(log_msg, " UP BUTTON CLICK : New Parent Directory : "+selectedPath);
-                   // selectedObjectFile = new ObjectFile(parent);
-                    getSetFolderFiles(new ObjectFile(selectedPath));
-                }else{
-                    selectedPath = selectedObjectFile.path;
-                    showMsg(toast_msg, " Cannot go Up... \nAlready at the root of the tree...");
+        root_browser_upButton.setOnClickListener(v -> {
+            selectedPath = selectedObjectFile.parent;
+            if(null!=selectedPath & new File(selectedPath).exists()){
+                showMsg(log_msg, " UP BUTTON CLICK : New Parent Directory : "+selectedPath);
+               // selectedObjectFile = new ObjectFile(parent);
+                getSetFolderFiles(new ObjectFile(selectedPath));
+            }else{
+                selectedPath = selectedObjectFile.path;
+                showMsg(toast_msg, " Cannot go Up... \nAlready at the root of the tree...");
+            }
+        });
+
+        spinner_root_browser.setOnItemLongClickListener((parent, view1, position, id) -> {
+            prefEditRootBookmarks.remove(spinnerPathItems.get(position)).apply();
+            spinnerPathItems.remove(position);
+            setSpinnerData();
+            return true;
+        });
+
+        root_bottomAppBar.setOnMenuItemClickListener(item -> {
+
+            ColorStateList colorStateList = ContextCompat.getColorStateList(context, R.color.color_state);
+            if(adapterRootBrowser!=null){
+                selectedFilesList = adapterRootBrowser.getSelectedFileList();
+            }
+
+            switch(item.getItemId()){
+
+                case R.id.files_bottom_av_refresh:{
+                   launchNewSearchTask(selectedObjectFile.path);
+                    break;
+                }
+
+                case R.id.files_bottom_nav_create_new:{
+                    showMsg(log_msg, "Create New Clicked.");
+                    new ClassRootUtils(context,notifyUIContext).createNew(selectedObjectFile);
+                    break;
+                }
+
+                case R.id.files_bottom_nav_select_all:{
+                    selectAll(true);
+                    showMsg(toast_msg, "Selected All");
+                    adapterRootBrowser.notifyDataSetChanged();
+                    break;
+                }
+
+                case R.id.files_bottom_nav_unselect_all:{
+                    selectAll(false);
+                    adapterRootBrowser.notifyDataSetChanged();
+                    showMsg(toast_msg, "Unselected All");
+                    break;
+                }
+
+                case R.id.files_bottom_nav_copy:{
+                    OPERATION_ID = OPERATION_COPY;
+                    showMsg(toast_msg, "File Ready to be Copied . Browse to target folder & paste");
+                    fab_action.show();
+                    adapterRootBrowser.selection_mode = false;
+                    //selectAll(false);
+                    showMsg(log_msg, "Selected files list : "+selectedFilesList.size());
+                    break;
+                }
+
+                case R.id.files_bottom_nav_cut:{
+                    OPERATION_ID = OPERATION_MOVE;
+                    showMsg(toast_msg, "File Ready to be Moved . Browse to target folder & paste");
+                    fab_action.show();
+                    adapterRootBrowser.selection_mode=false;
+                   // selectAll(false);
+                    showMsg(log_msg, "Selected files list : "+selectedFilesList.size());
+                  //fab_action.setImageResource(R.drawable.ic_content_paste_white_36dp);
+                    break;
+                }
+
+                case R.id.files_bottom_nav_paste:{
+                    launchPasteFilesTask();
+                    break;
+                }
+
+                case R.id.files_bottom_nav_delete:{
+                    launchDeleteFilesTask();
+                    resetSelection();
+                    break;
+                }
+
+                case R.id.files_bottom_nav_cancel:{
+                    resetSelection();
+                    fab_action.hide();
+                    break;
+                }
+
+                case R.id.files_bottom_nav_install:{
+                    launchInstallApksTask();
+                    break;
+                }
+
+                case R.id.files_bottom_nav_rename:{
+                    NEW_TASKS_ID++  ;
+                    rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context, notifyUIContext);
+                    rootOperationsArray[NEW_TASKS_ID].rootRenameFile(selectedObjectFile);
+                    break;
                 }
             }
+            return true;
         });
 
-        spinner_root_browser.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                prefEditRootBookmarks.remove(spinnerPathItems.get(position)).commit();
-                spinnerPathItems.remove(position);
-                setSpinnerData();
-                return true;
-            }
-        });
-
-        root_bottomAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-
-                ColorStateList colorStateList = ContextCompat.getColorStateList(context, R.color.color_state);
-                if(adapterRootBrowser!=null){
-                    selectedFilesList = adapterRootBrowser.getSelectedFileList();
-                }
-
-                switch(item.getItemId()){
-
-                    case R.id.files_bottom_av_refresh:{
-                       launchNewSearchTask(selectedObjectFile.path);
-                        break;
-                    }
-
-                    case R.id.files_bottom_nav_create_new:{
-                        showMsg(log_msg, "Create New Clicked.");
-                        new ClassRootUtils(context,notifyUIContext).createNew(selectedObjectFile);
-                        break;
-                    }
-
-                    case R.id.files_bottom_nav_select_all:{
-                        selectAll(true);
-                        showMsg(toast_msg, "Selected All");
-                        adapterRootBrowser.notifyDataSetChanged();
-                        break;
-                    }
-
-                    case R.id.files_bottom_nav_unselect_all:{
-                        selectAll(false);
-                        adapterRootBrowser.notifyDataSetChanged();
-                        showMsg(toast_msg, "Unselected All");
-                        break;
-                    }
-
-                    case R.id.files_bottom_nav_copy:{
-                        OPERATION_ID = OPERATION_COPY;
-                        showMsg(toast_msg, "File Ready to be Copied . Browse to target folder & paste");
-                        fab_action.show();
-                        adapterRootBrowser.selection_mode = false;
-                        //selectAll(false);
-                        showMsg(log_msg, "Selected files list : "+selectedFilesList.size());
-                        break;
-                    }
-
-                    case R.id.files_bottom_nav_cut:{
-                        OPERATION_ID = OPERATION_MOVE;
-                        showMsg(toast_msg, "File Ready to be Moved . Browse to target folder & paste");
-                        fab_action.show();
-                        adapterRootBrowser.selection_mode=false;
-                       // selectAll(false);
-                        showMsg(log_msg, "Selected files list : "+selectedFilesList.size());
-                      //fab_action.setImageResource(R.drawable.ic_content_paste_white_36dp);
-                        break;
-                    }
-
-                    case R.id.files_bottom_nav_paste:{
-                        launchPasteFilesTask();
-                        break;
-                    }
-
-                    case R.id.files_bottom_nav_delete:{
-                        launchDeleteFilesTask();
-                        resetSelection();
-                        break;
-                    }
-
-                    case R.id.files_bottom_nav_cancel:{
-                        resetSelection();
-                        fab_action.hide();
-                        break;
-                    }
-
-                    case R.id.files_bottom_nav_install:{
-                        launchInstallApksTask();
-                        break;
-                    }
-
-                    case R.id.files_bottom_nav_rename:{
-                        NEW_TASKS_ID++  ;
-                        rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context, notifyUIContext);
-                        rootOperationsArray[NEW_TASKS_ID].rootRenameFile(selectedObjectFile);
-                        break;
-                    }
-                }
-                return true;
-            }
-        });
-
-        fab_action.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               launchPasteFilesTask();
-            }
-        });
+        fab_action.setOnClickListener(v -> launchPasteFilesTask());
         
         return view;
     }
@@ -391,11 +365,11 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
              }
         }
 
-       spinnerAdapter_rootBrowser = new ArrayAdapter<>(context,R.layout.listitem_storage_spinner,R.id.spinner_item, spinnerPathItems);
+        SpinnerAdapter spinnerAdapter_rootBrowser = new ArrayAdapter<>(context, R.layout.listitem_storage_spinner, R.id.spinner_item, spinnerPathItems);
        spinner_root_browser.setAdapter(spinnerAdapter_rootBrowser);
 
         if(spinnerPathItems !=null & spinnerPathItems.size()>0){
-            value_spinner_position = sharedPrefRootBrowser.getInt(key_spinner_position,0);
+            int value_spinner_position = sharedPrefRootBrowser.getInt(key_spinner_position, 0);
             selectedPath =  spinnerPathItems.get(value_spinner_position);
             spinner_root_browser.setSelection(value_spinner_position);
 //          getSetFolderFiles(new ObjectFile(selectedPath));
@@ -427,7 +401,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         }
     }
 
-    protected  void launchNewSearchTask(String parentPath){
+    private void launchNewSearchTask(String parentPath){
         if(null!=searchTask) {
             if (searchTask.isRunning) {
                 searchTask.cancelTask();
@@ -439,7 +413,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         searchTask.getFolderFilesFromShell(selectedObjectFile.path, showHidden);
     }
 
-    void setNewAdapter(List<ObjectFile> list){
+    private void setNewAdapter(List<ObjectFile> list){
         if(null!=list){
             showMsg(log_msg, "in setNewAdapter : size : "+list.size());
             objectFileList = SortRootFileList(list);
@@ -450,21 +424,22 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         }
     }
 
-    protected void resetSelection(){
+    private void resetSelection(){
         if(null!=selectedFilesList){
             selectedFilesList.clear();
             selectAll(false);
             adapterRootBrowser.selection_mode=false;
             adapterRootBrowser.selected_count=0;
         }
-        OPERATION_ID = NO_OPERATION ;
+        int NO_OPERATION = 0;
+        OPERATION_ID = NO_OPERATION;
     }
 
-    protected void setPathTextView(String path){
+    private void setPathTextView(String path){
         root_browser_textview_path.setText(path);
     }
     
-    void showMsg(String msgtype, String str){
+    private void showMsg(String msgtype, String str){
 
         if(null==str || str.isEmpty()){
             showDefaultMsg(msgtype);
@@ -482,7 +457,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         }
     }
 
-    void showDefaultMsg(String type){
+    private void showDefaultMsg(String type){
         String msg1 = "Total Files : "+ objectFileList.size()+" Files Selected :"+adapterRootBrowser.getSelectedFileList().size();
         String msg = "Total Files : "+ objectFileList.size()+" Files Selected :"+adapterRootBrowser.selected_count;
 
@@ -497,7 +472,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         Log.d(TAG,msg1)        ;
     }
 
-    void selectAll(boolean enable){
+    private void selectAll(boolean enable){
 
         if(null!=objectFileList){
             for(ObjectFile f : objectFileList){
@@ -509,7 +484,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         setNewAdapter(objectFileList);
     }
 
-    void enableBottomActions(boolean action){
+    private void enableBottomActions(boolean action){
         if (action) {
             root_bottomAppBar.getMenu().setGroupVisible(R.id.menugroup_files_permament,true);
             root_bottomAppBar.getMenu().setGroupVisible(R.id.menugroup_files_option_group,false);
@@ -527,112 +502,77 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         }
     }
 
-    protected void launchDeleteFilesTask(){
+    private void launchDeleteFilesTask(){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Confirm Delete Operation");
         builder.setMessage("Delete "+selectedFilesList.size()+" files from "+selectedObjectFile.name);
-        builder.setPositiveButton("Yes", new AlertDialog.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                OPERATION_ID = OPERATION_DELETE;
-                NEW_TASKS_ID++;
-                rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context,notifyUIContext,NEW_TASKS_ID);
-                rootOperationsArray[NEW_TASKS_ID].deleteFiles(new ArrayList<>(selectedFilesList));
-            }
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            OPERATION_ID = OPERATION_DELETE;
+            NEW_TASKS_ID++;
+            rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context,notifyUIContext,NEW_TASKS_ID);
+            rootOperationsArray[NEW_TASKS_ID].deleteFiles(new ArrayList<>(selectedFilesList));
         });
-        builder.setNegativeButton("No", new AlertDialog.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
         builder.show();
      //  resetSelection();
     }
 
-    protected void launchPasteFilesTask(){
+    private void launchPasteFilesTask(){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
             if(OPERATION_ID == OPERATION_COPY){
                 builder.setTitle("Confirm the Operation");
                 builder.setMessage("Copy "+selectedFilesList.size()+" files to "+selectedObjectFile.name);
-                builder.setPositiveButton("Confirm", new AlertDialog.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        NEW_TASKS_ID++;
-                        rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context, notifyUIContext, NEW_TASKS_ID);
-                        rootOperationsArray[NEW_TASKS_ID].rootCopy(new ArrayList<>(selectedFilesList), selectedObjectFile.path);
-                    }
+                builder.setPositiveButton("Confirm", (dialog, which) -> {
+                    NEW_TASKS_ID++;
+                    rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context, notifyUIContext, NEW_TASKS_ID);
+                    rootOperationsArray[NEW_TASKS_ID].rootCopy(new ArrayList<>(selectedFilesList), selectedObjectFile.path);
                 });
 
             }else if(OPERATION_ID == OPERATION_MOVE){
                 builder.setTitle("Confirm the Operation");
                 builder.setMessage("Move "+selectedFilesList.size()+" files to "+selectedObjectFile.name);
-                builder.setPositiveButton("Confirm", new AlertDialog.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        NEW_TASKS_ID++;
-                        rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context, notifyUIContext, NEW_TASKS_ID);
-                        rootOperationsArray[NEW_TASKS_ID].rootMove(new ArrayList<>(selectedFilesList), selectedObjectFile.path);
-                    }
+                builder.setPositiveButton("Confirm", (dialog, which) -> {
+                    NEW_TASKS_ID++;
+                    rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context, notifyUIContext, NEW_TASKS_ID);
+                    rootOperationsArray[NEW_TASKS_ID].rootMove(new ArrayList<>(selectedFilesList), selectedObjectFile.path);
                 });
             }
 
-            builder.setNegativeButton("Cancel", new AlertDialog.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
 
         builder.show();
         fab_action.hide();
       // resetSelection();
     }
 
-    protected void launchInstallApksTask(){
+    private void launchInstallApksTask(){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Confirm the Operation");
         builder.setMessage("Are You Sure to install "+selectedFilesList.size()+" files.");
-        builder.setPositiveButton("Confirm", new AlertDialog.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                NEW_TASKS_ID++;
-                rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context, notifyUIContext,NEW_TASKS_ID);
-                rootOperationsArray[NEW_TASKS_ID].installApksList(new ArrayList<>(selectedFilesList));
-            }
+        builder.setPositiveButton("Confirm", (dialog, which) -> {
+            NEW_TASKS_ID++;
+            rootOperationsArray[NEW_TASKS_ID] = new ClassRootUtils(context, notifyUIContext,NEW_TASKS_ID);
+            rootOperationsArray[NEW_TASKS_ID].installApksList(new ArrayList<>(selectedFilesList));
         });
-        builder.setNegativeButton("Cancel Operation", new AlertDialog.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setNegativeButton("Cancel Operation", (dialog, which) -> dialog.dismiss());
         builder.show();
       //  resetSelection();
     }
 
-    protected  void launchRenameFilesTask(){
+    private void launchRenameFilesTask(){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Confirm Copying Files");
-        builder.setMessage("Are You Sure to copy "+selectedFilesList.size()+selectedObjectFile.name);
-        builder.setPositiveButton("Confirm", new AlertDialog.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        builder.setTitle("Confirm Renaming Files");
+        builder.setMessage("Are You Sure to rename "+selectedFilesList.size()+selectedObjectFile.name);
+        builder.setPositiveButton("Confirm", (dialog, which) -> {
 
-            }
         });
-        builder.setNegativeButton("Cancel", new AlertDialog.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
         builder.show();
       //  resetSelection();
     }
 
-    public List<ObjectFile> SortRootFileList(List to_sort_list) {
+    private List<ObjectFile> SortRootFileList(List to_sort_list) {
         Comparator<ObjectFile> file_name_comparator =
                 (ObjectFile l1, ObjectFile l2) -> l1.name.toLowerCase().compareTo(l2.name.toLowerCase());
         Comparator<ObjectFile> file_size_comparator =
@@ -647,7 +587,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         switch(sort_by) {
             case sort_by_name: {
                 Collections.sort(to_sort_list, file_name_comparator);
-                if (order_by == order_decreasing) {
+                if (order_by.equals(order_decreasing)) {
                     Collections.reverse(to_sort_list);
                 }
                 //  Log.i(TAG, "in sort_by_name");
@@ -656,7 +596,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
 
             case sort_by_date: {
                 Collections.sort(to_sort_list, modified_date_comparator);
-                if (order_by == order_decreasing) {
+                if (order_by.equals(order_decreasing)) {
                     Collections.reverse(to_sort_list);
                 }
                 //    Log.i(TAG, "in sort_by_date");
@@ -665,7 +605,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
 
             case sort_by_size: {
                 Collections.sort(to_sort_list, file_size_comparator);
-                if (order_by == order_decreasing) {
+                if (order_by.equals(order_decreasing)) {
                     Collections.reverse(to_sort_list);
                 }
                 //    Log.i(TAG, "in sort_by_size");
@@ -674,7 +614,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
 
             case sort_by_type: {
                 Collections.sort(to_sort_list, file_type_comparator);
-                if (order_by == order_decreasing) {
+                if (order_by.equals(order_decreasing)) {
                     Collections.reverse(to_sort_list);
                 }
 //                Log.i(TAG, "in sort_by_type");
@@ -725,11 +665,11 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
 
     @Override
     public void updateTextView(String msg_type, String msg) {
-        showMsg(msg_type,msg);
+        showMsg(msg_type, msg);
     }
 
     @Override
-    public void setNewObjectFilesList(String path, List<ObjectFile> list) {
+    public void searchCompleted(String path, List<ObjectFile> list) {
         cacheList.put(path, list);
         showMsg(log_msg, "setNewAdapter : Directory cached : "+selectedObjectFile.path+" with of size"+list.size());
         showMsg(log_msg, "setNewAdapter : Total Directories in cache : "+cacheList.size());
@@ -751,9 +691,7 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
         if(selectedObjectFile.path.equals(path)){
           launchNewSearchTask(path);
         }
-        if(cacheList.containsKey(path)){
-            cacheList.remove(path);
-        }
+        cacheList.remove(path);
     }
 
     @Override
@@ -800,10 +738,10 @@ public class FragmentRootBrowser extends Fragment implements AdapterRootBrowser.
             menu.setGroupVisible(R.id.menugroup_files_option_group,false);
         }
 
-        value_sorting = sharedPrefRootBrowser.getString(key_sorting, sort_by_name);
+        String value_sorting = sharedPrefRootBrowser.getString(key_sorting, sort_by_name);
         value_order_by = sharedPrefRootBrowser.getString(value_order_by, order_increasing);
 
-        showMsg(log_msg, " Sorting Value found :"+value_sorting);
+        showMsg(log_msg, " Sorting Value found :"+ value_sorting);
         showMsg(log_msg, " Order by Value found :"+value_order_by);
 
         switch(value_sorting)

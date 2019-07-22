@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/group_item"
         android:layout_width="391dp"
-        android:layout_height="30dp"
+        android:layout_height="35dp"
         android:layout_marginStart="32dp"
         android:background="@color/black"
         android:padding="@dimen/padding_medium"

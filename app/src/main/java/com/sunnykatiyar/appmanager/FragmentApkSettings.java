@@ -22,31 +22,24 @@ import java.util.List;
 import static com.sunnykatiyar.appmanager.ActivityMain.sharedPrefApkManager;
 
 
-public class FragmentApkSettings extends Fragment implements
+class FragmentApkSettings extends Fragment implements
         AdapterView.OnItemSelectedListener{
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    Spinner spinner1;
-    Spinner spinner3;
-    Spinner spinner5;
-    Spinner spinner7;
-    EditText edit2;
-    EditText edit4;
-    EditText edit6;
-    EditText edit8;
+    private Spinner spinner1;
+    private Spinner spinner3;
+    private Spinner spinner5;
+    private Spinner spinner7;
+    private EditText edit2;
+    private EditText edit4;
+    private EditText edit6;
+    private EditText edit8;
 
-    public static List<String> spinner_items ;
+    private static List<String> spinner_items ;
     private final String TAG = "RENAME_APK_SETTINGS ";
-    Button button_save;
-    Button button_clear;
-    TextView name_format;
-    String name_format_string;
-    ArrayAdapter<String> spin_adapter1;
-    ArrayAdapter<String> spin_adapter3;
-    ArrayAdapter<String> spin_adapter5;
-    ArrayAdapter<String> spin_adapter7;
+    private TextView name_format;
 
     public final static  String PREF_NAME = "com.sunnykatiyar.appmanager.RENAME";
     public final static String key_global_path ="GLOBAL_PATH";
@@ -59,14 +52,14 @@ public class FragmentApkSettings extends Fragment implements
     public final static String name_part_7 = "NAME_PART_7";
     public final static String name_part_8 = "NAME_PART_8";
 
-    public final static String empty = "Nothing";
-    public final static String app_name = "AppName";
-    public final static String version_name = "VersionName";
-    public final static String version_code = "VersionCode";
-    public final static String pkg_name = "PackageName";
-    public final static String file_size = "FileSize";
+    private final static String empty = "Nothing";
+    private final static String app_name = "AppName";
+    private final static String version_name = "VersionName";
+    private final static String version_code = "VersionCode";
+    private final static String pkg_name = "PackageName";
+    private final static String file_size = "FileSize";
 
-    public final static String spinner_items_set= "SPINNER_ITEMS_SET";
+    private final static String spinner_items_set= "SPINNER_ITEMS_SET";
     public final static String name_format_data_saved = "FORMAT_DATA_SAVED";
     public FragmentApkSettings() {
         // Required empty public constructor
@@ -105,8 +98,8 @@ public class FragmentApkSettings extends Fragment implements
         spinner5.setOnItemSelectedListener(this);
         spinner7.setOnItemSelectedListener(this);
 
-        button_save = v.findViewById(R.id.buttton_add_extsd);
-        button_clear = v.findViewById(R.id.buttton_clear_extsd);
+        Button button_save = v.findViewById(R.id.buttton_add_extsd);
+        Button button_clear = v.findViewById(R.id.buttton_clear_extsd);
         name_format = v.findViewById(R.id.text_format);
 
 
@@ -116,19 +109,9 @@ public class FragmentApkSettings extends Fragment implements
 
         setNameFormatLabel();
 
-        button_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveFormat();
-            }
-        });
+        button_save.setOnClickListener(v12 -> saveFormat());
 
-        button_clear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clearFormat();
-            }
-        });
+        button_clear.setOnClickListener(v1 -> clearFormat());
 
         return v;
     }
@@ -139,7 +122,7 @@ public class FragmentApkSettings extends Fragment implements
         return super.onOptionsItemSelected(item);
     }
 
-    public String getItem(int i){
+    private String getItem(int i){
         switch(i){
             case 0:{  return "";              }
             case 1:{  return spinner_items.get(1) ;    }
@@ -196,7 +179,7 @@ public class FragmentApkSettings extends Fragment implements
         parent.setSelection(0);
     }
 
-    public void setNewSpinnerData(){
+    private void setNewSpinnerData(){
         spinner_items = new ArrayList<>();
         spinner_items.add(empty);
         spinner_items.add(app_name);
@@ -205,16 +188,16 @@ public class FragmentApkSettings extends Fragment implements
         spinner_items.add(file_size);
         spinner_items.add(pkg_name);
 
-        spin_adapter1 = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,spinner_items);
+        ArrayAdapter<String> spin_adapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, spinner_items);
         spin_adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        spin_adapter3 = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,spinner_items);
+        ArrayAdapter<String> spin_adapter3 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, spinner_items);
         spin_adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        spin_adapter5 = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,spinner_items);
+        ArrayAdapter<String> spin_adapter5 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, spinner_items);
         spin_adapter5.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        spin_adapter7 = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,spinner_items);
+        ArrayAdapter<String> spin_adapter7 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, spinner_items);
         spin_adapter7.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinner1.setAdapter(spin_adapter1);
@@ -226,7 +209,7 @@ public class FragmentApkSettings extends Fragment implements
         Log.i(TAG,"Spinners Data is Set ... ");
     }
 
-    public void clearFormat(){
+    private void clearFormat(){
         ActivityMain.prefEditApkManager.remove(name_part_1);
         ActivityMain.prefEditApkManager.remove(name_part_2);
         ActivityMain.prefEditApkManager.remove(name_part_3);
@@ -243,7 +226,7 @@ public class FragmentApkSettings extends Fragment implements
         setNewSpinnerData();
     }
 
-    public void saveFormat(){
+    private void saveFormat(){
         ActivityMain.prefEditApkManager.putInt(name_part_1,spinner1.getSelectedItemPosition());
         ActivityMain.prefEditApkManager.putString(name_part_2,edit2.getText().toString());
         ActivityMain.prefEditApkManager.putInt(name_part_3,spinner3.getSelectedItemPosition());
@@ -261,22 +244,22 @@ public class FragmentApkSettings extends Fragment implements
 
     }
 
-    public void setNameFormatLabel(){
+    private void setNameFormatLabel(){
         Log.i(TAG,"Set Name Format Label");
 
-        name_format_string = getItem(sharedPrefApkManager.getInt(name_part_1,1))+
-                sharedPrefApkManager.getString(name_part_2,"_v")+
-                getItem(sharedPrefApkManager.getInt(name_part_3,2))+
-                sharedPrefApkManager.getString(name_part_4,"_")+
-                getItem(sharedPrefApkManager.getInt(name_part_5,3))+
-                sharedPrefApkManager.getString(name_part_6,"")+
-                getItem(sharedPrefApkManager.getInt(name_part_7,0))+
-                sharedPrefApkManager.getString(name_part_8,"");
+        String name_format_string = getItem(sharedPrefApkManager.getInt(name_part_1, 1)) +
+                sharedPrefApkManager.getString(name_part_2, "_v") +
+                getItem(sharedPrefApkManager.getInt(name_part_3, 2)) +
+                sharedPrefApkManager.getString(name_part_4, "_") +
+                getItem(sharedPrefApkManager.getInt(name_part_5, 3)) +
+                sharedPrefApkManager.getString(name_part_6, "") +
+                getItem(sharedPrefApkManager.getInt(name_part_7, 0)) +
+                sharedPrefApkManager.getString(name_part_8, "");
 
         name_format.setText(name_format_string);
     }
 
-    public void retrieveSpinnerData(){
+    private void retrieveSpinnerData(){
 
         Log.i(TAG,"retrieveSpinnerData()");
 

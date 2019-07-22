@@ -18,11 +18,10 @@ import java.util.List;
 
 public class AdapterFileSelector extends RecyclerView.Adapter<ViewHolderFileSelector> {
 
-    final String TAG = "ADAPTER_FILE_SELECTOR : ";
-    Context context;
-    List<ObjectDocumentFile> files_list ;
-    List<ObjectDocumentFile> selected_files_list;
-    LoadFilesTask loadFilesAsyncTask;
+    private Context context;
+    private final List<ObjectDocumentFile> files_list ;
+    private List<ObjectDocumentFile> selected_files_list;
+    private LoadFilesTask loadFilesAsyncTask;
 
     public AdapterFileSelector(Context c, List<ObjectDocumentFile> list) {
         context = c;
@@ -45,6 +44,7 @@ public class AdapterFileSelector extends RecyclerView.Adapter<ViewHolderFileSele
 
         ObjectDocumentFile local_file = files_list.get(position);
 
+        String TAG = "ADAPTER_FILE_SELECTOR : ";
         Log.i(TAG, "Showing Document :"+local_file.file_name);
         cflv.selector_file_name.setText(local_file.file_name);
         cflv.selector_file_time.setText(local_file.modification_time);
@@ -52,31 +52,23 @@ public class AdapterFileSelector extends RecyclerView.Adapter<ViewHolderFileSele
         cflv.selector_file_perm.setText(local_file.perm);
 
         cflv.itemView.setOnClickListener(null);
-        cflv.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        cflv.itemView.setOnClickListener(v -> {
 //              file.check_box_state = !(file.check_box_state);
 
-                if(local_file.file_doc.isDirectory()){
+            if(local_file.file_doc.isDirectory()){
 
-                    loadFilesAsyncTask.cancel(true);
-                    loadFilesAsyncTask = new LoadFilesTask(local_file.file_doc);
-                    loadFilesAsyncTask.execute();
-                    ActivityFileSelector.selector_adapter.notifyDataSetChanged();
-                }else if(local_file.file_doc.isFile()){
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(local_file.uri);
-                    context.startActivity(i);
-                }
+                loadFilesAsyncTask.cancel(true);
+                loadFilesAsyncTask = new LoadFilesTask(local_file.file_doc);
+                loadFilesAsyncTask.execute();
+                ActivityFileSelector.selector_adapter.notifyDataSetChanged();
+            }else if(local_file.file_doc.isFile()){
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(local_file.uri);
+                context.startActivity(i);
             }
         });
 
-        cflv.selector_file_checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                local_file.check_box_state=isChecked;
-            }
-        });
+        cflv.selector_file_checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> local_file.check_box_state=isChecked);
 
     }
 
@@ -90,7 +82,7 @@ public class AdapterFileSelector extends RecyclerView.Adapter<ViewHolderFileSele
 
 
 
-    public void getSelectedFiles(){
+    private void getSelectedFiles(){
         for(ObjectDocumentFile obj:files_list){
             if(obj.check_box_state){
                 selected_files_list.add(obj);
@@ -105,13 +97,13 @@ public class AdapterFileSelector extends RecyclerView.Adapter<ViewHolderFileSele
 
 
 
-    public class LoadFilesTask extends AsyncTask<Void,String,List>{
+    class LoadFilesTask extends AsyncTask<Void,String,List>{
 
         List<ObjectDocumentFile> child_doc_list = new ArrayList<>();
-        DocumentFile local_doc;
+        final DocumentFile local_doc;
         int count=0;
 
-        public LoadFilesTask(DocumentFile f) {
+        LoadFilesTask(DocumentFile f) {
             super();
             local_doc=f;
         }
@@ -141,7 +133,7 @@ public class AdapterFileSelector extends RecyclerView.Adapter<ViewHolderFileSele
             notifyDataSetChanged();
         }
 
-        protected List getChildrenList(DocumentFile local_doc){
+        List getChildrenList(DocumentFile local_doc){
             List<ObjectDocumentFile> local_list =  new ArrayList<>();
 
             for(DocumentFile f:local_doc.listFiles()){

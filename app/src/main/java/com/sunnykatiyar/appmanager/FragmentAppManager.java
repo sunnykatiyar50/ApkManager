@@ -40,46 +40,37 @@ import static com.sunnykatiyar.appmanager.ActivityMain.toolbar_main;
 public class FragmentAppManager extends Fragment {
 
     public static Context appContext;
-    public static TextView progress_percent ;
-    public static ProgressBar progressBar ;
+    private static ProgressBar progressBar ;
     public static PackageManager  mainpm;
-    public static List<PackageInfo> launchable_apps_list;
-    public static List<PackageInfo> applist;
-    public static RecyclerView app_listview;
-    public static Long initFragmentTime;
+    private static List<PackageInfo> launchable_apps_list;
+    private static List<PackageInfo> applist;
+    private static RecyclerView app_listview;
+    private static Long initFragmentTime;
     public static ActivityManager activityManager;
     public static ClipboardManager clipboardManager;
-    public static AdapterAppList adapter;
+    private static AdapterAppList adapter;
 
-    MyAsyncTask myAsyncTask;
-    DividerItemDecoration mDividerItemDecoration;
-    final static String TAG ="APPLIST_FRAGMENT : ";
-    public static TextView label_msgbox;
-    SearchView searchView;
-    MenuItem search_menuItem;
+    private MyAsyncTask myAsyncTask;
+    private final static String TAG ="APPLIST_FRAGMENT : ";
+    private static TextView label_msgbox;
 
-    static final String sort_apps_by_name = "SORT_BY_NAME";
-    static final String sort_apps_by_update_time = "SORT_BY_UPDATE_TIME";
-    static final String sort_apps_by_install_time = "SORT_BY_INSTALL_TIME";
-    static final String sort_apps_by_size = "SORT_BY_SIZE";
+    private static final String sort_apps_by_name = "SORT_BY_NAME";
+    private static final String sort_apps_by_update_time = "SORT_BY_UPDATE_TIME";
+    private static final String sort_apps_by_install_time = "SORT_BY_INSTALL_TIME";
+    private static final String sort_apps_by_size = "SORT_BY_SIZE";
 
-    static final String order_apps_decreasing = "ORDER_INCREASING";
-    static final String order_apps_increasing = "ORDER_DECREASING";
+    private static final String order_apps_decreasing = "ORDER_INCREASING";
+    private static final String order_apps_increasing = "ORDER_DECREASING";
 
-    public static String sort_apps_by;
-    public static String order_apps_by;
-    public String search_query="";
+    private static String sort_apps_by;
+    private static String order_apps_by;
+    private String search_query="";
 
-    public static final String key_sorting = "SORT_APPS_BY";
-    public static final String key_order_by = "ORDER_APPS_BY";
+    private static final String key_sorting = "SORT_APPS_BY";
+    private static final String key_order_by = "ORDER_APPS_BY";
 
-    final String toast_msg = "show_as_toast";
-    final String textview_msg = "show_in_textview";
-    final String log_only = "show_in_log_only";
+    private final String toast_msg = "show_as_toast";
     Activity context = getActivity();
-    String value_sorting;
-    String  value_order_by;
-    LinearLayoutManager llm;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,7 +86,7 @@ public class FragmentAppManager extends Fragment {
         setRetainInstance(true);
         View v = inflater.inflate(R.layout.fragment_app_manager, container, false);
         progressBar = v.findViewById(R.id.progress_bar);
-        progress_percent = v.findViewById(R.id.progress_int);
+        TextView progress_percent = v.findViewById(R.id.progress_int);
         app_listview =  v.findViewById(R.id.app_recycleview_list);
         label_msgbox = v.findViewById(R.id.label_applist_msgbox);
         mainpm = getContext().getPackageManager();
@@ -109,11 +100,11 @@ public class FragmentAppManager extends Fragment {
         clipboardManager = (ClipboardManager) getContext().getSystemService(CLIPBOARD_SERVICE);
         activityManager= (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
 
-        llm = new LinearLayoutManager(appContext);
+        LinearLayoutManager llm = new LinearLayoutManager(appContext);
         llm.setOrientation(RecyclerView.VERTICAL);
         app_listview.setLayoutManager(llm);
 
-        mDividerItemDecoration = new DividerItemDecoration(appContext,llm.getOrientation());
+        DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(appContext, llm.getOrientation());
         app_listview.addItemDecoration(mDividerItemDecoration);
 
         if(myAsyncTask==null){
@@ -144,10 +135,10 @@ public class FragmentAppManager extends Fragment {
 
         inflater.inflate(R.menu.menu_applist, menu);
 
-        search_menuItem = menu.findItem(R.id.search_item);
+        MenuItem search_menuItem = menu.findItem(R.id.search_item);
         search_menuItem.setVisible(true);
 
-        searchView = (SearchView) search_menuItem.getActionView();
+        SearchView searchView = (SearchView) search_menuItem.getActionView();
         searchView.setIconifiedByDefault(true);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -179,21 +170,13 @@ public class FragmentAppManager extends Fragment {
 //
 //        });
 
-        searchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toolbar_main.setTitle("");
-            }
-        });
+        searchView.setOnClickListener(view -> toolbar_main.setTitle(""));
 
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                Log.e("in ActivityMain : ", " in setOnCloseListener ");
-                adapter.notifyDataSetChanged();
-                toolbar_main.setTitle(R.string.app_name);
-                return false;
-            }
+        searchView.setOnCloseListener(() -> {
+            Log.e("in ActivityMain : ", " in setOnCloseListener ");
+            adapter.notifyDataSetChanged();
+            toolbar_main.setTitle(R.string.app_name);
+            return false;
         });
 
     }
@@ -204,8 +187,8 @@ public class FragmentAppManager extends Fragment {
         Log.i(TAG," onPrepareOptionsMenu : ");
 
 //-----------------------LOADING "SORT BY" FROM SHARED PREFERENCES---------------------------------------
-        value_sorting = sharedPrefAppSettings.getString(key_sorting, sort_apps_by_name);
-        Log.i(TAG,"Sorting Setting in Shared Preferences: "+value_sorting);
+        String value_sorting = sharedPrefAppSettings.getString(key_sorting, sort_apps_by_name);
+        Log.i(TAG,"Sorting Setting in Shared Preferences: "+ value_sorting);
 
         if(value_sorting.equals(sort_apps_by_name)){
             menu.findItem(R.id.menuitem_sortappsby_name).setChecked(true);
@@ -231,7 +214,7 @@ public class FragmentAppManager extends Fragment {
 
 //--------------------------------LOADING "ORDER BY" FROM SHARED PREFERENCES---------------------------------------
 
-        value_order_by = sharedPrefAppSettings.getString(key_order_by, order_apps_increasing);
+        String value_order_by = sharedPrefAppSettings.getString(key_order_by, order_apps_increasing);
         Log.i(TAG," Found Ordering Settings in SHARED PREFERENCES: "+ value_order_by);
 
         if(value_order_by.equals(order_apps_decreasing)){
@@ -336,19 +319,22 @@ public class FragmentAppManager extends Fragment {
 
     private void showMsg(String display_as, String msg, boolean isempty){
 
+        String log_only = "show_in_log_only";
+        String textview_msg = "show_in_textview";
         if(display_as.equals(toast_msg)){
             Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+            Log.v(TAG, msg);
         }
         else if(display_as.equals(textview_msg)) {
             showMsgInTextView(isempty,msg);
+            Log.v(TAG, msg);
         }else if(display_as.equals(log_only)){
-
+            Log.i(TAG, msg);
         }
-
-        Log.i(TAG, msg);
+        
     }
 
-    public void showMsgInTextView(boolean empty_string, String str) {
+    private void showMsgInTextView(boolean empty_string, String str) {
         if(empty_string) {
             String default_string = "Total Apps : " + launchable_apps_list.size();
             label_msgbox.setText(default_string);
@@ -359,11 +345,11 @@ public class FragmentAppManager extends Fragment {
 
     class MyAsyncTask extends AsyncTask<Void, String , String> {
 
-        Activity activity;
-        String search_filter;
+        final Activity activity;
+        final String search_filter;
         final String TAG = "MYASYNCTASK ACTIVITY";
 
-        public MyAsyncTask(Activity a,String str){
+        MyAsyncTask(Activity a, String str){
             this.activity = a;
             this.search_filter = str;
         }
@@ -389,7 +375,7 @@ public class FragmentAppManager extends Fragment {
             setLabelTextMsg(strings[0]);
         }
 
-        public void LoadAppList(String str){
+        void LoadAppList(String str){
             Log.e("in MyAsyncTask :", "AppLoadList : " + ((System.currentTimeMillis() - initFragmentTime) / 1000) + "s");
             applist = new ArrayList<>();
             launchable_apps_list = new ArrayList<>();
@@ -437,7 +423,7 @@ public class FragmentAppManager extends Fragment {
 
     }
 
-    public void SortAppList() {
+    private void SortAppList() {
         Comparator<PackageInfo> app_name_comparator = (PackageInfo p1, PackageInfo p2) -> p1.applicationInfo.loadLabel(mainpm).toString().compareTo(p2.applicationInfo.loadLabel(mainpm).toString());
         Comparator<PackageInfo> file_size_comparator = (PackageInfo p1, PackageInfo p2) -> Long.compare(new File(p1.applicationInfo.sourceDir).length(),new File(p2.applicationInfo.sourceDir).length());
         Comparator<PackageInfo> app_install_time_comparator = (PackageInfo p1, PackageInfo p2) -> Long.compare(p1.firstInstallTime,p2.firstInstallTime);
@@ -448,7 +434,7 @@ public class FragmentAppManager extends Fragment {
         switch(sort_apps_by) {
             case sort_apps_by_name: {
                 Collections.sort(launchable_apps_list, app_name_comparator);
-                if (order_apps_by == order_apps_decreasing) {
+                if (order_apps_by.equals(order_apps_decreasing)) {
                     Collections.reverse(launchable_apps_list);
                 }
                 Log.i(TAG, "in sort_apps_by_name");
@@ -457,7 +443,7 @@ public class FragmentAppManager extends Fragment {
 
             case sort_apps_by_install_time: {
                 Collections.sort(launchable_apps_list, app_install_time_comparator);
-                if (order_apps_by == order_apps_decreasing) {
+                if (order_apps_by.equals(order_apps_decreasing)) {
                     Collections.reverse(launchable_apps_list);
                 }
                 Log.i(TAG, "in sort_by_date");
@@ -466,7 +452,7 @@ public class FragmentAppManager extends Fragment {
 
             case sort_apps_by_update_time: {
                 Collections.sort(launchable_apps_list, app_update_time_comparator);
-                if (order_apps_by == order_apps_decreasing) {
+                if (order_apps_by.equals(order_apps_decreasing)) {
                     Collections.reverse(launchable_apps_list);
                 }
                 Log.i(TAG, "in sort_by_date");
@@ -475,7 +461,7 @@ public class FragmentAppManager extends Fragment {
 
             case sort_apps_by_size: {
                 Collections.sort(launchable_apps_list, file_size_comparator);
-                if (order_apps_by == order_apps_decreasing) {
+                if (order_apps_by.equals(order_apps_decreasing)) {
                     Collections.reverse(launchable_apps_list);
                 }
                 Log.i(TAG, "in sort_apps_by_size");
@@ -494,7 +480,7 @@ public class FragmentAppManager extends Fragment {
         setLabelTextMsg("Total Apps : "+launchable_apps_list.size());
     }
 
-    public void setLabelTextMsg(String str){
+    private void setLabelTextMsg(String str){
             label_msgbox.setText(str);
     }
 

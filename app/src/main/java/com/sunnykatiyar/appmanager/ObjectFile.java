@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 
 public class ObjectFile {
 
-    public File file;
+    private File file;
     public String path="";
     public String name="";
     public String parent="";
@@ -31,12 +31,11 @@ public class ObjectFile {
     public String user_name="";
     public String size="";
     public long long_size;
-    public String hard_links="";
-    public String inode="";
+    public final String inode="";
     public String file_type="";
     public int drawableIcon;
     public boolean isSelected = false;
-    final String TAG = "OBJECT FILE : ";
+    private final String TAG = "OBJECT FILE : ";
 
 //    String[] lslongHeaders = {"PERM","CHILD_COUNT","OWNER","GROUP","SIZE","TIME","NAME"};
 
@@ -81,7 +80,7 @@ public class ObjectFile {
             //Log.i(TAG,"STAT ARRAY Size : "+stats.length);
             this.perm = stats[0];
             this.user_name = stats[1];
-            this.hard_links = stats[2];
+            String hard_links = stats[2];
             this.mod_time = stats[3];
             this.path = path;
             this.name = Paths.get(this.path).getFileName().toString();
@@ -166,7 +165,7 @@ public class ObjectFile {
         Log.i(TAG,"ALL PRPERTIES SET : "+name);
     }
 
-    public String getPerm(File f){
+    private String getPerm(File f){
         String perm = "";
         if(f.canRead()){
             perm = perm+"r";
@@ -180,26 +179,27 @@ public class ObjectFile {
         return  perm;
     }
 
-    public String convertSizeToFormat(long length) {
-        final long MB = 1024 * 1024;
+    private String convertSizeToFormat(long length) {
         final long KB = 1024;
+        final long MB = 1024 * 1024;
         final long GB = 1024 * 1024 * 1024;
-        final DecimalFormat format = new DecimalFormat("#.###");
+
+        final DecimalFormat format = new DecimalFormat("###.##");
 
         if (length > GB) {
-            return format.format(length / GB) + " MB";
+            return format.format((float)length / GB) + " GB";
         }
         if (length > MB) {
-            return format.format(length / MB) + " MB";
+            return format.format((float)length / MB) + " MB";
         }
         if (length > KB) {
-            return format.format(length / KB) + " KB";
+            return format.format((float)length / KB) + " KB";
         }
 
-        return format.format(length) + "Bytes";
+        return format.format(length) + " Bytes";
     }
 
-    public String convertTimeToFormat(long time) {
+    private String convertTimeToFormat(long time) {
         DateFormat dateFormat = new SimpleDateFormat("hh:mm a dd~MM~yy");
         String strDate = dateFormat.format(time);
         return strDate;

@@ -20,13 +20,11 @@ public class AdapterRootBrowser extends RecyclerView.Adapter<ViewHolderRootBrows
 
     public int selected_count ;
     public boolean selection_mode=false;
-    private List<ObjectFile> fileList;
-    private List<ObjectFile> selectedFileslist;
-    MyRootBrowserCallBack myCallBack;
+    private final List<ObjectFile> fileList;
+    private final MyRootBrowserCallBack myCallBack;
     Vibrator vibrator;
-    Context context;
 
-    
+
     public interface MyRootBrowserCallBack{
         void openDocument(ObjectFile obj);
         void selectAllitems(boolean enable);
@@ -36,7 +34,7 @@ public class AdapterRootBrowser extends RecyclerView.Adapter<ViewHolderRootBrows
 
     public AdapterRootBrowser(MyRootBrowserCallBack act, List<ObjectFile> list, Context c)
         {
-            this.context = c;
+            Context context = c;
             this.fileList = list;
             this.myCallBack = act;
             this.selected_count = getSelectedFileList().size();
@@ -84,69 +82,62 @@ public class AdapterRootBrowser extends RecyclerView.Adapter<ViewHolderRootBrows
         holder.itemView.setOnClickListener(null);
         holder.itemView.setOnLongClickListener(null);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG," onClick selection mode = "+selection_mode);
-                if(!selection_mode) {
-                    Log.i(TAG, "CLICKED ITEM : " + objectFile.name);
-                    myCallBack.openDocument(objectFile);
-                }else if(selection_mode){
-                    if(objectFile.isSelected==true){
-                        objectFile.isSelected = false;
-                        selected_count--;
-                        holder.itemView.setBackgroundResource(R.color.tint_item_unselected);
-                        myCallBack.updateMsgTextview("");
-                    }else {
-                        objectFile.isSelected = true;
-                        selected_count++;
-                        myCallBack.updateMsgTextview("");
-                        holder.itemView.setBackgroundResource(R.color.tint_item_selected);
-                    }
-                    Log.i(TAG, "CLICKED ITEM : " + objectFile.name+"   selected = "+objectFile.isSelected);
+        holder.itemView.setOnClickListener(v -> {
+            Log.i(TAG," onClick selection mode = "+selection_mode);
+            if(!selection_mode) {
+                Log.i(TAG, "CLICKED ITEM : " + objectFile.name);
+                myCallBack.openDocument(objectFile);
+            }else {
+                if(objectFile.isSelected){
+                    objectFile.isSelected = false;
+                    selected_count--;
+                    holder.itemView.setBackgroundResource(R.color.tint_item_unselected);
+                    myCallBack.updateMsgTextview("");
+                }else {
+                    objectFile.isSelected = true;
+                    selected_count++;
+                    myCallBack.updateMsgTextview("");
+                    holder.itemView.setBackgroundResource(R.color.tint_item_selected);
+                }
+                Log.i(TAG, "CLICKED ITEM : " + objectFile.name+"   selected = "+objectFile.isSelected);
 
-                    if(selected_count==0){
-                        selection_mode = false;
-                        myCallBack.enableBottomActionBar(false);
-                        v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-                    }
+                if(selected_count==0){
+                    selection_mode = false;
+                    myCallBack.enableBottomActionBar(false);
+                    v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
                 }
             }
         });
 
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener(){
+        holder.itemView.setOnLongClickListener(v -> {
 
-            @Override
-            public boolean onLongClick(View v) {
-
-                if(!selection_mode){
+            if(!selection_mode){
 //                  //cflv.file_checkbox.setChecked(true);
-                    Log.i(TAG," New Selection Mode = "+selection_mode);
-                    v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-                    selection_mode=true;
-                    objectFile.isSelected = true;
-                    selected_count++;
-                    myCallBack.updateMsgTextview("");
-                    myCallBack.enableBottomActionBar(true);
-                    holder.itemView.setBackgroundResource(R.color.tint_item_selected);
-                }else{
-                    //cflv.file_checkbox.setChecked(false);
-                    Log.i(TAG," New Selection Mode = "+selection_mode);
-                    v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-                    selection_mode = false;
-                    selected_count=0;
-                    myCallBack.selectAllitems(false);
-                    myCallBack.enableBottomActionBar(false);
-                    myCallBack.updateMsgTextview("");
-                }
-              return true;
+                Log.i(TAG," New Selection Mode = "+ false);
+                v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                selection_mode=true;
+                objectFile.isSelected = true;
+                selected_count++;
+                myCallBack.updateMsgTextview("");
+                myCallBack.enableBottomActionBar(true);
+                holder.itemView.setBackgroundResource(R.color.tint_item_selected);
+            }else{
+                //cflv.file_checkbox.setChecked(false);
+                Log.i(TAG," New Selection Mode = "+ true);
+                v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                selection_mode = false;
+                selected_count=0;
+                myCallBack.selectAllitems(false);
+                myCallBack.enableBottomActionBar(false);
+                myCallBack.updateMsgTextview("");
             }
+          return true;
         });
 
     }
 
     public List<ObjectFile> getSelectedFileList(){
-        selectedFileslist = new ArrayList<>();
+        List<ObjectFile> selectedFileslist = new ArrayList<>();
         List<ObjectFile> list =new ArrayList<>();
         for(ObjectFile f:fileList){
             if(f.isSelected){
@@ -154,7 +145,7 @@ public class AdapterRootBrowser extends RecyclerView.Adapter<ViewHolderRootBrows
             }
         }
         
-        selectedFileslist=list;
+        selectedFileslist =list;
         return list;
     }
 

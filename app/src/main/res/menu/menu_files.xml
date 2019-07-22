@@ -163,7 +163,6 @@
     </item>
 
     <item
-        android:id="@+id/menuitem_empty_folder"
         android:icon="@drawable/ic_refresh_white_24dp"
         android:orderInCategory="100"
         android:title="Delete Empty Folders"
@@ -183,7 +182,6 @@
 
         <menu>
             <group
-                android:id="@+id/menugroup_sort_by"
                 android:checkableBehavior="single"
                 android:menuCategory="secondary">
 
@@ -215,7 +213,6 @@
 
 
             <group
-                android:id="@+id/menugroup_order_by"
                 android:checkableBehavior="single"
                 android:menuCategory="secondary">
                 <item

@@ -10,13 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ViewHolderFilesList extends RecyclerView.ViewHolder {
 
-    TextView file_name;
-    TextView file_type;
-    TextView file_time;
-    TextView file_perm;
-    TextView file_size;
-    CheckBox file_checkbox;
-    ImageView file_thumbnail;
+    final TextView file_name;
+    final TextView file_type;
+    final TextView file_time;
+    final TextView file_perm;
+    final TextView file_size;
+    final ImageView file_thumbnail;
     String TAG = "FILE_LIST_VIEWHOLDER :";
 
     public ViewHolderFilesList(@NonNull View itemView) {
@@ -26,7 +25,7 @@ public class ViewHolderFilesList extends RecyclerView.ViewHolder {
         this.file_time = itemView.findViewById(R.id.file_item_time);
         this.file_perm = itemView.findViewById(R.id.file_item_perm);
         this.file_size = itemView.findViewById(R.id.file_item_size);
-        this.file_checkbox = itemView.findViewById(R.id.file_item_checkbox);
+        CheckBox file_checkbox = itemView.findViewById(R.id.file_item_checkbox);
         this.file_thumbnail = itemView.findViewById(R.id.file_item_thumbnails);
 
     }

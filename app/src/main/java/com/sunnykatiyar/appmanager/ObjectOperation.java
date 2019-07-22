@@ -4,34 +4,33 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 
-import androidx.core.app.NotificationCompat;
+class ObjectOperation {
 
-public class ObjectOperation {
-
-    Context context;
-    public String operationTitle;
+    public final String operationTitle;
     public String operationDetails;
-    public int operationID;
+    private final int operationID;
     public String operationStatus;
-    public int totalFiles;
-    public int currentFileNum;
-    public NotificationSetup notificationSetup;
-    public NotificationManager notimgr;
-    public Notification myNotification;
+    public int totalFiles=100;
+    public int currentFileNum=0;
+    public int progress = 0;
+    private final NotificationSetup notificationSetup;
+    private final NotificationManager notimgr;
+    private Notification myNotification;
     
     public ObjectOperation(Context c, int id, String type, int totalFiles) {
-        this.context = c;
+        Context context = c;
         this.operationID = id;
         this.operationTitle = type;
         this.totalFiles = totalFiles;
-        this.notimgr = (NotificationManager) c.getSystemService(context.NOTIFICATION_SERVICE);
+        this.notimgr = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationSetup = new NotificationSetup(context);
         myNotification = notificationSetup.task_notification;
     }
 
-    public void showNotification(String desc, int curr_num){
+    public void showNotification(String desc, int curr_num, int progress){
         this.operationDetails = desc;
         this.currentFileNum = curr_num;
+        this.progress = progress;
 
         if(this.currentFileNum < totalFiles){
             operationStatus = "Status: Running";
@@ -41,9 +40,13 @@ public class ObjectOperation {
             operationStatus = "Status: Unknown";
         }
         
-        notificationSetup.prepareTaskNotification(operationDetails, operationTitle);
+        notificationSetup.prepareTaskNotification(operationDetails, operationTitle, this.progress);
         myNotification = notificationSetup.task_notification;
         notimgr.notify(operationID, myNotification);
+    }
+
+    public void cancelNotification(){
+        notificationSetup.notiManager.cancel(operationID);
     }
 
 //    public void showNotificationCancelable(){

@@ -2,17 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/lisitem_cons_layout"
-    
+
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/operation_details_textview"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
+        android:layout_width="291dp"
+        android:layout_height="41dp"
         android:layout_marginStart="2dp"
-        android:layout_marginEnd="2dp"
         android:autoSizeMaxTextSize="18sp"
         android:autoSizeMinTextSize="14sp"
         android:autoSizeTextType="uniform"
@@ -20,14 +18,13 @@
         android:maxLines="2"
         android:minLines="1"
         android:text="Operation Live  Details"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/operation_progressBar" />
 
     <TextView
         android:id="@+id/operation_name_textview"
-        android:layout_width="163dp"
-        android:layout_height="24dp"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
         android:layout_marginStart="2dp"
         android:lines="2"
         android:maxLines="2"
@@ -36,14 +33,14 @@
         android:text="Operation Name"
         android:textColor="#1E88E5"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/operation_status_textView"
+        app:layout_constraintEnd_toStartOf="@+id/operation_progress_textview"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/operation_status_textView"
-        android:layout_width="0dp"
-        android:layout_height="24dp"
+        android:layout_width="121dp"
+        android:layout_height="40dp"
         android:lines="2"
         android:maxLines="2"
         android:minLines="1"
@@ -51,9 +48,9 @@
         android:textAlignment="center"
         android:textColor="#43A047"
         android:textStyle="bold|italic"
-        app:layout_constraintEnd_toStartOf="@+id/operation_progress_textview"
-        app:layout_constraintStart_toEndOf="@+id/operation_name_textview"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/operation_details_textview"
+        app:layout_constraintTop_toBottomOf="@+id/operation_progressBar" />
 
     <ProgressBar
         android:id="@+id/operation_progressBar"
@@ -75,8 +72,7 @@
     <TextView
         android:id="@+id/operation_progress_textview"
         android:layout_width="107dp"
-        android:layout_height="28dp"
-        android:layout_marginEnd="2dp"
+        android:layout_height="26dp"
         android:lines="2"
         android:maxLines="2"
         android:minLines="1"
@@ -85,6 +81,5 @@
         android:textColor="#E05858"
         android:textStyle="normal|bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/operation_status_textView"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

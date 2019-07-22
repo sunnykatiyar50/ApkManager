@@ -14,28 +14,21 @@ import androidx.core.app.NotificationCompat;
 
 public class NotificationSetup extends Notification {
 
-    NotificationChannel notiChannel;
-    NotificationManager notiManager;
-    NotificationCompat.Builder notiBuilder;
-    Context context;
+    private NotificationChannel notiChannel;
+    final NotificationManager notiManager;
+    private NotificationCompat.Builder notiBuilder;
+    private final Context context;
     final String TAG = " MY_NOTIFICATION : " ;
 
-    final String SERVICE_NOTI_CHANNEL_ID = "FOREGROUND_SERVICE_CHANNEL";
-    final String NORMAL_NOTI_CHANNEL_ID = "NORMAL_NOTIFICATION_CHANNEL";
-    final String TASKS_NOTI_CHANNEL_ID = "TASKS_NOTIFICATIONS_CHANNEL";
-    final CharSequence SERVICE_NOTI_CHANNEL_NAME = "Foreground Service Notification Channel";
-    final CharSequence NORMAL_NOTI_CHANNEL_NAME = "Normal Notification Channel";
-    final CharSequence TASKS_NOTI_CHANNEL_NAME = "Tasks Notification Channel";
-    final int CHANNEL_IMPORTANCE = NotificationManager.IMPORTANCE_DEFAULT;
+    private final String SERVICE_NOTI_CHANNEL_ID = "FOREGROUND_SERVICE_CHANNEL";
+    private final String NORMAL_NOTI_CHANNEL_ID = "NORMAL_NOTIFICATION_CHANNEL";
+    private final String TASKS_NOTI_CHANNEL_ID = "TASKS_NOTIFICATIONS_CHANNEL";
+    private final CharSequence SERVICE_NOTI_CHANNEL_NAME = "Foreground Service Notification Channel";
+    private final CharSequence NORMAL_NOTI_CHANNEL_NAME = "Normal Notification Channel";
+    private final CharSequence TASKS_NOTI_CHANNEL_NAME = "Tasks Notification Channel";
 
     Notification service_notification;
-    Notification normal_notification;
     Notification task_notification;
-//  String content = "You can disable from app_info";
-//  private String title = "Listening for Package Addition/removal";
-    private String service_noti_description = "Disable this channel if you dont want it";
-    private String normal_noti_description = "All important notifications from app will be shown in this channel";
-    private String tasks_noti_description = "All Tasks notifications from app will be shown in this channel";
 
 
     public NotificationSetup(Context context) {
@@ -46,8 +39,12 @@ public class NotificationSetup extends Notification {
 
     private void createServiceNotiChannel(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
-            Log.i(TAG,"IN CREATE PERSISTANT CHANNEL : ");
-            notiChannel = new NotificationChannel(SERVICE_NOTI_CHANNEL_ID,SERVICE_NOTI_CHANNEL_NAME,CHANNEL_IMPORTANCE);
+          //  Log.i(TAG,"IN CREATE PERSISTANT CHANNEL : ");
+            int CHANNEL_IMPORTANCE = NotificationManager.IMPORTANCE_DEFAULT;
+            notiChannel = new NotificationChannel(SERVICE_NOTI_CHANNEL_ID,SERVICE_NOTI_CHANNEL_NAME, CHANNEL_IMPORTANCE);
+            //  String content = "You can disable from app_info";
+            //  private String title = "Listening for Package Addition/removal";
+            String service_noti_description = "Disable this channel if you dont want it";
             notiChannel.setDescription(service_noti_description);
             notiChannel.setLightColor(Color.BLUE);
             notiChannel.setSound(null,null);
@@ -79,8 +76,9 @@ public class NotificationSetup extends Notification {
 
     private void createNormalNotiChannel(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
-            Log.i(TAG,"IN CREATE CHANNEL : ");
-            notiChannel = new NotificationChannel(NORMAL_NOTI_CHANNEL_ID,NORMAL_NOTI_CHANNEL_NAME,NotificationManager.IMPORTANCE_LOW);
+           // Log.i(TAG,"IN CREATE CHANNEL : ");
+            notiChannel = new NotificationChannel(NORMAL_NOTI_CHANNEL_ID,NORMAL_NOTI_CHANNEL_NAME,NotificationManager.IMPORTANCE_MIN);
+            String normal_noti_description = "All important notifications from app will be shown in this channel";
             notiChannel.setDescription(normal_noti_description);
             notiChannel.setLightColor(Color.GREEN);
             notiChannel.setSound(null,null);
@@ -98,9 +96,9 @@ public class NotificationSetup extends Notification {
 
         notiBuilder = new NotificationCompat.Builder(this.context,NORMAL_NOTI_CHANNEL_ID);
 
-        normal_notification = notiBuilder.setOngoing(true)
+        Notification normal_notification = notiBuilder.setOngoing(true)
                 .setSmallIcon(R.drawable.ic_android)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_MIN)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setContentIntent(pdi)
@@ -110,8 +108,9 @@ public class NotificationSetup extends Notification {
     
     private void createTaskNotiChannel(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
-            Log.i(TAG,"IN CREATE CHANNEL : ");
-            notiChannel = new NotificationChannel(TASKS_NOTI_CHANNEL_ID,TASKS_NOTI_CHANNEL_NAME,NotificationManager.IMPORTANCE_LOW);
+          //  Log.i(TAG,"IN CREATE CHANNEL : ");
+            notiChannel = new NotificationChannel(TASKS_NOTI_CHANNEL_ID,TASKS_NOTI_CHANNEL_NAME,NotificationManager.IMPORTANCE_MIN);
+            String tasks_noti_description = "All Tasks notifications from app will be shown in this channel";
             notiChannel.setDescription(tasks_noti_description);
             notiChannel.setLightColor(Color.GREEN);
             notiChannel.setSound(null,null);
@@ -120,7 +119,7 @@ public class NotificationSetup extends Notification {
         }
     }
 
-    public void prepareTaskNotification(String content, String title){
+    public void prepareTaskNotification(String content, String title, int progress){
 
         createTaskNotiChannel();
         Intent noti_click_intent = new Intent(context, ActivityOperations.class);
@@ -128,17 +127,18 @@ public class NotificationSetup extends Notification {
         PendingIntent pdi = PendingIntent.getActivity(context,0,noti_click_intent,0);
 
         notiBuilder = new NotificationCompat.Builder(this.context,TASKS_NOTI_CHANNEL_ID);
-
         task_notification = notiBuilder.setOngoing(true)
                 .setSmallIcon(R.drawable.ic_android)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setPriority(NotificationCompat.PRIORITY_MIN)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setContentIntent(pdi)
-                .setAutoCancel(true)
+                .setProgress(100, progress, false)
+                .setAutoCancel(false)
                 .setStyle(new NotificationCompat.BigTextStyle())
                 .addAction(R.drawable.ic_cancel_white_24dp,"Cancel",pdi)
                 .build();
     }
+
 
 }

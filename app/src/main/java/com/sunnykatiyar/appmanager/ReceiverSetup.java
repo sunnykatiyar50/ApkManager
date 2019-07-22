@@ -18,10 +18,6 @@ public class ReceiverSetup extends BroadcastReceiver {
 
     private final String TAG= "RECEIVER_PACKAGE_ADDED/REMOVED : ";
 
-    ObjectAppPackageName appItem;
-    PackageManager pm;
-    ClassApkOperation apkOperationObject;
-
     public ReceiverSetup( ) {
         super();
     }
@@ -39,12 +35,12 @@ public class ReceiverSetup extends BroadcastReceiver {
                 Log.i(TAG,"Intent.ACTION_PACKAGE_ADDED");
                 Log.i(TAG,"Package Name Direct : "+pkg_name);
                 Log.i(TAG,"Package Added Name from uid : "+pkg_name_from_uid);
-                pm = context.getPackageManager();
+                PackageManager pm = context.getPackageManager();
 
                 try {
-                        appItem = new ObjectAppPackageName(pkg_name,context);
-                        apkOperationObject = new ClassApkOperation(appItem,context);
-                        Log.i(TAG,"Extracting Apk of size :"+appItem.apk_size);
+                    ObjectAppPackageName appItem = new ObjectAppPackageName(pkg_name, context);
+                    ClassApkOperation apkOperationObject = new ClassApkOperation(appItem, context);
+                        Log.i(TAG,"Extracting Apk of size :"+ appItem.apk_size);
                         apkOperationObject.extractApk();
                         showLog(context,"Package Extracted to - "+ apkOperationObject.parent_folder.getAbsolutePath());
                 }catch(Exception ex) {
@@ -57,7 +53,7 @@ public class ReceiverSetup extends BroadcastReceiver {
             case Intent.ACTION_PACKAGE_REMOVED :{
                 Log.i(TAG,"Intent.ACTION_PACKAGE_REMOVED");
                 showLog(context,"Package Removed name: "+pkg_name);
-//                showLog(context,"Package Name from uid Removed: "+pkg_name_from_uid);
+//              showLog(context,"Package Name from uid Removed: "+pkg_name_from_uid);
                 break;
             }
 
@@ -82,7 +78,7 @@ public class ReceiverSetup extends BroadcastReceiver {
 
     }
     
-    public void showLog(Context context, String str){
+    private void showLog(Context context, String str){
         Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
         Log.i(TAG,str);
     }

@@ -31,7 +31,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     public static MenuItem search_menuItem;
     public static NotificationManager notimgr ;
     public static Context context;
-    public static ContentResolver resolver;
     //////SHARED PREFERENCES APPLIST
     Activity activity = ActivityMain.this;
 
@@ -53,10 +52,9 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     public static SharedPreferences sharedPrefExternalStorages;
     public static SharedPreferences.Editor prefEditExternalStorages;
 
-    NavigationView navigationView;
+    private NavigationView navigationView;
 
-    public static FragmentManager fm;
-    public static FragmentTransaction ft;
+    private static FragmentManager fm;
 
     final String TAG_APK_LIST  = "apk_list_activity";
     final String TAG_APP_LIST  = "app_list_activity";
@@ -65,22 +63,21 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     final String TAG_FILE_RENAMER_FORMAT  = "file_renamer_format_activity";
     final String TAG_APK_RENAME_FORMAT  = "apk_renamer_format_activity";
 
-    final String key_last_fragment = "LAST_FRAGMENT_ID";
-    public static final String key_export_apk_enable = FragmentSettings.key_export_apk_enable;
+    private final String key_last_fragment = "LAST_FRAGMENT_ID";
+    private static final String key_export_apk_enable = FragmentSettings.key_export_apk_enable;
     public static final String key_export_apk_path = FragmentSettings.key_export_apk_uri;
     public String value_export_apk_path;
     public boolean value_export_apk_enable;
 
-    int CURRENT_FRAGMENT = 0;
-    public static FragmentAppManager fragmentAppManager;
-    FragmentFileSettings fragmentFileSettings;
-    FragmentApkSettings fragmentApkSettings;
-    FragmentSettings fragmentSettings;
-    FragmentApkFiles fragmentApkFiles;
-    FragmentAbout aboutFragment;
-    FragmentHelp fragmentHelp;
-    FragmentFileManager fragmentFileManager;
-    ActivityOperations activityOperations;
+    private int CURRENT_FRAGMENT = 0;
+    private static FragmentAppManager fragmentAppManager;
+    private FragmentFileSettings fragmentFileSettings;
+    private FragmentApkSettings fragmentApkSettings;
+    private FragmentSettings fragmentSettings;
+    private FragmentApkFiles fragmentApkFiles;
+    private FragmentAbout aboutFragment;
+    private FragmentHelp fragmentHelp;
+    private FragmentFileManager fragmentFileManager;
     ServiceSetup myService;
     public static Intent serviceIntent;
 
@@ -100,10 +97,10 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 new ActionBarDrawerToggle(this, drawer, toolbar_main, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        
-        activityOperations = ActivityOperations.getInstanceOf();
+
+        ActivityOperations activityOperations = ActivityOperations.getInstanceOf();
         context = getApplicationContext();
-        resolver = getContentResolver();
+        ContentResolver resolver = getContentResolver();
         navigationView = findViewById(R.id.nav_view_applist);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -177,6 +174,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
     private void setFragment(int id){
 
+        FragmentTransaction ft;
         switch(id){
             case R.id.nav_apklist:{
                 Log.e(TAG,"NavBar ApkList Fragment ");

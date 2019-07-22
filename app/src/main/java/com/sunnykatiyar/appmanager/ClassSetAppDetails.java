@@ -1,12 +1,14 @@
 package com.sunnykatiyar.appmanager;
 
 import android.content.pm.ActivityInfo;
+import android.content.pm.ConfigurationInfo;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ServiceInfo;
+import android.content.pm.SharedLibraryInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,10 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class ClassSetAppDetails {
+class ClassSetAppDetails {
 
-    PackageManager appInfo_pm;
-    PackageInfo pkg;
+    private final PackageManager appInfo_pm;
+    private final PackageInfo pkg;
 
     public ClassSetAppDetails(PackageManager appInfo_pm, PackageInfo pkg){
         this.appInfo_pm=appInfo_pm;
@@ -38,8 +40,11 @@ public class ClassSetAppDetails {
                             List<String> lastUpdate_Time= new ArrayList<>();
                             List<String> version_code=new ArrayList<>() ;
                             List<String> targetSdk = new ArrayList<>();
+                            List<String> minSdk = new ArrayList<>();
+                            List<String> configs = new ArrayList<>();
+                            List<String> uids = new ArrayList<>();
                             List<String> processName = new ArrayList<>();
-                            List<String> shared_user_id = new ArrayList<>();
+                            List<String> sharedLibs = new ArrayList<>();
                             List<String> installTime = new ArrayList<>();
                             List<String> installLocation = new ArrayList<>();
                             List<String> requested_features = new ArrayList<>();
@@ -69,36 +74,38 @@ public class ClassSetAppDetails {
         if(servicesInfos!=null){
             for(ServiceInfo ser : servicesInfos){
                 if(ser!=null){
-                    services_list.add(ser.toString());
+                    services_list.add(ser.name);
                 }
             }
-        }
-
-        if(services_list.size()==0){
+            if(services_list.size()==0){
+                services_list.add("Not Available");
+            }
+        }else{
             services_list.add("Not Available");
         }
-        expandable_list.put("All Services", permissions_list);
+        expandable_list.put("Services", services_list);
+
 
         //-----------------------ADD VERSION-----------------------------
-        version_code.add(pkg.versionName+"_"+String.valueOf(pkg.versionCode));
+        version_code.add(pkg.versionName+"_"+ pkg.versionCode);
         expandable_list.put("Version ",version_code);
 
+
         // --------------------ADD PERMISSIONS-----------------------------------
-        PermissionInfo[] permissionInfos = pkg.permissions;
-        try {
-           // pkg1=appinfo_pm.getPackageInfo(pkg.packageName,PackageManager.PER);
-            if(permissionInfos!=null) {
-                for (PermissionInfo per : permissionInfos) {
-                    permissions_list.add(per.toString());
-                }
-            }else permissions_list.add("No Permissions");
-        }catch(Exception ex) {
-            providers_list.add("Unable To Access");
-        }
-        expandable_list.put("All Permissions", permissions_list);
+//        PermissionInfo[] permissionInfos = pkg.permissions;
+//        try {
+//           // pkg1=appinfo_pm.getPackageInfo(pkg.packageName,PackageManager.PER);
+//            if(permissionInfos!=null) {
+//                for (PermissionInfo per : permissionInfos) {
+//                    permissions_list.add(per.name);
+//                }
+//            }else permissions_list.add("No Permissions");
+//        }catch(Exception ex) {
+//            providers_list.add("Unable To Access");
+//        }
+//        expandable_list.put("All Permissions", permissions_list);
 
         // --------------------ADD INSTALL LOCATION-----------------------------------
-
         int loc = pkg.installLocation;
         if(loc==0){
             installLocation.add(" INSTALL_LOCATION_AUTO");
@@ -109,56 +116,62 @@ public class ClassSetAppDetails {
         }else {
             installLocation.add("<Unknown>");
         }
-
         expandable_list.put("Install Location", installLocation);
+
 
         //---------------------Add PROCESS NAME--------------------------------
         processName.add(pkg.applicationInfo.processName);
         expandable_list.put("Process Name",processName);
 
+
         //--------------------FIRST INSTALL TIME------------------------------------
         installTime.add(new SimpleDateFormat().format(pkg.firstInstallTime));
         expandable_list.put("Installed on ",installTime);
+
 
         //--------------------ADD LAST_UPDATE_TIME------------------------------------
         lastUpdate_Time.add(new SimpleDateFormat().format(pkg.lastUpdateTime));
         expandable_list.put("Last Updated On",lastUpdate_Time);
 
+
         //-----------------------ADD DataDirectory Path------------------------------------------------
         DataDirectory_Path.add(pkg.applicationInfo.dataDir);
         expandable_list.put("Data Directory Path ",DataDirectory_Path);
+
 
         //-----------------------ADD APK PATH-----------------------------------------------
         apkPath.add(pkg.applicationInfo.sourceDir);
         expandable_list.put("Base Apk Path ",apkPath);
 
-        //-----------------------ADD SHARED USER ID------------------------------------------------
-        shared_user_id.add(pkg.sharedUserId);
-        if(shared_user_id==null){
-            shared_user_id.add("No Shared User ID ");
+
+        //-----------------------USER ID------------------------------------------------
+        List<SharedLibraryInfo> shlibs = appInfo_pm.getSharedLibraries(0);
+        for(SharedLibraryInfo sh :shlibs){
+            sharedLibs.add(sh.getName()+" - "+sh.getType());
         }
-            expandable_list.put("Shared User ID ",shared_user_id);
+        expandable_list.put("Shared Libraries",sharedLibs);
 
 
         //-----------------------SPLIT APK Path------------------------------------------------
-
         if(pkg.applicationInfo.splitSourceDirs != null){
            split_apks_path =Arrays.asList(pkg.applicationInfo.splitSourceDirs);
         }else{
             split_apks_path.add("No Split APK Paths ");
         }
-
         expandable_list.put("Split APK Paths",split_apks_path );
+
 
         //-----------------------Add Target SDK----------------------------------------------
         targetSdk.add(String.valueOf(pkg.applicationInfo.targetSdkVersion));
         expandable_list.put("Target SDK Version",targetSdk);
 
+        //-----------------------Add Minimum SDK----------------------------------------------
+        minSdk.add(String.valueOf(pkg.applicationInfo.minSdkVersion));
+        expandable_list.put("Minimum SDK Version",minSdk);
+
+
         // --------------------ADD INSTALLER SOURCE-----------------------------------
         install_SourceApp.add(appInfo_pm.getInstallerPackageName(pkg.packageName));
-        if(install_SourceApp==null){
-            install_SourceApp.add("No Installer Source");
-        }
         expandable_list.put("Installer Package", install_SourceApp);
 
 
@@ -174,7 +187,6 @@ public class ClassSetAppDetails {
         } catch (PackageManager.NameNotFoundException e) {
             req_permissions_list.add("Unable To Access");
         }
-
         expandable_list.put("Permissions Requested", req_permissions_list);
 
 
@@ -190,7 +202,6 @@ public class ClassSetAppDetails {
         } catch (PackageManager.NameNotFoundException e) {
             activities_list.add("Unable To Access");
         }
-
         expandable_list.put("Activities", activities_list);
 
         // ----------------------------------GET FEATURES-----------------------------------------------
@@ -204,7 +215,7 @@ public class ClassSetAppDetails {
         } catch (Exception e) {
             requested_features.add("Unable To Access");
         }
-        expandable_list.put("Requested Features", requested_features);
+        expandable_list.put("Features Requested", requested_features);
 
 
         // ----------------------------------GET PROVIDERS-----------------------------------------------
@@ -235,6 +246,30 @@ public class ClassSetAppDetails {
             receivers_list.add("Unable To Access");
         }
         expandable_list.put("Receivers", receivers_list);
+
+        //-----------------------UID----------------------------------------------
+        try {
+            int uid = appInfo_pm.getPackageUid(pkg.packageName, 0);
+            uids.add(String.valueOf(uid));
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            uids.add("Not available");
+        }
+        expandable_list.put("UserID (uid) ", uids);
+
+        //-----------------------CONFIG PREFERENCES----------------------------------------------
+//        ConfigurationInfo[] cons =  pkg.configPreferences;
+//        if(null!=cons){
+//            for(ConfigurationInfo info : cons){
+//                configs.add(info.);
+//            }
+//        }else{
+//           configs.add("No ConfigPreference") ;
+//        }
+//        expandable_list.put("Configuration Info", configs);
+
+        //-----------------------Add Target SDK----------------------------------------------
+//        appInfo_pm.get
 
         return expandable_list;
     }

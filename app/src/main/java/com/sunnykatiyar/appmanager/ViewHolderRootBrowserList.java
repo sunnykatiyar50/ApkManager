@@ -10,15 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ViewHolderRootBrowserList extends RecyclerView.ViewHolder {
 
-    TextView root_browser_item_name;
-    TextView root_browser_item_type;
-    TextView root_browser_item_time;
-    TextView root_browser_item_perm;
-    TextView root_browser_inode;
-    TextView root_browser_owner;
-    TextView root_browser_item_size;
-    CheckBox root_browser_item_checkbox;
-    ImageView root_browser_item_thumbnail;
+    final TextView root_browser_item_name;
+    final TextView root_browser_item_type;
+    final TextView root_browser_item_time;
+    final TextView root_browser_item_perm;
+    final TextView root_browser_inode;
+    final TextView root_browser_owner;
+    final TextView root_browser_item_size;
+    final ImageView root_browser_item_thumbnail;
     String TAG = "root_browser_item_LIST_VIEWHOLDER :";
 
     public ViewHolderRootBrowserList(@NonNull View itemView) {
@@ -31,7 +30,7 @@ public class ViewHolderRootBrowserList extends RecyclerView.ViewHolder {
         this.root_browser_owner = itemView.findViewById(R.id.root_browser_textview_owner);
         this.root_browser_item_perm = itemView.findViewById(R.id.root_browser_item_perm);
         this.root_browser_item_size = itemView.findViewById(R.id.root_browser_item_size);
-        this.root_browser_item_checkbox = itemView.findViewById(R.id.root_browser_item_checkbox);
+        CheckBox root_browser_item_checkbox = itemView.findViewById(R.id.root_browser_item_checkbox);
         this.root_browser_item_thumbnail = itemView.findViewById(R.id.root_browser_item_thumbnails);
     }
 }

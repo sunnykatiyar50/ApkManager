@@ -29,7 +29,6 @@
 
             <group
                 android:title="Order Apps By"
-                android:id="@+id/appmenugroup_sort_by"
                 android:checkableBehavior="single"
                 android:menuCategory="secondary">
                 <item
@@ -65,7 +64,6 @@
 
             <group
                 android:title="Order Apps By"
-                android:id="@+id/appmenugroup_order_by"
                 android:checkableBehavior="single"
                 android:menuCategory="secondary">
                 <item

@@ -14,42 +14,37 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
-public class ObjectApkFile {
+class ObjectApkFile {
 
 //    String file_path;
 //    Context context;
 
-    private final String TAG = "ObjectApkFile :";
-
-    File file;
+    final File file;
   //  DocumentFile file_doc;
   //  Uri file_uri;
     ApplicationInfo app_info;
     PackageInfo apk_pkg_info;
-    PackageInfo app_pkg_info;
-  //PackageInfo pkg_info;
+    //PackageInfo pkg_info;
     String app_name ;
-    String file_name ;
+    final String file_name ;
     String file_size ;
     String app_version_name;
     String app_version_code;
     String apk_version_name;
     String apk_version_code;
     String pkg_name ;
-    String str_file_creation_time;
-    String str_app_update_time;
+    final String str_file_creation_time;
+    final String str_app_update_time;
     Uri parent;
 
     boolean isInstalled ;
     boolean isUpdatable ;
     boolean select_box_state ;
 
-    long app_install_time;
-    long app_update_time;
+    private long app_update_time;
     long file_creation_time;
-    long file_modified_time;
 
-    PackageManager pm = FragmentApkFiles.pm;
+    final PackageManager pm = FragmentApkFiles.pm;
 
     private static final DecimalFormat format = new DecimalFormat("#.##");
     private static final long MB = 1024 * 1024;
@@ -87,10 +82,11 @@ public class ObjectApkFile {
 //        Log.i(TAG,"GETFRAGMENT(): "+file_uri.getFragment());
 //        Log.i(TAG,"ISABSOLUTE(): "+file_uri.isAbsolute());
 
+        String TAG = "ObjectApkFile :";
         try{
             BasicFileAttributes attr = Files.readAttributes(f1.toPath(), BasicFileAttributes.class);
             this.file_creation_time = attr.creationTime().toMillis();
-            this.file_modified_time = attr.lastModifiedTime().toMillis();
+            long file_modified_time = attr.lastModifiedTime().toMillis();
           //Log.i(TAG,"File Creation Time of \""+file_name+"\" is "+file_creation_time);
         }catch(Exception ex){
             Log.i(TAG,"Error getting File Creation Time of - "+file_name);
@@ -118,8 +114,8 @@ public class ObjectApkFile {
         }
 
         try{
-            app_pkg_info = pm.getPackageInfo(pkg_name,0);
-            this.app_install_time = app_pkg_info.firstInstallTime;
+            PackageInfo app_pkg_info = pm.getPackageInfo(pkg_name, 0);
+            long app_install_time = app_pkg_info.firstInstallTime;
             this.app_update_time = app_pkg_info.lastUpdateTime;
             app_version_code = String.valueOf(app_pkg_info.versionCode);
             app_version_name = app_pkg_info.versionName;
@@ -145,7 +141,7 @@ public class ObjectApkFile {
 
     }
 
-    public String getSize(File file) {
+    private String getSize(File file) {
 
         if (!file.isFile()) {
             throw new IllegalArgumentException("Expected a file");
@@ -165,7 +161,7 @@ public class ObjectApkFile {
         return format.format(length) + "Bytes";
     }
 
-    public String getTime(long time){
+    private String getTime(long time){
         DateFormat dateFormat = new SimpleDateFormat("hh:mm a dd-MM-yy");
         String strDate = dateFormat.format(time);
         return strDate;

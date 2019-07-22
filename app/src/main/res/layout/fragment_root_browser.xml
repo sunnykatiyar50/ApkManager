@@ -38,7 +38,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:textAlignment="viewEnd"
-        app:layout_constraintBottom_toTopOf="@+id/root_browser_msg_text_view"
+        app:layout_constraintBottom_toTopOf="@+id/rootBrowser_msgTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -150,7 +150,7 @@
     <!--app:menu="@menu/files_bottom_menu" />-->
 
     <TextView
-        android:id="@+id/root_browser_msg_text_view"
+        android:id="@+id/rootBrowser_msgTextView"
         android:layout_width="0dp"
         android:layout_height="24dp"
         android:autoSizeMaxTextSize="14sp"
@@ -182,7 +182,7 @@
         android:visibility="invisible"
         app:backgroundTint="@color/colorPrimaryDark"
         app:fabSize="normal"
-        app:layout_constraintBottom_toBottomOf="@+id/root_browser_msg_text_view"
+        app:layout_constraintBottom_toBottomOf="@+id/rootBrowser_msgTextView"
         app:layout_constraintEnd_toEndOf="parent"
         tools:visibility="visible" />
 

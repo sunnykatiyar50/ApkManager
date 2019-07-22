@@ -37,12 +37,11 @@
         android:layout_height="0dp"
         android:background="#00292727"
         android:textAlignment="viewEnd"
-        app:layout_constraintBottom_toTopOf="@+id/files_msg_text_view"
+        app:layout_constraintBottom_toTopOf="@+id/files_msgTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/files_progress_bar"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/files_progress_bar" />
 
     <Spinner
         android:id="@+id/files_storage_spinner"
@@ -105,24 +104,22 @@
 
 
     <TextView
-        android:id="@+id/files_msg_text_view"
+        android:id="@+id/files_msgTextView"
         android:layout_width="0dp"
         android:layout_height="24dp"
         android:autoSizeMaxTextSize="14sp"
         android:autoSizeMinTextSize="10sp"
         android:autoSizeTextType="uniform"
         android:gravity="center"
-        android:lines="1"
+        android:lines="2"
         android:maxLines="2"
         android:minLines="1"
         android:text="@string/textview_msg_hint"
         android:textAlignment="center"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/files_bottomAppBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -184,7 +181,6 @@
         tools:visibility="visible" />
 
     <ImageView
-        android:id="@+id/imageView"
         android:layout_width="40dp"
         android:layout_height="35dp"
         android:background="#090808"

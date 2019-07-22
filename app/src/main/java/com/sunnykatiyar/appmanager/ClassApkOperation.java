@@ -14,49 +14,54 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.topjohnwu.superuser.Shell;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
-public class ClassApkOperation {
+import static com.sunnykatiyar.appmanager.ActivityOperations.adapter_operations_list;
 
-    Context context;
+class ClassApkOperation {
+
+    private Context context;
     //Activity activity;
-    ObjectApkFile apkItem;
+    private ObjectApkFile apkItem;
     String apk_formatted_name;
-    String app_formatted_name;
+    private String app_formatted_name;
     boolean result = false;
     public File parent_folder;
-    ObjectAppPackageName appItem;
-    File source_file;
+    private ObjectAppPackageName appItem;
+    private File source_file;
     File dest_file;
-    String command;
-    ContentResolver resolver;
+    private ContentResolver resolver;
 
-    final String TAG = "MYAPP : MOVE_APK  : ";
+    private final String TAG = "MYAPP : APK OPERATION  : ";
 
-    final String name_part_1 = FragmentApkSettings.name_part_1;
-    final String name_part_2 = FragmentApkSettings.name_part_2;
-    final String name_part_3 = FragmentApkSettings.name_part_3;
-    final String name_part_4 = FragmentApkSettings.name_part_4;
-    final String name_part_5 = FragmentApkSettings.name_part_5;
-    final String name_part_6 = FragmentApkSettings.name_part_6;
-    final String name_part_7 = FragmentApkSettings.name_part_7;
-    final String name_part_8 = FragmentApkSettings.name_part_8;
+    private final String name_part_1 = FragmentApkSettings.name_part_1;
+    private final String name_part_2 = FragmentApkSettings.name_part_2;
+    private final String name_part_3 = FragmentApkSettings.name_part_3;
+    private final String name_part_4 = FragmentApkSettings.name_part_4;
+    private final String name_part_5 = FragmentApkSettings.name_part_5;
+    private final String name_part_6 = FragmentApkSettings.name_part_6;
+    private final String name_part_7 = FragmentApkSettings.name_part_7;
+    private final String name_part_8 = FragmentApkSettings.name_part_8;
     final String name_format_data_saved = FragmentApkSettings.name_format_data_saved;
 
-    public static final String key_repository_folder = FragmentSettings.key_repository_folder;
-    public static final String key_root_access = FragmentSettings.key_root_access;
-    public static final String path_not_set = FragmentSettings.path_not_set;
+    private static final String key_repository_folder = FragmentSettings.key_repository_folder;
+    private static final String key_root_access = FragmentSettings.key_root_access;
+    private static final String path_not_set = FragmentSettings.path_not_set;
     public static final String key_export_apk_enable = FragmentSettings.key_export_apk_enable;
-    public static final String key_export_apk_uri = FragmentSettings.key_export_apk_uri;
+    private static final String key_export_apk_uri = FragmentSettings.key_export_apk_uri;
     public String value_export_apk_path;
     public boolean value_export_apk_enable;
 
-    public static boolean root_access;
+    private static boolean root_access;
 
     static {
         Shell.Config.setFlags(Shell.FLAG_REDIRECT_STDERR);
@@ -80,7 +85,7 @@ public class ClassApkOperation {
     }
 
     private void setNameFormatFromApk() {
-        if (ActivityMain.sharedPrefApkManager.contains(name_format_data_saved)) {
+        //if (ActivityMain.sharedPrefApkManager.contains(name_format_data_saved)) {
 
             int part1 = ActivityMain.sharedPrefApkManager.getInt(name_part_1, 1);
             Log.i(TAG, "Part 1 :" + part1);
@@ -107,7 +112,7 @@ public class ClassApkOperation {
             Log.i(TAG, "Part 8 :" + part8);
 
             this.apk_formatted_name = getNameFromApkFile(apkItem, part1) + part2 + getNameFromApkFile(apkItem, part3) + part4 + getNameFromApkFile(apkItem, part5) + part6 + getNameFromApkFile(apkItem, part7) + part8 + ".apk";
-        }
+      //  }
 
         Log.i(TAG," APK Formatted Name : "+this.apk_formatted_name);
     }
@@ -163,9 +168,9 @@ public class ClassApkOperation {
             }
 
 //--------------------------RENAME APK VIA ROOT----------------------------------------
-        }else if(root_access){
-            command = "mv \""+ source_file +"\" \""+ dest_file +"\"";
-            Log.i(TAG,"COMMAND : "+command);
+        }else {
+            String command = "mv \"" + source_file + "\" \"" + dest_file + "\"";
+            Log.i(TAG,"COMMAND : "+ command);
             try{
                 Shell.su(command).exec();
                 this.result = true;
@@ -192,36 +197,36 @@ public class ClassApkOperation {
     }
 
     private void setNameFormatFromApp() {
-        if (ActivityMain.sharedPrefApkManager.contains(name_format_data_saved)) {
 
-            int part1 = ActivityMain.sharedPrefApkManager.getInt(name_part_1, 1);
-            Log.i(TAG, "Part 1 :" + part1);
+//        if (ActivityMain.sharedPrefApkManager.contains(name_format_data_saved)) {
 
-            String part2 = ActivityMain.sharedPrefApkManager.getString(name_part_2, "_v");
-            Log.i(TAG, "Part 2 :" + part2);
+        int part1 = ActivityMain.sharedPrefApkManager.getInt(name_part_1, 1);
+        Log.i(TAG, "Part 1 :" + part1);
 
-            int part3 = ActivityMain.sharedPrefApkManager.getInt(name_part_3, 2);
-            Log.i(TAG, "Part 3 :" + part3);
+        String part2 = ActivityMain.sharedPrefApkManager.getString(name_part_2, "_v");
+        Log.i(TAG, "Part 2 :" + part2);
 
-            String part4 = ActivityMain.sharedPrefApkManager.getString(name_part_4, "_");
-            Log.i(TAG, "Part 4 :" + part4);
+        int part3 = ActivityMain.sharedPrefApkManager.getInt(name_part_3, 2);
+        Log.i(TAG, "Part 3 :" + part3);
 
-            int part5 = ActivityMain.sharedPrefApkManager.getInt(name_part_5, 3);
-            Log.i(TAG, "Part 5 :" + part5);
+        String part4 = ActivityMain.sharedPrefApkManager.getString(name_part_4, "_");
+        Log.i(TAG, "Part 4 :" + part4);
 
-            String part6 = ActivityMain.sharedPrefApkManager.getString(name_part_6, "");
-            Log.i(TAG, "Part 6 :" + part6);
+        int part5 = ActivityMain.sharedPrefApkManager.getInt(name_part_5, 3);
+        Log.i(TAG, "Part 5 :" + part5);
 
-            int part7 = ActivityMain.sharedPrefApkManager.getInt(name_part_7, 0);
-            Log.i(TAG, "Part 7 :" + part7);
+        String part6 = ActivityMain.sharedPrefApkManager.getString(name_part_6, "");
+        Log.i(TAG, "Part 6 :" + part6);
 
-            String part8 = ActivityMain.sharedPrefApkManager.getString(name_part_8, "");
-            Log.i(TAG, "Part 8 :" + part8);
+        int part7 = ActivityMain.sharedPrefApkManager.getInt(name_part_7, 0);
+        Log.i(TAG, "Part 7 :" + part7);
 
-            this.app_formatted_name = getNameFromApp(appItem, part1) + part2 + getNameFromApp(appItem, part3)
-                    + part4 + getNameFromApp(appItem, part5) + part6 + getNameFromApp(appItem, part7) + part8 + ".apk";
-        }
+        String part8 = ActivityMain.sharedPrefApkManager.getString(name_part_8, "");
+        Log.i(TAG, "Part 8 :" + part8);
 
+        this.app_formatted_name = getNameFromApp(appItem, part1) + part2 + getNameFromApp(appItem, part3)
+                + part4 + getNameFromApp(appItem, part5) + part6 + getNameFromApp(appItem, part7) + part8 + ".apk";
+    //}
         Log.i(TAG," APP Formatted Name : "+this.app_formatted_name);
     }
 
@@ -289,97 +294,53 @@ public class ClassApkOperation {
             }
 
 //--------------------------------EXTRACT APK WITHOUT ROOT-----------------------------------
-            if(!root_access){
-
-                if(!parent_folder.canWrite()){
-                    publishProgress("\n Default Parent Folder not Writable : " + parent_folder);
-                    parent_folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                }
-
-                dest_file = new File(parent_folder + "/" + app_formatted_name);
-                publishProgress(" Apk will be extracted as : " + dest_file);
-
-                if(parent_folder.canWrite()){
-                    copyTo(source_file, dest_file);
-                }
-                else{
-                    //result = (source_file).renameTo(dest_file);
-                    Log.i(TAG," : Renaming failed for \"" + source_file.getName() + "\". Cannot Write to "+parent_folder.getAbsolutePath());
-                }
+//            if(!root_access){
+                Uri parent_uri = Uri.parse(ActivityMain.sharedPrefSettings.getString(key_export_apk_uri,path_not_set));
+                if(!parent_uri.toString().equals(path_not_set)){
+                    //-------------------------------URI METHOD-----------------------------------------------------------
+                    ContentResolver resolver = context.getContentResolver();
+                    Uri base_apk_src_uri = DocumentFile.fromFile(source_file).getUri();
+                    Log.i(TAG,"parent_uri : "+parent_uri);
+                    Uri parentDocUri = DocumentsContract.buildDocumentUriUsingTree(parent_uri, DocumentsContract.getTreeDocumentId(parent_uri));
+                    copyDocFile(base_apk_src_uri, parentDocUri);
+                    Log.i(TAG,"APK EXPORTED BY URI METHOD to: "+parent_uri.getPath());
+                }else{
+                    showToast("Please specify Folder to extract apk in Settings ");
+//                }
+//                    if(!parent_folder.canWrite()){
+//                        publishProgress("\n Default Parent Folder not Writable : " + parent_folder);
+//                        parent_folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+//                    }
+//
+//                    dest_file = new File(parent_folder + "/" + app_formatted_name);
+//                    publishProgress(" Apk will be extracted as : " + dest_file);
+//
+//                    if(parent_folder.canWrite()){
+//                        copyTo(source_file, dest_file);
+//                    }
+//                    else{
+//                        Log.i(TAG," : Renaming failed for \"" + source_file.getName() + "\". Cannot Write to "+parent_folder.getAbsolutePath());
+//                    }
+//                }
 
             }
 //-----------------------------------ROOT EXTRACT APK-----------------------------------
-            else if(root_access){
-                dest_file = new File(parent_folder + "/" + app_formatted_name);
-                publishProgress(" Apk will be extracted as : " + dest_file);
+//            else if(root_access){
+//                dest_file = new File(parent_folder + "/" + app_formatted_name);
+//                publishProgress(" Apk will be extracted as : " + dest_file);
+//
+//                command = "cp \""+ source_file +"\" \""+ dest_file +"\"";
+//                try{
+//                    Shell.sh(command).exec();
+//                     publishProgress(" Apk extracted successfully : " + dest_file.getAbsolutePath());
+//                }catch(Exception ex){
+//                     publishProgress("ROOT : Apk Extraction failed : "+app_formatted_name);
+//                }
+//            }
 
-                command = "cp \""+ source_file +"\" \""+ dest_file +"\"";
-                try{
-                    Shell.sh(command).exec();
-                     publishProgress(" Apk extracted successfully : " + dest_file.getAbsolutePath());
-                }catch(Exception ex){
-                     publishProgress("ROOT : Apk Extraction failed : "+app_formatted_name);
-                }
-            }
-
-            //-------------------------------URI METHOD-----------------------------------------------------------
-            Uri parent_uri = Uri.parse(ActivityMain.sharedPrefSettings.getString(key_export_apk_uri,path_not_set));
-            Uri parentDocUri = DocumentsContract.buildDocumentUriUsingTree(parent_uri, DocumentsContract.getTreeDocumentId(parent_uri));
-            Uri base_apk_src_uri = DocumentFile.fromFile(source_file).getUri();
-            Uri target_uri;
-            ContentResolver resolver = context.getContentResolver();
-            String mime_type = MimeTypeMap.getSingleton().getMimeTypeFromExtension("apk");
-
-            try{
-                target_uri = DocumentsContract.createDocument(resolver, parentDocUri, mime_type, app_formatted_name);
-                DocumentsContract.copyDocument(ActivityMain.resolver, base_apk_src_uri, target_uri);
-                Log.i(TAG,"APK EXPORTED BY URI METHOD to: "+target_uri.getPath());
-            }catch (FileNotFoundException e) {
-                Log.i(TAG,"APK EXPORT ERROR URI METHOD : "+e);
-            }
         }
         
     }
-
-//    private void extractApkOf(){
-//
-//        String parent = ActivityMain.sharedPrefSettings.getString(key_repository_folder,path_not_set);
-//        Log.i(TAG, "\nParent value from preference : " + parent);
-//
-//        parent_folder = new File(parent);
-//
-//        if(!parent_folder.exists() || !parent_folder.isDirectory()){
-//            Log.i(TAG, "\nParent value not exists : " + parent_folder);
-//            parent_folder = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-//        }
-//
-//       // dest_file = new File(parent_folder + "/" + this.apk_formatted_name);
-//         dest_file = new File(parent_folder + "/" + this.apk_formatted_name);
-//        Log.i(TAG, " Apk will be saved to : " + dest_file);
-//
-//
-////--------------------------------EXTRACT APK WITHOUT ROOT-----------------------------------
-//        if(!root_access){
-//            //  if(dest_doc_file.canWrite()){
-//            //     copyTo(source_uri, dest_uri);
-//            //   Log.i(TAG,"Writing to Destination Allowed.");
-//            //  }else{
-//            //  this.result = (source_doc_file).renameTo(dest_doc_file);
-//            //   Log.i(TAG," : Renaming failed for \"" + source_doc_file.getName() + "\". Cannot Write to "+parent_folder.getUri().getPath());
-//            //}
-//        }
-////-----------------------------------ROOT EXTRACT APK-----------------------------------
-//        else if(root_access){
-//            command = "cp \""+ source_file +"\" \""+ dest_file +"\"";
-//            try{
-//                Shell.sh(command).exec();
-//
-//                showToast(" Apk extracted successfully : " + dest_file.getAbsolutePath());
-//            }catch(Exception ex){
-//                showToast("ROOT : Apk Extraction failed : "+apk_formatted_name);
-//            }
-//        }
-//    }
     
     private void showToast(String str){
         Toast.makeText(ActivityMain.context,str,Toast.LENGTH_LONG).show();
@@ -428,6 +389,60 @@ public class ClassApkOperation {
         }
 
         return result;
+    }
+
+    private boolean copyDocFile(Uri srcFile, Uri targetFolder){
+
+        InputStream in = null;
+        OutputStream out = null;
+        Uri targetFileUri = null;
+
+        BufferedInputStream buf_in;
+        BufferedOutputStream buf_out;
+
+        boolean result ;
+
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension("apk");
+
+        try{
+            targetFileUri = DocumentsContract.createDocument(resolver, targetFolder, mimeType, app_formatted_name);
+        }catch (FileNotFoundException e) {
+            Log.i(TAG," Unable create target document uri");
+        }
+
+        try{
+            in = resolver.openInputStream(srcFile);
+            buf_in = new BufferedInputStream(in);
+            Log.i(TAG," Uri to copy from : "+srcFile);
+
+            out = resolver.openOutputStream(targetFileUri);
+            buf_out = new BufferedOutputStream(out);
+            Log.i(TAG,"uri to copy to : "+targetFileUri);
+
+            int data;
+
+            while((data = buf_in.read()) != -1){
+                buf_out.write(data);
+            }
+
+            out.flush();
+            result=true;
+            Log.i(TAG, "Extraction of apk successfull : "+targetFileUri.getPath());
+
+        }catch(Exception e) {
+            result=true;
+            Log.i(TAG, "Extraction of apk  file failed : "+e);
+        }finally{
+            try {
+                in.close();
+                out.close();
+                Log.i(TAG, "Streams Closed successfully.");
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return true;
     }
 
 }

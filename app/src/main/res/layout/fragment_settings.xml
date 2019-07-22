@@ -7,40 +7,33 @@
     android:orientation="vertical"
     android:textAlignment="viewStart"
     tools:layout_editor_absoluteX="5dp"
-    tools:layout_editor_absoluteY="5dp"><![CDATA[
-
-
-    android:layout_margin="@dimen/margin_medium" >
-
-
-
-
-
-    ]]>
+    tools:layout_editor_absoluteY="5dp">
 
     <TextView
         android:id="@+id/label_exsd_path"
-        android:layout_width="394dp"
+        android:layout_width="0dp"
         android:layout_height="51dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="72dp"
         android:autoSizeTextType="uniform"
-        android:gravity="center"
-        android:padding="2dp"
+        android:background="#326B34"
+        android:gravity="center_vertical"
         android:text="@string/label_path_spinner"
-        android:textAlignment="center"
-        android:textColor="#64FFDA"
-        android:textSize="14sp"
+        android:textAlignment="gravity"
+        android:textColor="#F2F5F4"
+        android:textSize="12sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch_root_access" />
+        app:layout_constraintTop_toBottomOf="@+id/button_browse_repo" />
 
     <Button
         android:id="@+id/buttton_add_extsd"
-        android:layout_width="144dp"
-        android:layout_height="48dp"
+        android:layout_width="142dp"
+        android:layout_height="33dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="56dp"
+        android:layout_marginEnd="8dp"
+        android:background="#00897B"
         android:text="Add Path"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settings_storage_spinner"
@@ -48,10 +41,11 @@
 
     <Button
         android:id="@+id/buttton_clear_extsd"
-        android:layout_width="151dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="36dp"
+        android:layout_width="148dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="#00897B"
         android:text="Delete Path"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settings_storage_spinner"
@@ -61,12 +55,13 @@
         android:id="@+id/text_path_repository"
         android:layout_width="395dp"
         android:layout_height="46dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="52dp"
         android:autoSizeMaxTextSize="16sp"
         android:autoSizeMinTextSize="12sp"
         android:autoSizeTextType="uniform"
         android:clickable="false"
         android:editable="false"
+        android:ellipsize="middle"
         android:ems="10"
         android:focusable="auto"
         android:focusableInTouchMode="false"
@@ -77,30 +72,31 @@
         android:maxLines="3"
         android:minLines="2"
         android:textAlignment="viewStart"
-        android:textColor="#00BFA5"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.437"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/switch_root_access" />
 
     <Button
         android:id="@+id/button_browse_repo"
-        android:layout_width="183dp"
-        android:layout_height="48dp"
+        android:layout_width="187dp"
+        android:layout_height="33dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="8dp"
+        android:background="#00897B"
         android:text="Browse Repository "
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_path_repository" />
 
     <Button
         android:id="@+id/button_clear_repo_data"
-        android:layout_width="162dp"
-        android:layout_height="48dp"
+        android:layout_width="164dp"
+        android:layout_height="33dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="28dp"
+        android:background="#00897B"
         android:text="Clear Repo Data"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -109,16 +105,21 @@
 
     <Switch
         android:id="@+id/switch_root_access"
-        android:layout_width="391dp"
+        android:layout_width="0dp"
         android:layout_height="37dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
+        android:background="#326B34"
+        android:button="@color/white"
+        android:buttonTintMode="src_over"
+        android:foregroundTintMode="multiply"
         android:text="ROOT Operations"
-        android:textColor="#F78383"
+        android:textColor="#FCF8F8"
         android:textSize="18sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_browse_repo" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button_open_selector"
@@ -134,11 +135,12 @@
 
     <Spinner
         android:id="@+id/settings_storage_spinner"
-        android:layout_width="399dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="4dp"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="4dp"
+        android:backgroundTintMode="add"
+        android:foreground="#AB326B34"
+        android:foregroundTintMode="src_atop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/label_exsd_path" />
@@ -146,9 +148,10 @@
     <Button
         android:id="@+id/button_export_apk_folder"
         android:layout_width="102dp"
-        android:layout_height="43dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="4dp"
+        android:background="#00897B"
         android:text="Set Folder"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -156,29 +159,39 @@
 
     <EditText
         android:id="@+id/editText_apk_export_path"
-        android:layout_width="276dp"
-        android:layout_height="40dp"
+        android:layout_width="289dp"
+        android:layout_height="43dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:clickable="false"
+        android:editable="false"
+        android:ellipsize="middle"
         android:ems="10"
+        android:focusable="auto"
+        android:focusableInTouchMode="false"
         android:hint="Apks will be exported here"
         android:inputType="textPersonName"
         android:lines="2"
         android:maxLines="2"
         android:minLines="2"
         android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/button_export_apk_folder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/switch_export_apk" />
 
     <Switch
         android:id="@+id/switch_export_apk"
-        android:layout_width="390dp"
+        android:layout_width="0dp"
         android:layout_height="41dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:text="Export Apks of Installed Apps to below folder "
+        android:layout_marginTop="68dp"
+        android:background="#326B34"
+        android:button="@color/white"
+        android:buttonTint="@color/cream_white"
+        android:buttonTintMode="src_over"
+        android:text="Enable Exporting Apk of Installed App to below folder "
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttton_add_extsd" />
 

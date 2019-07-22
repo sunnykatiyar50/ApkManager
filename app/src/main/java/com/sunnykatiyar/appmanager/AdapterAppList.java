@@ -29,6 +29,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static android.content.Intent.createChooser;
 import static com.sunnykatiyar.appmanager.FragmentAppManager.activityManager;
@@ -42,11 +43,11 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
     private PackageManager pm;
     private List<PackageInfo> myAppList = new ArrayList<>();
     private Activity activity;
-    final String TAG = "APPLIST ADAPTER : ";
+    private final String TAG = "APPLIST ADAPTER : ";
     public static PackageInfo clicked_pkg;
     public static String clicked_pkg_label;
-    boolean rootAccess ;
-    public static final String key_root_access = FragmentSettings.key_root_access;
+    private boolean rootAccess ;
+    private static final String key_root_access = FragmentSettings.key_root_access;
     final String path_not_set = "PATH NOT SET";
     private static final DecimalFormat format = new DecimalFormat("#.##");
     private static final long MB = 1024 * 1024;
@@ -92,184 +93,135 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         vholder.app_size.setText(getSize(f.length()));
         vholder.text_extra.setText(String.valueOf(pkginfo.versionCode));
 
-        vholder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clicked_pkg = myAppList.get(i);
-                clicked_pkg_label = mainpm.getApplicationLabel(clicked_pkg.applicationInfo).toString();
-                Log.i(TAG, "Item clicked :" + clicked_pkg_label);
+        vholder.itemView.setOnClickListener(v -> {
+            clicked_pkg = myAppList.get(i);
+            clicked_pkg_label = mainpm.getApplicationLabel(clicked_pkg.applicationInfo).toString();
+            Log.i(TAG, "Item clicked :" + clicked_pkg_label);
 
-                Toast.makeText(appContext, clicked_pkg_label, Toast.LENGTH_SHORT).show();
-                Intent appInfo = new Intent(activity, ActivityAppDetails.class);
-                activity.startActivity(appInfo);
-            }
+            Toast.makeText(appContext, clicked_pkg_label, Toast.LENGTH_SHORT).show();
+            Intent appInfo = new Intent(activity, ActivityAppDetails.class);
+            activity.startActivity(appInfo);
         });
 
         vholder.itemView.setOnCreateContextMenuListener(null);
 
-        vholder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+        vholder.itemView.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
 
-            @Override
-            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            clicked_pkg = myAppList.get(i);
+            clicked_pkg_label = mainpm.getApplicationLabel(clicked_pkg.applicationInfo).toString();
+            MenuInflater inflater = activity.getMenuInflater();
+            inflater.inflate(R.menu.menu_app_details, menu);
+            PackageInfo p = myAppList.get(i);
+            Log.i(TAG, " CLICKED PACKAGE: " + (clicked_pkg==null));
 
-                clicked_pkg = myAppList.get(i);
-                clicked_pkg_label = mainpm.getApplicationLabel(clicked_pkg.applicationInfo).toString();
-                MenuInflater inflater = activity.getMenuInflater();
-                inflater.inflate(R.menu.menu_app_details, menu);
-                PackageInfo p = myAppList.get(i);
-                Log.i(TAG, " CLICKED PACKAGE: " + (clicked_pkg==null));
+            menu.setHeaderTitle(clicked_pkg_label);
 
-                menu.setHeaderTitle(clicked_pkg_label);
-
-                if (clicked_pkg != null) {
-    //----------------------------------------------------SET  DISABLE MENU ITEM----------------------------------------------------
-                    if (clicked_pkg.applicationInfo.enabled) {
-                        menu.findItem(R.id.disable_app_item).setTitle(R.string.disable_app);
-                    } else {
-                        menu.findItem(R.id.disable_app_item).setTitle(R.string.enable_app);
-                    }
+            if (clicked_pkg != null) {
+//----------------------------------------------------SET  DISABLE MENU ITEM----------------------------------------------------
+                if (clicked_pkg.applicationInfo.enabled) {
+                    menu.findItem(R.id.disable_app_item).setTitle(R.string.disable_app);
+                } else {
+                    menu.findItem(R.id.disable_app_item).setTitle(R.string.enable_app);
+                }
 
 //--------------------------------------------------------LAUNCH APP----------------------------------------------------
-                    menu.findItem(R.id.launch_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            showMsg("Launching " + clicked_pkg_label);
-                            Intent i = mainpm.getLaunchIntentForPackage(clicked_pkg.packageName);
-                            activity.startActivity(i);
-                            return true;
-                        }
-                    });
+                menu.findItem(R.id.launch_item).setOnMenuItemClickListener(item -> {
+                    showMsg("Launching " + clicked_pkg_label);
+                    Intent i14 = mainpm.getLaunchIntentForPackage(clicked_pkg.packageName);
+                    activity.startActivity(i14);
+                    return true;
+                });
 
 //--------------------------------------------------------OPEN IN PLAYSTORE----------------------------------------------------
-                    menu.findItem(R.id.playstore_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            showMsg("Opening " + clicked_pkg_label + " in Playstore");
-                            Intent i = new Intent();
-                            i.setData(Uri.parse("market://details?id=" + clicked_pkg.packageName));
-                            activity.startActivity(i);
-                            return true;
-                        }
-                    });
+                menu.findItem(R.id.playstore_item).setOnMenuItemClickListener(item -> {
+                    showMsg("Opening " + clicked_pkg_label + " in Playstore");
+                    Intent i13 = new Intent();
+                    i13.setData(Uri.parse("market://details?id=" + clicked_pkg.packageName));
+                    activity.startActivity(i13);
+                    return true;
+                });
 
 //--------------------------------------------------------OPEN_APPINFO----------------------------------------------------
-                    menu.findItem(R.id.sys_appinfo_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            Intent i = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + clicked_pkg.packageName));
-                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            activity.startActivity(i);
-                            return true;
-                        }
-                    });
+                menu.findItem(R.id.sys_appinfo_item).setOnMenuItemClickListener(item -> {
+                    Intent i12 = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + clicked_pkg.packageName));
+                    i12.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    activity.startActivity(i12);
+                    return true;
+                });
 
 //--------------------------------------------------------UNINSTALL APP AND DATA----------------------------------------------------
-                    menu.findItem(R.id.uninstall_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            uninstall();
-                            return true;
-                        }
-                    });
+                menu.findItem(R.id.uninstall_item).setOnMenuItemClickListener(item -> {
+                    uninstall();
+                    return true;
+                });
 
 //----------------------------------------------------EXTRACT APK----------------------------------------------------
-                    menu.findItem(R.id.extractApk_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            Log.i(TAG,"PACKAGE TO BE EXTRACTED : "+clicked_pkg.packageName);
-                            extract_apk(clicked_pkg.packageName);
-                            return true;
-                        }
-                    });
+                menu.findItem(R.id.extractApk_item).setOnMenuItemClickListener(item -> {
+                    Log.i(TAG, "PACKAGE TO BE EXTRACTED : " + clicked_pkg.packageName);
+                    extract_apk(clicked_pkg.packageName);
+                    return true;
+                });
 
 //-------------------------------------------------------COPY MENU----------------------------------------------------
-                    menu.findItem(R.id.copy_appname_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            copyToClipboard("App Name", clicked_pkg_label);
-                            Toast.makeText(activity, "App Name Copied", Toast.LENGTH_SHORT).show();
-                            return true;
-                        }
-                    });
+                menu.findItem(R.id.copy_appname_item).setOnMenuItemClickListener(item -> {
+                    copyToClipboard("App Name", clicked_pkg_label);
+                    Toast.makeText(activity, "App Name Copied", Toast.LENGTH_SHORT).show();
+                    return true;
+                });
 
-                    menu.findItem(R.id.copy_pkgname_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            copyToClipboard("Package Name", clicked_pkg.packageName);
-                            Toast.makeText(activity, "Package Name Copied", Toast.LENGTH_SHORT).show();
-                            return true;
-                        }
-                    });
+                menu.findItem(R.id.copy_pkgname_item).setOnMenuItemClickListener(item -> {
+                    copyToClipboard("Package Name", clicked_pkg.packageName);
+                    Toast.makeText(activity, "Package Name Copied", Toast.LENGTH_SHORT).show();
+                    return true;
+                });
 
-                    menu.findItem(R.id.copy_link_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            copyToClipboard("Playstore Link", "market://details?id=" + clicked_pkg.packageName);
-                            Toast.makeText(activity, "Playstore link copied", Toast.LENGTH_SHORT).show();
-                            return true;
-                        }
-                    });
+                menu.findItem(R.id.copy_link_item).setOnMenuItemClickListener(item -> {
+                    copyToClipboard("Playstore Link", "market://details?id=" + clicked_pkg.packageName);
+                    Toast.makeText(activity, "Playstore link copied", Toast.LENGTH_SHORT).show();
+                    return true;
+                });
 
-                    menu.findItem(R.id.share_link_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            Intent i = new Intent(Intent.ACTION_SEND);
-                            i.setType("text/plain");
-                            i.putExtra(Intent.EXTRA_TEXT, "market://details?id=" + clicked_pkg.packageName);
-                            activity.startActivity(createChooser(i, "Share Link Via"));
-                            return true;
-                        }
-                    });
+                menu.findItem(R.id.share_link_item).setOnMenuItemClickListener(item -> {
+                    Intent i1 = new Intent(Intent.ACTION_SEND);
+                    i1.setType("text/plain");
+                    i1.putExtra(Intent.EXTRA_TEXT, "market://details?id=" + clicked_pkg.packageName);
+                    activity.startActivity(createChooser(i1, "Share Link Via"));
+                    return true;
+                });
 
 //--------------------------------------------------------KILL_APP----------------------------------------------------
 
-                    menu.findItem(R.id.killapp_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            kill_app();
-                           return true;
-                        }
-                    });
+                menu.findItem(R.id.killapp_item).setOnMenuItemClickListener(item -> {
+                    kill_app();
+                    return true;
+                });
 
 //---------------------------------------------------CLEAR_DATA---------------------------------------------------
 
-                    menu.findItem(R.id.clear_data_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                           clear_data();
-                            return true;
-                        }
-                    });
+                menu.findItem(R.id.clear_data_item).setOnMenuItemClickListener(item -> {
+                    clear_data();
+                    return true;
+                });
 
 //--------------------------------------------------DISABLE/ENABLE_APP----------------------------------------------------
-                    menu.findItem(R.id.disable_app_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            disable_app(item);
-                            return true;
-                        }
-                    });
+                menu.findItem(R.id.disable_app_item).setOnMenuItemClickListener(item -> {
+                    disable_app(item);
+                    return true;
+                });
 
 //----------------------------------------------------UNINSTALL APP BUT KEEP DATA----------------------------------------------------
-                    menu.findItem(R.id.keepdata_install_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            keepdata_uninstall();
-                            return true;
-                        }
-                    });
+                menu.findItem(R.id.keepdata_install_item).setOnMenuItemClickListener(item -> {
+                    keepdata_uninstall();
+                    return true;
+                });
 
-                    menu.findItem(R.id.reset_perm_item).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            revokePermission();
-                            return false;
-                        }
-                    });
-                }
-                else {
-                    showMsg("Clicked Pkg = null.");
-                }
+                menu.findItem(R.id.reset_perm_item).setOnMenuItemClickListener(item -> {
+                    revokePermission();
+                    return false;
+                });
+            }
+            else {
+                showMsg("Clicked Pkg = null.");
             }
         });
 
@@ -281,25 +233,17 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
 
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                    try {
-                        showMsg("Revoke permission via terminal :" + Shell.rootAccess());
-                      //  Shell.sh("pm reset-permissions " + clicked_pkg.packageName).exec();
-                        Log.i(TAG, clicked_pkg.applicationInfo.loadLabel(mainpm).toString() + " permission revoked Successfully");
-                    } catch (Exception ex) {
-                        Log.e(TAG, "Revoke Permission :" + ex);
-                    }
-            }
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+                try {
+                    showMsg("Revoke permission via terminal :" + Shell.rootAccess());
+                  //  Shell.sh("pm reset-permissions " + clicked_pkg.packageName).exec();
+                    Log.i(TAG, clicked_pkg.applicationInfo.loadLabel(mainpm).toString() + " permission revoked Successfully");
+                } catch (Exception ex) {
+                    Log.e(TAG, "Revoke Permission :" + ex);
+                }
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
         builder.show();
 
     }
@@ -311,32 +255,26 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
 
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Confirmed Uninstalling"+clicked_pkg_label);
-                if (!rootAccess) {
-                    Intent intent = new Intent("android.intent.action.DELETE");
-                    intent.setData(Uri.parse("package:" + clicked_pkg.packageName));
-                    appContext.startActivity(intent);
-                } else {
-                    try {
-                        showMsg("Uninstallation by RootAccess :" + Shell.rootAccess());
-                        Shell.sh("pm uninstall " + clicked_pkg.packageName).exec();
-                        Log.i(TAG, clicked_pkg.applicationInfo.loadLabel(mainpm).toString() + " uninstalled Successfully by ROOT method.");
-                    } catch (Exception ex) {
-                        Log.i(TAG, "Uninstallation Failed by ROOT method :" + ex);
-                    }
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            showMsg("Confirmed Uninstalling"+clicked_pkg_label);
+            if (!rootAccess) {
+                Intent intent = new Intent("android.intent.action.DELETE");
+                intent.setData(Uri.parse("package:" + clicked_pkg.packageName));
+                appContext.startActivity(intent);
+            } else {
+                try {
+                    showMsg("Uninstallation by RootAccess :" + Shell.rootAccess());
+                    Shell.sh("pm uninstall " + clicked_pkg.packageName).exec();
+                    Log.i(TAG, clicked_pkg.applicationInfo.loadLabel(mainpm).toString() + " uninstalled Successfully by ROOT method.");
+                } catch (Exception ex) {
+                    Log.i(TAG, "Uninstallation Failed by ROOT method :" + ex);
                 }
             }
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Uninstallation Cancelled of " + clicked_pkg_label);
-                dialog.dismiss();
-            }
+        builder.setNegativeButton("No", (dialog, which) -> {
+            showMsg("Uninstallation Cancelled of " + clicked_pkg_label);
+            dialog.dismiss();
         });
         builder.show();
     }
@@ -346,14 +284,10 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         Log.i(TAG, "Clicked Extract Apk of : "+pkg_name);
 
         File apk = new File(clicked_pkg.applicationInfo.sourceDir);
-        if (apk == null) {
-            Toast.makeText(getContext(), "No Apk Available", Toast.LENGTH_SHORT);
-        } else {
-            Log.i(TAG, "found");
-            classApkOperationObject = new ClassApkOperation(new ObjectAppPackageName(pkg_name, getContext()), getContext());
-            classApkOperationObject.extractApk();
-          //  showMsg("Package Extracted to - " + apkOperationObject.parent_folder.getAbsolutePath());
-        }
+        Log.i(TAG, "found");
+        classApkOperationObject = new ClassApkOperation(new ObjectAppPackageName(pkg_name, getContext()), getContext());
+        classApkOperationObject.extractApk();
+        //  showMsg("Package Extracted to - " + apkOperationObject.parent_folder.getAbsolutePath());
         Toast.makeText(getContext(), "Extracting Apk " + clicked_pkg_label, Toast.LENGTH_SHORT).show();
     }
 
@@ -364,26 +298,20 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         builder.setTitle("Confirm to uninstall but keep data " + clicked_pkg_label);
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Uninstalling without deleting data "+clicked_pkg_label);
-                try {
-                    String command = "pm uninstall -k "+clicked_pkg.packageName;
-                    Shell.sh(command).exec();
-                    showMsg("Uninstalling " + clicked_pkg_label + " App without Deleting Data.");
-                } catch (Exception ex) {
-                    Log.e(TAG, "Uninstalling App Failed For " + clicked_pkg_label);
-                }
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            showMsg("Uninstalling without deleting data "+clicked_pkg_label);
+            try {
+                String command = "pm uninstall -k "+clicked_pkg.packageName;
+                Shell.sh(command).exec();
+                showMsg("Uninstalling " + clicked_pkg_label + " App without Deleting Data.");
+            } catch (Exception ex) {
+                Log.e(TAG, "Uninstalling App Failed For " + clicked_pkg_label);
             }
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Uninstallation Cancelled of " + clicked_pkg_label);
-                 dialog.dismiss();
-            }
+        builder.setNegativeButton("No", (dialog, which) -> {
+            showMsg("Uninstallation Cancelled of " + clicked_pkg_label);
+             dialog.dismiss();
         });
         builder.show();
     }
@@ -395,31 +323,23 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
 
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Confirmed Force Stopping "+clicked_pkg_label);
-                if (!rootAccess) {
-                    activityManager.killBackgroundProcesses(clicked_pkg.packageName);
-                    Toast.makeText(getContext(), "Stopping process by NOROOT method of " + clicked_pkg_label, Toast.LENGTH_SHORT).show();
-                } else if (rootAccess) {
-                    try {
-                        String command = "am force-stop " + clicked_pkg.packageName;
-                        Shell.su(command).exec();
-                        Log.e(TAG, "Force Stopped " + clicked_pkg_label);
-                    } catch (Exception ex) {
-                        Log.e(TAG, "Killing Cancelled" + clicked_pkg_label);
-                    }
-                }            }
-        });
-
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Cancelled Stopping " + clicked_pkg_label);
-
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            showMsg("Confirmed Force Stopping "+clicked_pkg_label);
+            if (!rootAccess) {
+                activityManager.killBackgroundProcesses(clicked_pkg.packageName);
+                Toast.makeText(getContext(), "Stopping process by NOROOT method of " + clicked_pkg_label, Toast.LENGTH_SHORT).show();
+            } else {
+                try {
+                    String command = "am force-stop " + clicked_pkg.packageName;
+                    Shell.su(command).exec();
+                    Log.e(TAG, "Force Stopped " + clicked_pkg_label);
+                } catch (Exception ex) {
+                    Log.e(TAG, "Killing Cancelled" + clicked_pkg_label);
+                }
             }
         });
+
+        builder.setNegativeButton("No", (dialog, which) -> showMsg("Cancelled Stopping " + clicked_pkg_label));
 
         builder.show();
     }
@@ -431,31 +351,23 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
 
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Confirmed Clearing data"+clicked_pkg_label);
-                if (!rootAccess) {
-                    activityManager.killBackgroundProcesses(clicked_pkg.packageName);
-                    showMsg("Data Cleared by NOROOT method for  " + clicked_pkg_label);
-                } else if (rootAccess) {
-                    try {
-                        String command = "pm clear " + clicked_pkg.packageName;
-                        Shell.su(command).exec();
-                        showMsg("Cleared Data by ROOT method of  " + clicked_pkg_label);
-                    } catch (Exception ex) {
-                        Log.e(TAG, "Data Clear Failed by ROOT method For " + clicked_pkg_label);
-                    }
-                }            }
-        });
-
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showMsg("Clearing Data Cancelled for " + clicked_pkg_label);
-
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            showMsg("Confirmed Clearing data"+clicked_pkg_label);
+            if (!rootAccess) {
+                activityManager.killBackgroundProcesses(clicked_pkg.packageName);
+                showMsg("Data Cleared by NOROOT method for  " + clicked_pkg_label);
+            } else {
+                try {
+                    String command = "pm clear " + clicked_pkg.packageName;
+                    Shell.su(command).exec();
+                    showMsg("Cleared Data by ROOT method of  " + clicked_pkg_label);
+                } catch (Exception ex) {
+                    Log.e(TAG, "Data Clear Failed by ROOT method For " + clicked_pkg_label);
+                }
             }
         });
+
+        builder.setNegativeButton("No", (dialog, which) -> showMsg("Clearing Data Cancelled for " + clicked_pkg_label));
         builder.show();
 
 
@@ -471,33 +383,25 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
             builder.setTitle("Confirm to disable " + clicked_pkg_label);
             builder.setMessage("Click Yes to Continue...");
             builder.setCancelable(false);
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    showMsg("Confirmed Disabling "+clicked_pkg_label);
+            builder.setPositiveButton("Yes", (dialog, which) -> {
+                showMsg("Confirmed Disabling "+clicked_pkg_label);
 
-                    if (!rootAccess) {
-                        pm.setApplicationEnabledSetting(clicked_pkg.packageName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+                if (!rootAccess) {
+                    pm.setApplicationEnabledSetting(clicked_pkg.packageName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+                    showMsg("Disabled App " + clicked_pkg_label);
+                } else {
+                    try {
+                        String command = "pm disable-user " + clicked_pkg.packageName;
+                        Shell.su(command).exec();
                         showMsg("Disabled App " + clicked_pkg_label);
-                    } else if (rootAccess) {
-                        try {
-                            String command = "pm disable-user " + clicked_pkg.packageName;
-                            Shell.su(command).exec();
-                            showMsg("Disabled App " + clicked_pkg_label);
-                            item.setTitle(R.string.enable_app);
-                        } catch (Exception ex) {
-                            Log.e(TAG, "Disabling App Failed For " + clicked_pkg_label);
-                        }
-                    }                }
-            });
-
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    showMsg(" Disabling Cancelled of " + clicked_pkg_label);
-
+                        item.setTitle(R.string.enable_app);
+                    } catch (Exception ex) {
+                        Log.e(TAG, "Disabling App Failed For " + clicked_pkg_label);
+                    }
                 }
             });
+
+            builder.setNegativeButton("No", (dialog, which) -> showMsg(" Disabling Cancelled of " + clicked_pkg_label));
             builder.show();
 
         }
@@ -507,38 +411,29 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
             builder.setMessage("Click Yes to Continue...");
             builder.setCancelable(false);
 
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    showMsg("Confirmed Enabling"+clicked_pkg_label);
-                    if (!rootAccess) {
-                        pm.setApplicationEnabledSetting(clicked_pkg.packageName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, 0);
-                        showMsg("Enabled App  " + clicked_pkg_label);
-                    } else if (rootAccess) {
-                        try {
-                            String command = "pm enable " + clicked_pkg.packageName;
-                            Shell.su().exec();
-                            showMsg("Enabled App " + clicked_pkg_label);
-                            item.setTitle(R.string.disable_app);
-                        } catch (Exception ex) {
-                            Log.e(TAG, "Enabling App Failed For " + clicked_pkg_label);
-                        }
+            builder.setPositiveButton("Yes", (dialog, which) -> {
+                showMsg("Confirmed Enabling"+clicked_pkg_label);
+                if (!rootAccess) {
+                    pm.setApplicationEnabledSetting(clicked_pkg.packageName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, 0);
+                    showMsg("Enabled App  " + clicked_pkg_label);
+                } else {
+                    try {
+                        String command = "pm enable " + clicked_pkg.packageName;
+                        Shell.su().exec();
+                        showMsg("Enabled App " + clicked_pkg_label);
+                        item.setTitle(R.string.disable_app);
+                    } catch (Exception ex) {
+                        Log.e(TAG, "Enabling App Failed For " + clicked_pkg_label);
                     }
                 }
             });
 
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    showMsg("Enabling Cancelled for " + clicked_pkg_label);
-
-                }
-            });
+            builder.setNegativeButton("No", (dialog, which) -> showMsg("Enabling Cancelled for " + clicked_pkg_label));
             builder.show();
         }
     }
 
-    public String getTime(long time){
+    private String getTime(long time){
         DateFormat dateFormat = new SimpleDateFormat("hh:mm a dd-MM-yy");
         String strDate = dateFormat.format(time);
         return strDate;
@@ -549,7 +444,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         clipboardManager.setPrimaryClip(clipData);
     }
 
-    public String getSize(long length) {
+    private String getSize(long length) {
         if(length>GB){
             return format.format(length / GB) + " MB";
         }

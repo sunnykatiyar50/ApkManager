@@ -10,11 +10,11 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.List;
 
-public class AdapterExpandableList extends BaseExpandableListAdapter {
+class AdapterExpandableList extends BaseExpandableListAdapter {
 
-    private Context context;
-    private List<String> headers;
-    private HashMap<String, List<String>> list;
+    private final Context context;
+    private final List<String> headers;
+    private final HashMap<String, List<String>> list;
 
     public AdapterExpandableList(Context c, List<String> headers, HashMap<String,List<String>> list)
     {
@@ -30,7 +30,7 @@ public class AdapterExpandableList extends BaseExpandableListAdapter {
         if(view==null){
             view=inflater.inflate(R.layout.listitem_expandable_list_header,null);
         }
-            TextView group_view= (TextView) view.findViewById(R.id.group_item);
+            TextView group_view= view.findViewById(R.id.group_item);
            // view.setClickable(false);
             group_view.setText(property_name);
         return view;
@@ -44,7 +44,7 @@ public class AdapterExpandableList extends BaseExpandableListAdapter {
             view=inflater.inflate(R.layout.listitem_expandable_list,null);
         }
 
-        TextView property_value = (TextView) view.findViewById(R.id.item_value);
+        TextView property_value = view.findViewById(R.id.item_value);
         property_value.setText(property_fetched);
       //  view.setClickable(false);
 

@@ -17,14 +17,12 @@ import java.util.List;
 public class AdapterApkList extends RecyclerView.Adapter<ViewHolderApkList> {
 
     private String TAG = "MYAPP : Custom List Adapter : ";
-    List<ObjectApkFile> list ;
-    Context context;
-    ObjectApkFile temp;
-    List<ObjectApkFile> selected_items_list;
-    String msg_text;
-    private final String str_no_install = "Not Installed";
+    private final List<ObjectApkFile> list ;
+    private Context context;
+    private ObjectApkFile temp;
+    private List<ObjectApkFile> selected_items_list;
+    private String msg_text;
     private final String str_install = "Installed";
-    private final String str_update = "#Update";
 
     ClipboardManager clipboardManager;
 
@@ -58,23 +56,25 @@ public class AdapterApkList extends RecyclerView.Adapter<ViewHolderApkList> {
         ver_apk = temp.apk_version_name + " " + temp.apk_version_code;
         ver_app = temp.app_version_name + " " + temp.app_version_code;
 
-        if (temp.isUpdatable == true) {
+        if (temp.isUpdatable) {
             cst.app_name.setTextColor(ContextCompat.getColor(context, R.color.Updatable));
             cst.text_app_install_status.setTextColor(ContextCompat.getColor(context, R.color.Updatable));
+            String str_update = "#Update";
             cst.text_app_install_status.setText(str_update);
             cst.text_app_install_status.setTypeface(Typeface.DEFAULT_BOLD);
             cst.file_name.setTypeface(Typeface.DEFAULT_BOLD);
             cst.apk_version.setTypeface(Typeface.DEFAULT_BOLD);
-        } else if (temp.isInstalled == true) {
+        } else if (temp.isInstalled) {
             cst.app_name.setTextColor(ContextCompat.getColor(context, R.color.InstalledOnly));
             cst.text_app_install_status.setTextColor(ContextCompat.getColor(context, R.color.InstalledOnly));
             cst.text_app_install_status.setTypeface(Typeface.DEFAULT);
             cst.file_name.setTypeface(Typeface.DEFAULT);
             cst.apk_version.setTypeface(Typeface.DEFAULT);
             cst.text_app_install_status.setText("Installed");
-        } else if (temp.isInstalled == false) {
+        } else if (!false) {
             cst.app_name.setTextColor(ContextCompat.getColor(context, R.color.Not_Installed));
             cst.text_app_install_status.setTextColor(ContextCompat.getColor(context, R.color.Not_Installed));
+            String str_no_install = "Not Installed";
             cst.text_app_install_status.setText(str_no_install);
             cst.text_app_install_status.setTypeface(Typeface.DEFAULT);
             cst.file_name.setTypeface(Typeface.DEFAULT);
@@ -103,41 +103,29 @@ public class AdapterApkList extends RecyclerView.Adapter<ViewHolderApkList> {
         cst.app_name.setTooltipText(temp.app_name);
         //  Log.i(TAG , "On view Binder");
 
-        cst.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cst.select_box.isChecked()) {
-                    cst.select_box.setChecked(false);
-                    temp.select_box_state = false;
-                } else {
-                    cst.select_box.setChecked(true);
-                    temp.select_box_state = false;
-                }
+        cst.itemView.setOnClickListener(v -> {
+            if (cst.select_box.isChecked()) {
+                cst.select_box.setChecked(false);
+                temp.select_box_state = false;
+            } else {
+                cst.select_box.setChecked(true);
+                temp.select_box_state = false;
             }
         });
 
     }
 
-    cst.select_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-        {
-            int total = getItemCount();
-            int sel ;
+    cst.select_box.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        int total = getItemCount();
+        int sel ;
 
-            if(isChecked){
-                list.get(i).select_box_state=true;}
-            else
-            {
-                list.get(i).select_box_state=false;
-                //buttonView.setChecked(false);
-            }
+        //buttonView.setChecked(false);
+        list.get(i).select_box_state = isChecked;
 
-            sel = getSelectedItemsList().size();
-            msg_text = "Total : "+total+"\t Selected : "+sel;
-            FragmentApkFiles.msg_textview.setText(msg_text);
-        }
-        });
+        sel = getSelectedItemsList().size();
+        msg_text = "Total : "+total+"\t Selected : "+sel;
+        FragmentApkFiles.msg_textview.setText(msg_text);
+    });
 
     }
 
@@ -147,7 +135,7 @@ public class AdapterApkList extends RecyclerView.Adapter<ViewHolderApkList> {
 
         if(list!=null){
             for(ObjectApkFile list_item : list){
-                if(list_item.select_box_state == true)
+                if(list_item.select_box_state)
                 {
                     selected_items_list.add(list_item);
                 }
@@ -159,7 +147,7 @@ public class AdapterApkList extends RecyclerView.Adapter<ViewHolderApkList> {
 
     public void SelectUpdatable(){
         for(ObjectApkFile list_item : list){
-            if(list_item.isInstalled == true){
+            if(list_item.isInstalled){
                 if(Integer.parseInt(list_item.apk_version_code) > Integer.parseInt(list_item.app_version_code))
                 {
                     list_item.select_box_state = true;

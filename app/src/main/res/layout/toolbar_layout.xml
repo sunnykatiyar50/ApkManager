@@ -59,7 +59,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/files_toolbar_edittext"
         android:layout_width="164dp"
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
@@ -82,7 +81,6 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/files_msg_text_view"
         android:layout_width="182dp"
         android:layout_height="55dp"
         android:layout_marginStart="4dp"

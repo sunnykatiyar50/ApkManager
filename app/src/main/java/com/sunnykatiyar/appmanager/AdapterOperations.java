@@ -18,11 +18,11 @@ import static com.sunnykatiyar.appmanager.FragmentFileManager.NoRootOperations;
 
 class AdapterOperations extends RecyclerView.Adapter<AdapterOperations.ViewHolderOperationList> {
 
-    Context context;
-    LinkedHashMap<Integer, ObjectOperation> map;
-    int CANCEL_BUTTON = 456789;
+    private Context context;
+    private final LinkedHashMap<Integer, ObjectOperation> map;
+    private final int CANCEL_BUTTON = 456789;
     OperationOptions myOperationOption;
-    final String TAG = "ADAPTER_OPERATIONS  : ";
+    private final String TAG = "ADAPTER_OPERATIONS  : ";
     public interface OperationOptions{
         void cancelOperation(int id);
     }
@@ -49,29 +49,23 @@ class AdapterOperations extends RecyclerView.Adapter<AdapterOperations.ViewHolde
         holder.operationType.setText(obj.operationTitle);
         holder.operationStatus.setText(obj.operationStatus);
         holder.progressStatus.setText(obj.currentFileNum+"/"+obj.totalFiles);
-        holder.progressBar.setMax(obj.totalFiles);
-        holder.progressBar.setProgress(obj.currentFileNum);
+        holder.progressBar.setMax(100);
+        holder.progressBar.setProgress(obj.progress);
         holder.operationDetails.setText(obj.operationDetails);
 
-        holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-            @Override
-            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                
-                menu.add(0, CANCEL_BUTTON, 100, "Cancel");
+        holder.itemView.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
 
-                menu.findItem(CANCEL_BUTTON).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
+            menu.add(0, CANCEL_BUTTON, 100, "Cancel");
+
+            menu.findItem(CANCEL_BUTTON).setOnMenuItemClickListener(item -> {
 //                        myOperationOption.cancelOperation(id);
-                        if(NoRootOperations[id]!=null){
-                            NoRootOperations[id].cancelTask();
-                            Log.i(TAG," TAsk cancelled with ID :"+id);
-                        }
-                        return false;
-                    }
-                });
+                if (NoRootOperations[id] != null) {
+                    NoRootOperations[id].cancelTask();
+                    Log.i(TAG, " TAsk cancelled with ID :" + id);
+                }
+                return false;
+            });
 
-            }
         });
 
 
@@ -90,13 +84,13 @@ class AdapterOperations extends RecyclerView.Adapter<AdapterOperations.ViewHolde
 
     public class ViewHolderOperationList extends RecyclerView.ViewHolder
     {
-        TextView operationType;
-        TextView operationDetails;
-        TextView operationStatus;
-        TextView progressStatus;
-        ProgressBar progressBar;
+        final TextView operationType;
+        final TextView operationDetails;
+        final TextView operationStatus;
+        final TextView progressStatus;
+        final ProgressBar progressBar;
 
-            public ViewHolderOperationList(@NonNull View itemView)
+            ViewHolderOperationList(@NonNull View itemView)
             {
                 super(itemView);
                 operationType = itemView.findViewById(R.id.operation_name_textview);
@@ -105,7 +99,6 @@ class AdapterOperations extends RecyclerView.Adapter<AdapterOperations.ViewHolde
                 progressStatus = itemView.findViewById(R.id.operation_progress_textview);
                 progressBar = itemView.findViewById(R.id.operation_progressBar);
             }
-
     }
 
 }

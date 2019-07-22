@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.DocumentsContract;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.documentfile.provider.DocumentFile;
@@ -16,39 +17,43 @@ import java.text.SimpleDateFormat;
 
 public class ObjectDocumentFile {
 
-    File file;
     DocumentFile file_doc;
-    String doc_id;
-    Uri uri;
+    final Uri uri;
     Uri parent_uri;
-    String file_name;
+    final String file_name;
     String file_size;
     long size_long;
     long time_long;
+    float size;
     String creation_time;
-    String flags;
-    String perm;
+    final String perm;
     String summary;
     String icon_path;
     boolean isDirectory = false;
     final String TAG = "OBJECT_FILE :";
-    String modification_time;
-    String file_type;
+    final String modification_time;
+    final String file_type;
     String mime_type;
     boolean check_box_state = false;
-    Context context;
+    private final Context context;
     Bitmap thumbnail;
 
     public ObjectDocumentFile(Cursor cursor, Uri uri, Context context) {
 
         this.context = context;
         this.uri = uri;
-        this.file_doc = DocumentFile.fromTreeUri(context, uri);
-        this.doc_id = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DOCUMENT_ID));
+
+        this.file_doc = DocumentFile.fromSingleUri(context, uri);
+//        Log.i(TAG, "Uri : "+ uri.toString());
+//        Log.i(TAG, "FILE_DOC : "+ file_doc.getUri().toString());
+//        Log.i(TAG, "is Tree uri : "+ DocumentsContract.isTreeUri(uri));
+//        Log.i(TAG, "is Document uri : "+ DocumentsContract.isTreeUri(uri));
+
+        String doc_id = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DOCUMENT_ID));
         this.file_name = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME));
         this.mime_type = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE));
-        this.flags = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_FLAGS));
-        this.perm = Integer.toBinaryString(Integer.valueOf(flags))+" ("+flags+")";
+        String flags = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_FLAGS));
+        this.perm = Integer.toBinaryString(Integer.valueOf(flags))+" ("+ flags +")";
         this.size_long =cursor.getLong(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_SIZE));
         this.file_size = convertSizeToFormat(this.size_long);
 
@@ -57,29 +62,17 @@ public class ObjectDocumentFile {
             this.isDirectory = true;
             this.file_size = "" ;
         }else{
-//            if(null==MimeTypeMap.getSingleton().getExtensionFromMimeType(mime_type)) {
                 this.file_type = file_name.substring(file_name.lastIndexOf('.') + 1);
-//            }else{
-//                this.file_type = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime_type);
-//            }
         }
-//      this.icon_path = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_ICON));
-//      this.summary = DocumentsContract.Document.COLUMN_SUMMARY;
-//     Log.i(TAG, "SUMMARY : " + file_name + "  : " + summary);
-//        try {
-//            this.thumbnail = DocumentsContract.getDocumentThumbnail(context.getContentResolver(), uri, new Point(45, 45), null);
-//        } catch (Exception ex) {
-//            this.thumbnail = null;
-//        }
+
         this.time_long =  cursor.getLong(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED));
         this.modification_time = convertTimeToFormat(this.time_long);
         this.parent_uri = Uri.parse(uri.toString().replace(Uri.encode(file_name), ""));
         if(parent_uri.toString().endsWith("%2F")){
             this.parent_uri = Uri.parse(parent_uri.toString().substring(0,parent_uri.toString().length()-3));
         }
-     //   Log.i(TAG,"parentUri : "+parent_uri);
-//      Log.i(TAG,"Name encoded : "+Uri.encode("/"+file_name));
-        if (this.doc_id.endsWith(":")) {
+
+        if (doc_id.endsWith(":")) {
             this.parent_uri = null;
         }
 
@@ -104,7 +97,7 @@ public class ObjectDocumentFile {
         this.context = c;
         this.file_doc = doc;
         this.uri = file_doc.getUri();
-        this.file = new File(uri.getPath());
+        File file = new File(uri.getPath());
         this.file_name = file_doc.getName();
         this.file_size = getSizeFromDoc(file_doc);
         this.modification_time = convertTimeToFormat(file_doc.lastModified());
@@ -115,10 +108,9 @@ public class ObjectDocumentFile {
 
     }
 
-    public String getFileTypeFromDoc(DocumentFile df) {
+    private String getFileTypeFromDoc(DocumentFile df) {
 
         String type = file_doc.getType();
-        ;
 
         if (df.isDirectory()) {
             type = "Directory";
@@ -129,7 +121,7 @@ public class ObjectDocumentFile {
         return type;
     }
 
-    public String getSizeFromDoc(DocumentFile doc) {
+    private String getSizeFromDoc(DocumentFile doc) {
 
         String size = "Not Available";
 
@@ -141,7 +133,7 @@ public class ObjectDocumentFile {
         return size;
     }
 
-    public String getPermissionFromDoc(DocumentFile doc) {
+    private String getPermissionFromDoc(DocumentFile doc) {
 
         String file_perm = "Not Available";
 
@@ -157,26 +149,27 @@ public class ObjectDocumentFile {
 
     }
 
-    public String convertSizeToFormat(long length) {
-        final long MB = 1024 * 1024;
+    private String convertSizeToFormat(long length) {
         final long KB = 1024;
+        final long MB = 1024 * 1024;
         final long GB = 1024 * 1024 * 1024;
-        final DecimalFormat format = new DecimalFormat("#.###");
+
+        final DecimalFormat format = new DecimalFormat("###.##");
 
         if (length > GB) {
-            return format.format(length / GB) + " MB";
+            return format.format((float)length / GB) + " GB";
         }
         if (length > MB) {
-            return format.format(length / MB) + " MB";
+            return format.format((float)length / MB) + " MB";
         }
         if (length > KB) {
-            return format.format(length / KB) + " KB";
+            return format.format((float)length / KB) + " KB";
         }
 
-        return format.format(length) + "Bytes";
+        return format.format(length) + " Bytes";
     }
 
-    public String convertTimeToFormat(long time) {
+    private String convertTimeToFormat(long time) {
         DateFormat dateFormat = new SimpleDateFormat("hh:mm a dd-MM-yy");
         String strDate = dateFormat.format(time);
         return strDate;

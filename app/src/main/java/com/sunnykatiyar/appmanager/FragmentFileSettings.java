@@ -26,33 +26,28 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class FragmentFileSettings extends Fragment {
+class FragmentFileSettings extends Fragment {
 
     public FragmentFileSettings() {
     }
 
-    Button btn_browse;
-    EditText file_search_path;
+    private EditText file_search_path;
     Context context = getContext();
-    TextView files_text_masg;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_files_settings, container, false);
-        btn_browse = view.findViewById(R.id.button_file_renamer_path);
-        files_text_masg = view.findViewById(R.id.files_text_msg);
+        Button btn_browse = view.findViewById(R.id.button_file_renamer_path);
+        TextView files_text_masg = view.findViewById(R.id.files_text_msg);
         file_search_path = view.findViewById(R.id.text_file_renamer_path);
 
-        btn_browse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getContext(), FilePickerActivity.class);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
-                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
-                i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
-                startActivityForResult(i, 3);
-            }
+        btn_browse.setOnClickListener(v -> {
+            Intent i = new Intent(getContext(), FilePickerActivity.class);
+            i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+            i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
+            i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
+            i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
+            startActivityForResult(i, 3);
         });
         return view;
     }
@@ -60,10 +55,8 @@ public class FragmentFileSettings extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
     {
-        switch(requestCode)
-        {
-            case 3 : if(resultCode == RESULT_OK)
-            {
+        if (requestCode == 3) {
+            if (resultCode == RESULT_OK) {
                 //Use the provided utility method to parse the result
                 List<Uri> files = Utils.getSelectedFilesFromResult(data);
                 File file = Utils.getFileForUri(files.get(0));

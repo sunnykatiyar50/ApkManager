@@ -9,17 +9,17 @@ import android.widget.TextView;
 
 public class ViewHolderApkList extends RecyclerView.ViewHolder {
 
-    TextView app_name;
-    TextView file_name;
-    TextView text_app_install_status;
-    TextView text_time;
-    TextView text_pkg_name;
-    TextView file_size;
-    TextView app_version;
-    TextView apk_version;
-    ImageView app_icon ;
+    final TextView app_name;
+    final TextView file_name;
+    final TextView text_app_install_status;
+    final TextView text_time;
+    final TextView text_pkg_name;
+    final TextView file_size;
+    final TextView app_version;
+    final TextView apk_version;
+    final ImageView app_icon ;
 
-    CheckBox select_box;
+    final CheckBox select_box;
 
     public ViewHolderApkList(@NonNull View itemView) {
         super(itemView);

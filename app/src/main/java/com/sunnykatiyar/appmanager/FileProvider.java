@@ -16,12 +16,12 @@ import static android.provider.DocumentsContract.Root.*;
 public class FileProvider extends DocumentsProvider {
 
 
-    public final static String[]  DEFAULT_ROOT_PROJECTION = {COLUMN_ROOT_ID, COLUMN_DOCUMENT_ID, COLUMN_TITLE,
+    private final static String[]  DEFAULT_ROOT_PROJECTION = {COLUMN_ROOT_ID, COLUMN_DOCUMENT_ID, COLUMN_TITLE,
                                                                 COLUMN_CAPACITY_BYTES, COLUMN_AVAILABLE_BYTES, COLUMN_MIME_TYPES,
                                                                 COLUMN_SUMMARY, COLUMN_FLAGS, COLUMN_ICON};
 
     @Override
-    public Cursor queryRoots(String[] projection) throws FileNotFoundException {
+    public Cursor queryRoots(String[] projection) {
 
         MatrixCursor result = new MatrixCursor(projection != null ? projection : DEFAULT_ROOT_PROJECTION);
 
@@ -36,17 +36,17 @@ public class FileProvider extends DocumentsProvider {
     }
 
     @Override
-    public Cursor queryDocument(String documentId, String[] projection) throws FileNotFoundException {
+    public Cursor queryDocument(String documentId, String[] projection) {
         return null;
     }
 
     @Override
-    public Cursor queryChildDocuments(String parentDocumentId, String[] projection, String sortOrder) throws FileNotFoundException {
+    public Cursor queryChildDocuments(String parentDocumentId, String[] projection, String sortOrder) {
         return null;
     }
 
     @Override
-    public ParcelFileDescriptor openDocument(String documentId, String mode, @Nullable CancellationSignal signal) throws FileNotFoundException {
+    public ParcelFileDescriptor openDocument(String documentId, String mode, @Nullable CancellationSignal signal) {
         return null;
     }
 

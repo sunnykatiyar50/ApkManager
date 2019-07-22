@@ -27,46 +27,46 @@ import java.util.List;
 
 public class ClassRootUtils {
 
-    Context context;
+    private final Context context;
 
-    final String key_root_value = FragmentSettings.key_root_access;
-    private boolean root_access;
+    private final String key_root_value = FragmentSettings.key_root_access;
+    private final boolean root_access;
 
-    final String TAG = "MYAPP : ROOT_FILE_OPERATION";
+    private final String TAG = "MYAPP : ROOT_FILE_OPERATION";
     private ContentResolver resolver;
+
     private final String textview_msg ="textview_msg";
     private final String log_msg = "log_msg";
     private final String toast_msg ="toast_msg";
-    int OPERATION_ID=0;
+
+    private int OPERATION_ID=0;
     public boolean isRunning = false;
     final int NO_OPERATION = 0;
-    boolean   isCancelled = false;
-    final int OPERATION_COPY = 201;
-    final int OPERATION_MOVE  = 204;
-    final int OPERATION_RENAME = 209;
-    final int OPERATION_DELETE = 212;
-    final int OPERATION_INSTALL_APKS = 215;
+    private boolean   isCancelled = false;
+    private final int OPERATION_COPY = 201;
+    private final int OPERATION_MOVE  = 204;
+    private final int OPERATION_RENAME = 209;
+    private final int OPERATION_DELETE = 212;
+    private final int OPERATION_INSTALL_APKS = 215;
     final int GET_FOLDER_FILES = 218;
-    final int GET_SUBFOLDERS_FILES = 221;
-    final int GET_FILTERED_FILES  = 224;
-    final int GET_EMPTY_FOLDERS = 227;
-    final int GET_FOLDER_FILES_BY_SHELL = 230;
+    private final int GET_FOLDER_FILES_BY_SHELL = 230;
 
-
-    notifyUIAboutOperation notifyUI;
-    SharedPreferences sharedPrefSettings;
+    private final notifyUIAboutOperation notifyUI;
+    private final SharedPreferences sharedPrefSettings;
     SharedPreferences.Editor prefAppSettings;
-    LoadRootTasks runTask;
-    List<ObjectFile> shellFileList = new ArrayList<>();
-    List<File> empty_files = new ArrayList<>();
+    private LoadRootTasks runTask;
+    private final List<ObjectFile> shellFileList = new ArrayList<>();
+    private final List<File> empty_files = new ArrayList<>();
     List<ObjectFile> filteredFileList = new ArrayList<>();
-    List<ObjectFile> allFileList = new ArrayList<>();
-    final String key_show_hidden = FragmentRootBrowser.key_show_hidden;
+    private final List<ObjectFile> allFileList = new ArrayList<>();
     String value_show_hidden;
+
+
+
 
     public interface notifyUIAboutOperation {
         void updateTextView(String msg_type,String msg);
-        void setNewObjectFilesList(String path,List<ObjectFile> list);
+        void searchCompleted(String path, List<ObjectFile> list);
         void setprogressBar(boolean visible);
         void taskCompletedAction(int type,String path);
     }
@@ -96,31 +96,31 @@ public class ClassRootUtils {
     }
 
     public void rootCopy(List<ObjectFile> srcPathList, String dest_path){
-        runTask = new LoadRootTasks(OPERATION_COPY,  srcPathList) ;
+        runTask = new LoadRootTasks(OPERATION_COPY,  new ArrayList<>(srcPathList)) ;
         runTask.execute(dest_path);
         Log.e(TAG,"Executing ROOT COPY Operation : ");
     }
 
     public void rootMove(List<ObjectFile> srcPathList, String dest_path){
-        runTask = new LoadRootTasks(OPERATION_MOVE,  srcPathList);
+        runTask = new LoadRootTasks(OPERATION_MOVE,  new ArrayList<>(srcPathList));
         runTask.execute(dest_path);
         Log.e(TAG,"Executing ROOT Move Operation : ");
     }
 
     public void rootRename(List<ObjectFile> srcPathList, String dest_path){
-        runTask = new LoadRootTasks(OPERATION_RENAME, srcPathList);
+        runTask = new LoadRootTasks(OPERATION_RENAME,srcPathList);
         runTask.execute(dest_path);
         Log.e(TAG,"Executing ROOT Rename Operation: ");
     }
 
     public void deleteFiles(List<ObjectFile> srcPathList) {
-        runTask = new LoadRootTasks(OPERATION_DELETE, srcPathList);
+        runTask = new LoadRootTasks(OPERATION_DELETE, new ArrayList<>(srcPathList));
         runTask.execute();
         Log.e(TAG,"Executing ROOT Delete Operation : ");
     }
 
     public void  installApksList(List<ObjectFile> apksList){
-        runTask = new LoadRootTasks(OPERATION_INSTALL_APKS, apksList);
+        runTask = new LoadRootTasks(OPERATION_INSTALL_APKS, new ArrayList<>(apksList));
         runTask.execute();
     }
 
@@ -134,57 +134,35 @@ public class ClassRootUtils {
         builder.setMessage("Choose what to create ");
         EditText input = new EditText(context);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setPositiveButton("New Folder", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                AlertDialog.Builder builder1 =  new AlertDialog.Builder(context)
-                        .setTitle("Enter Folder Name")
-                        .setView(input)
-                        .setPositiveButton("Create", new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    String command = "mkdir \""+ Paths.get(objectfile.path,input.getText().toString())+"\"";
-                                    Shell.su(command).exec();
-                                }catch(Exception e) {
-                                    notifyUI.updateTextView(log_msg,"Error Creating new Folder : "+e);
-                                }
-                            }
-                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        }) ;
-                builder1.show();
-            }
+        builder.setPositiveButton("New Folder", (dialog, which) -> {
+            AlertDialog.Builder builder1 =  new AlertDialog.Builder(context)
+                    .setTitle("Enter Folder Name")
+                    .setView(input)
+                    .setPositiveButton("Create", (dialog14, which14) -> {
+                        try {
+                            String command = "mkdir \"" + Paths.get(objectfile.path, input.getText().toString()) + "\"";
+                            Shell.su(command).exec();
+                        } catch (Exception e) {
+                            notifyUI.updateTextView(log_msg, "Error Creating new Folder : " + e);
+                        }
+                    }).setNegativeButton("Cancel", (dialog13, which13) -> dialog13.dismiss()) ;
+            builder1.show();
         });
 
-        builder.setNegativeButton("New File", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                AlertDialog.Builder builder2 = new AlertDialog.Builder(context)
-                        .setTitle("Enter File Name")
-                        .setView(input)
-                        .setPositiveButton("Create", new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    String command = "touch \""+ Paths.get(objectfile.path,input.getText().toString())+"\"";
-                                    Shell.su(command).exec();
-                                }catch(Exception e) {
-                                    notifyUI.updateTextView(log_msg,"Error Creating new Folder : "+e);
-                                }
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        }) ;
-                builder2.show();
-            }
+        builder.setNegativeButton("New File", (dialog, which) -> {
+            AlertDialog.Builder builder2 = new AlertDialog.Builder(context)
+                    .setTitle("Enter File Name")
+                    .setView(input)
+                    .setPositiveButton("Create", (dialog12, which12) -> {
+                        try {
+                            String command = "touch \"" + Paths.get(objectfile.path, input.getText().toString()) + "\"";
+                            Shell.su(command).exec();
+                        } catch (Exception e) {
+                            notifyUI.updateTextView(log_msg, "Error Creating new Folder : " + e);
+                        }
+                    })
+                    .setNegativeButton("Cancel", (dialog1, which1) -> dialog1.dismiss()) ;
+            builder2.show();
         });
         builder.show();
     }
@@ -213,23 +191,15 @@ public class ClassRootUtils {
         AlertDialog.Builder builder1 =  new AlertDialog.Builder(context)
                 .setTitle("Enter New Name")
                 .setView(input)
-                .setPositiveButton("Done", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            String command = "mv \""+ file.path+"\" \""+Paths.get(file.parent, input.getText().toString());
-                            Shell.su(command).exec();
-                            notifyUI.updateTextView(toast_msg,"Renamed File succesfully : ");
-                        }catch(Exception e) {
-                            notifyUI.updateTextView(toast_msg,"Error Renaming File : "+"\nEnter a Valid Name");
-                        }
+                .setPositiveButton("Done", (dialog, which) -> {
+                    try {
+                        String command = "mv \""+ file.path+"\" \""+Paths.get(file.parent, input.getText().toString());
+                        Shell.su(command).exec();
+                        notifyUI.updateTextView(toast_msg,"Renamed File succesfully : ");
+                    }catch(Exception e) {
+                        notifyUI.updateTextView(toast_msg,"Error Renaming File : "+"\nEnter a Valid Name");
                     }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }) ;
+                }).setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss()) ;
         builder1.show();
     }
 
@@ -244,7 +214,7 @@ public class ClassRootUtils {
         return list;
     }
 
-    public List<ObjectFile> getAllSubfolderFiles(File folder){
+    private List<ObjectFile> getAllSubfolderFiles(File folder){
 
         if(folder.isDirectory()){
             for(File f : folder.listFiles()){
@@ -261,7 +231,7 @@ public class ClassRootUtils {
         return allFileList;
     }
     
-    public List<File> rootSearchEmptyFolders(File file){
+    private List<File> rootSearchEmptyFolders(File file){
 
         if(file.listFiles().length>0){
             for(File f:file.listFiles())
@@ -374,18 +344,18 @@ public class ClassRootUtils {
         String searchPath;
         String targetPath;
         ObjectOperation myOperationObject;
-        List<ObjectFile> objectFilesList ;
+        final List<ObjectFile> list;
         long startTime ;
 
-        public LoadRootTasks(int ops, List<ObjectFile> list) {
+        LoadRootTasks(int ops, List<ObjectFile> list){
             super();
             OPERATION_TYPE =  ops;
-            objectFilesList = list;
+            this.list = list;
             Log.i(TAG,"in Asynctask Opertaion "+OPERATION_TYPE);
         }
 
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute(){
             super.onPreExecute();
             startTime = new Date().getTime();
             isRunning = true;
@@ -397,6 +367,9 @@ public class ClassRootUtils {
         @Override
         protected Object doInBackground(Object[] objects) {
 
+            int GET_EMPTY_FOLDERS = 227;
+            int GET_FILTERED_FILES = 224;
+            int GET_SUBFOLDERS_FILES = 221;
             switch(OPERATION_TYPE){
 
                 case GET_FOLDER_FILES_BY_SHELL:{
@@ -437,23 +410,7 @@ public class ClassRootUtils {
                    break;
                 }
 
-                case GET_SUBFOLDERS_FILES :{
 
-
-                    break;
-                }
-
-                case GET_FILTERED_FILES :{
-
-
-                    break;
-                }
-
-                case GET_EMPTY_FOLDERS :{
-
-
-                    break;
-                }
             }
             return null;
         }
@@ -467,9 +424,9 @@ public class ClassRootUtils {
             Log.i(TAG, "PostExecute :ISTASKCANCELLED variable : "+isCancelled);
 
             if(!isCancelled & OPERATION_TYPE==GET_FOLDER_FILES_BY_SHELL){
-                notifyUI.setNewObjectFilesList(searchPath, shellFileList);
+                notifyUI.searchCompleted(searchPath, shellFileList);
                 Log.i(TAG, "PostExecute : Returning "+shellFileList.size()+" files of : "+searchPath);
-//                notifyUI.setprogressBar(false);
+//              notifyUI.setprogressBar(false);
             }
 
             if(OPERATION_TYPE == OPERATION_COPY || OPERATION_TYPE==OPERATION_DELETE || OPERATION_TYPE==OPERATION_MOVE){
@@ -489,6 +446,7 @@ public class ClassRootUtils {
         private void getSendFilesFromfolder(String searchPath){
             List<String> oup;
             int count = 0 ;
+            String key_show_hidden = FragmentRootBrowser.key_show_hidden;
             boolean showHidden = FragmentRootBrowser.sharedPrefRootBrowser.getBoolean(key_show_hidden,true);
             Log.i(TAG," in GET_FOLDER_FILES_BY_SHELL");
             if(new File(searchPath).exists())
@@ -533,16 +491,16 @@ public class ClassRootUtils {
         }
 
         private void copyFileTask(String dest_path){
-            myOperationObject = new ObjectOperation(context, OPERATION_ID, "Operation Copy", objectFilesList.size());
+            myOperationObject = new ObjectOperation(context, OPERATION_ID, "Operation Copy"+" to "+dest_path, list.size());
             ActivityOperations.operationsHashMapList.put(OPERATION_ID, myOperationObject);
             int i;
-            for(i=1;i<=objectFilesList.size();i++){
-                ObjectFile obj = objectFilesList.get(i-1);
+            for(i=1; i<= list.size(); i++){
+                ObjectFile obj = list.get(i-1);
                 try{
-                    myOperationObject.showNotification(i+"/"+objectFilesList.size()+" - Copying "+obj.name+" to "+dest_path, i);
+                    myOperationObject.showNotification(i+"/"+ list.size()+" - Copying "+obj.name, i,(i*100)/list.size());
                     String command = "cp \"" + obj.path + "\" \"" + dest_path + "\"";
                     Shell.su(command).exec();
-                    notifyUI.updateTextView(textview_msg, " Copied Successfully " + obj.path);
+                    publishProgress(textview_msg, " Copied Successfully " + obj.path);
                 } catch (Exception ex) {
                     Log.e(TAG, "Error copying files by root method : " + ex);
                 }
@@ -552,21 +510,23 @@ public class ClassRootUtils {
                 }
             }
             i--;
-            myOperationObject.showNotification(i+" files COPIED successfully to "+dest_path,i);
+            myOperationObject.cancelNotification();
+
+//          myOperationObject.showNotification(i+" files COPIED successfully to "+dest_path,i, (i*100)/list.size());
         }
 
         private void moveFilesTask(String dest_path){
-            myOperationObject = new ObjectOperation(context, OPERATION_ID, "Operation Move", objectFilesList.size());
+            myOperationObject = new ObjectOperation(context, OPERATION_ID, "Operation Move to "+dest_path, list.size());
             ActivityOperations.operationsHashMapList.put(OPERATION_ID, myOperationObject);
             int i;
-            for(i=1;i<=objectFilesList.size();i++){
-                ObjectFile src_file = objectFilesList.get(i-1);
+            for(i=1; i<= list.size(); i++){
+                ObjectFile src_file = list.get(i-1);
                 try {
-                    myOperationObject.showNotification(i+"/"+objectFilesList.size()
-                            +" - Moving "+src_file.name+" to "+dest_path, i);
+                    myOperationObject.showNotification(i+"/"+ list.size()
+                            +" - Moving "+src_file.name, i,(i*100)/list.size());
                     String command = "mv \"" + src_file.path + "\" \"" + dest_path + "\"";
                     Shell.su(command).exec().getOut();
-                    notifyUI.updateTextView(textview_msg, " Copied Successfully " + src_file.path);
+                    publishProgress(textview_msg, " Copied Successfully " + src_file.path);
                 } catch (Exception ex) {
                     Log.e(TAG, "Error copying files by root method : " + ex);
                 }
@@ -575,19 +535,21 @@ public class ClassRootUtils {
                 }
             }
             i--;
-            myOperationObject.showNotification(i+" files MOVED successfully to "+dest_path,i);
+            myOperationObject.cancelNotification();
+
+//            myOperationObject.showNotification(i+" files MOVED successfully",i, (i*100)/list.size());
         }
 
         private void installApksTask(){
             long apk_size;
             String command;
             ObjectFile file;
-            myOperationObject = new ObjectOperation(context, OPERATION_ID, "Deleting Files", objectFilesList.size());
+            myOperationObject = new ObjectOperation(context, OPERATION_ID, "Deleting Files", list.size());
             ActivityOperations.operationsHashMapList.put(OPERATION_ID, myOperationObject);
             int i;
-            for(i=1;i<=objectFilesList.size();i++){
-                file = objectFilesList.get(i);
-                myOperationObject.showNotification(i+"/"+objectFilesList.size()+" Installing "+ file.name, i);
+            for(i=1; i<= list.size(); i++){
+                file = list.get(i);
+                myOperationObject.showNotification(i+"/"+ list.size()+" Installing "+ file.name, i, (i*100)/list.size());
                 try{
                     apk_size = file.long_size;
                     command = "cat \"" + file.path + "\"|pm install -S " + apk_size;
@@ -600,22 +562,25 @@ public class ClassRootUtils {
                 }
             }
             i--;
-            myOperationObject.showNotification("Apk Installation Finished.",i);
+            myOperationObject.cancelNotification();
+
+//          myOperationObject.showNotification("Apk Installation Finished.",i, (i*100)/list.size());
             publishProgress(textview_msg,"");
         }
 
         private void deleteFilesTask(){
             ObjectFile src_file;
-            myOperationObject = new ObjectOperation(context, OPERATION_ID, "Deleting Files", objectFilesList.size());
+            Log.i(TAG,"Deleting Files"+ list.size());
+            myOperationObject = new ObjectOperation(context, OPERATION_ID, "Deleting Files", list.size());
             ActivityOperations.operationsHashMapList.put(OPERATION_ID, myOperationObject);
             int i=0;
-            for(i=1;i<=objectFilesList.size();i++){
+            for(i=1; i<= list.size(); i++){
                 try{
-                    src_file = objectFilesList.get(i-1);
-                    myOperationObject.showNotification(i+"/"+objectFilesList.size()+" Deleting "+ src_file.name, i);
+                    src_file = list.get(i-1);
+                    myOperationObject.showNotification(i+"/"+ list.size()+" Deleting "+ src_file.name, i,(i*100)/list.size());
                     String command = "rm -rf \""+src_file.path+"\"";
                     Shell.su(command).exec();
-                    notifyUI.updateTextView(textview_msg, "Deleted Successfully "+src_file.path);
+//                  notifyUI.updateTextView(textview_msg, "Deleted Successfully "+src_file.path);
                 }catch(Exception ex){
                     Log.e(TAG,"Error deleting files by root method : "+ex);
                 }
@@ -624,20 +589,22 @@ public class ClassRootUtils {
                 }
             }
             i--;
-            myOperationObject.showNotification("Delete Operation Finished.", i);
+            myOperationObject.cancelNotification();
+
+//            myOperationObject.showNotification("Delete Operation Finished.",i, (i*100)/list.size());
         }
 
         private void renameFilesTask(String dest_path){
-            myOperationObject = new ObjectOperation(context, OPERATION_ID, "Operation Rename", objectFilesList.size());
+            myOperationObject = new ObjectOperation(context, OPERATION_ID, "Operation Rename", list.size());
             ActivityOperations.operationsHashMapList.put(OPERATION_ID, myOperationObject);
             int i=0;
-            for(i=1;i<=objectFilesList.size();i++){
+            for(i=1; i<= list.size(); i++){
                 try{
-                    ObjectFile src_file = objectFilesList.get(i-1);
-                    myOperationObject.showNotification(i+"/"+objectFilesList.size()+" Renaming "+ src_file.name, i);
+                    ObjectFile src_file = list.get(i-1);
+                    myOperationObject.showNotification(i+"/"+ list.size()+" Renaming "+ src_file.name,i, (i*100)/list.size());
                     String command = "mv \""+src_file.path+"\" \""+dest_path+"\"";
                     // Shell.su(command).exec().getOut();
-                    notifyUI.updateTextView(textview_msg, " Copied Successfully "+src_file.path);
+                    publishProgress(textview_msg, " Copied Successfully "+src_file.path);
                 }catch(Exception ex){
                     Log.e(TAG,"Error copying files by root method : "+ex);
                 }
@@ -646,7 +613,8 @@ public class ClassRootUtils {
                 }
             }
             i--;
-            myOperationObject.showNotification(i+" files Renamed successfully.",i);
+            myOperationObject.cancelNotification();
+//            myOperationObject.showNotification(i+" files Renamed successfully.",i, (i*100)/list.size());
         }
 
     }

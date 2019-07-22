@@ -196,7 +196,6 @@
 
             <group
                 android:title="Sort Apps By"
-                android:id="@+id/apkmenugroup_sort_by"
                 android:checkableBehavior="single"
                 android:menuCategory="secondary">
                 <item
@@ -225,7 +224,6 @@
 
             <group
                 android:title="Order Apps By"
-                android:id="@+id/apkmenugroup_order_by"
                 android:checkableBehavior="single"
                 android:menuCategory="secondary">
                 <item

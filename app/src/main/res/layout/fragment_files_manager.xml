@@ -142,7 +142,7 @@
     <!--app:layout_constraintEnd_toEndOf="parent"-->
     <!--app:layout_constraintHorizontal_bias="0.0"-->
     <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--tools:context="com.sunnykatiyar.appmanager.ActivityMain">-->
+    <!--tools:context="skmanagerActivityMain">-->
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/files_bottomAppBar"

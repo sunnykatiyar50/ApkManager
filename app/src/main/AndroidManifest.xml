@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sunnykatiyar.appmanager"
+    package="com.sunnykatiyar.skmanager"
     android:installLocation="preferExternal">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -23,7 +23,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".ActivityMain"
+            android:name="com.sunnykatiyar.skmanager.ActivityMain"
             android:label="SK Manager"
             android:theme="@style/FilePickerTheme">
 
@@ -38,13 +38,13 @@
                 android:resource="@xml/searchable" />
         </activity>
         
-        <activity  android:name=".ActivityRootBrowser"
+        <activity  android:name="com.sunnykatiyar.skmanager.ActivityRootBrowser"
             android:label="@string/title_activity_root_browser"
-            android:parentActivityName=".ActivityMain"
+            android:parentActivityName="com.sunnykatiyar.skmanager.ActivityMain"
             android:theme="@style/FilePickerTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sunnykatiyar.appmanager.ActivityMain" />
+                android:value="com.sunnykatiyar.skmanager.ActivityMain" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -53,29 +53,29 @@
         </activity>
 
 
-        <activity   android:name=".ActivityOperations"
+        <activity   android:name="com.sunnykatiyar.skmanager.ActivityOperations"
             android:label="@string/title_activity_operation"
-            android:parentActivityName=".ActivityMain"
+            android:parentActivityName="com.sunnykatiyar.skmanager.ActivityMain"
             android:theme="@style/FilePickerTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sunnykatiyar.appmanager.ActivityMain" />
+                android:value="com.sunnykatiyar.skmanager.ActivityMain" />
         </activity>
 
-        <activity android:name=".ActivityFileSelector" >
+        <activity android:name="com.sunnykatiyar.skmanager.ActivityFileSelector" >
 
         </activity>
 
 
 
         <activity
-            android:name=".ActivityAppDetails"
+            android:name="com.sunnykatiyar.skmanager.ActivityAppDetails"
             android:label="@string/title_activity_app_details_"
-            android:parentActivityName=".ActivityMain"
+            android:parentActivityName="com.sunnykatiyar.skmanager.ActivityMain"
             android:theme="@style/FilePickerTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sunnykatiyar.appmanager.ActivityMain" />
+                android:value="com.sunnykatiyar.skmanager.ActivityMain" />
         </activity>
 
         <provider
@@ -89,7 +89,7 @@
         </provider>
 
         <provider
-            android:name=".FileProvider"
+            android:name="com.sunnykatiyar.skmanager.FileProvider"
             android:authorities="${applicationId}.documents"
             android:exported="true"
             android:grantUriPermissions="true"
@@ -99,7 +99,7 @@
             </intent-filter>
         </provider>
 
-        <receiver android:name=".ReceiverSetup">
+        <receiver android:name="com.sunnykatiyar.skmanager.ReceiverSetup">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_INSTALL" />
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
@@ -123,7 +123,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".ServiceSetup" />
+        <service android:name="com.sunnykatiyar.skmanager.ServiceSetup" />
     </application>
 
 </manifest>

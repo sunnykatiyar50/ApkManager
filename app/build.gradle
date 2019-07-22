@@ -10,7 +10,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.sunnykatiyar.appmanager"
+        applicationId "com.sunnykatiyar.skmanager"
         minSdkVersion 26
         targetSdkVersion 28
         versionCode 1

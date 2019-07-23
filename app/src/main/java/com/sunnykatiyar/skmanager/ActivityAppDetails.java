@@ -153,6 +153,10 @@ public class ActivityAppDetails extends AppCompatActivity {
         }
 
 
+        appinfo_pkgname.setTooltipText(appinfo_pkgname.getText());
+        app_version.setTooltipText(app_version.getText());
+
+
         expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
             Intent activityIntent = new Intent();
             Log.e("in Appdetails","click child item");
@@ -295,11 +299,20 @@ public class ActivityAppDetails extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_app_details,menu);
-        if (clickedPackageInfo.applicationInfo.enabled) {
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu) ;
+        int app_state = packageManager.getApplicationEnabledSetting(clickedPackageInfo.packageName);
+        Log.i(TAG,"APP STATE (ActivityAppDetails Menu) : "+app_state);
+        if (app_state==1 || app_state == 0) {
             menu.findItem(R.id.disable_app_item).setTitle(R.string.disable_app);
-        } else {
+        }else if(app_state==2){
             menu.findItem(R.id.disable_app_item).setTitle(R.string.enable_app);
         }
+
         return true;
     }
 
@@ -547,9 +560,7 @@ public class ActivityAppDetails extends AppCompatActivity {
                     Log.i(TAG, clickedPackageLabel + " permission revoked status : DONE " );
                 }
                 Log.i(TAG, clickedPackageLabel + " permission revoked Successfully");
-                appDetails = new ClassSetAppDetails(packageManager, clickedPackageInfo);
-                exp_adapter = new AdapterExpandableList(this, headers, expListMap,clickedPackageInfo,appDetails);
-                expandableListView.setAdapter(exp_adapter);
+                setNewAdapter();
             }catch(Exception ex) {
                 Log.e(TAG, "Revoke Permission :" + ex);
             }
@@ -579,9 +590,7 @@ public class ActivityAppDetails extends AppCompatActivity {
                     }
                     Log.i(TAG, clickedPackageLabel + " permission granted status : DONE " );
                 }
-                appDetails = new ClassSetAppDetails(packageManager, clickedPackageInfo);
-                exp_adapter = new AdapterExpandableList(this, headers, expListMap,clickedPackageInfo,appDetails);
-                expandableListView.setAdapter(exp_adapter);
+                setNewAdapter();
                 Log.i(TAG, clickedPackageLabel + " permissions granted Successfully");
             }catch(Exception ex) {
                 Log.e(TAG, "Grant Permisiion status : " + ex);
@@ -596,7 +605,7 @@ public class ActivityAppDetails extends AppCompatActivity {
     private void keepdata_uninstall(){
 
         showMsg("Confirm to uninstall " + clickedPackageLabel);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Confirm to uninstall but keep data " + clickedPackageLabel);
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
@@ -619,8 +628,11 @@ public class ActivityAppDetails extends AppCompatActivity {
     }
 
     private void disable_app(MenuItem item){
-        if (clickedPackageInfo.applicationInfo.enabled) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        int app_state = packageManager.getApplicationEnabledSetting(clickedPackageInfo.packageName);
+        Log.i(TAG,"APP STATE : "+app_state);
+
+        if (app_state == 1 || app_state == 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Confirm to disable " + clickedPackageLabel);
             builder.setMessage("Click Yes to Continue...");
             builder.setCancelable(false);
@@ -632,7 +644,7 @@ public class ActivityAppDetails extends AppCompatActivity {
                     showMsg("Disabled App " + clickedPackageLabel);
                 } else {
                     try {
-                        String command = "pm disable-user " + clickedPackageInfo.packageName;
+                        String command = "pm disable " + clickedPackageInfo.packageName;
                         Shell.su(command).exec();
                         showMsg("Disabled App " + clickedPackageLabel);
                         item.setTitle(R.string.enable_app);
@@ -646,7 +658,7 @@ public class ActivityAppDetails extends AppCompatActivity {
             builder.show();
 
         }
-        else {
+        else if(app_state==2){
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Confirm to Enable " + clickedPackageLabel);
             builder.setMessage("Click Yes to Continue...");

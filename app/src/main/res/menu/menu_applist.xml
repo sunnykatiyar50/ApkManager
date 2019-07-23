@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<menu   xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context="com.shanekatear.appexplorer.MainActivity">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.shanekatear.appexplorer.MainActivity">
 
     <item
         android:id="@+id/search_item"
-        android:title="Search"
         android:icon="@drawable/ic_action_search"
+        android:title="Search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="always" />
 
@@ -19,65 +19,223 @@
         android:title="Reload Apps"
         app:showAsAction="never" />
 
-
     <item
-        android:title="Sort Apps By"
-        android:orderInCategory="101"
-        android:icon="@drawable/ic_sort_black_24dp">
+        android:icon="@drawable/ic_sort_black_24dp"
+        android:orderInCategory="100"
+        android:title="Filter Apps">
 
         <menu>
 
             <group
-                android:title="Order Apps By"
                 android:checkableBehavior="single"
-                android:menuCategory="secondary">
+                android:menuCategory="secondary"
+                android:title="Filter Apps">
+
+                <item
+                    android:id="@+id/apps_launchable"
+                    android:orderInCategory="100"
+                    android:title="Launchable Apps"
+                    app:showAsAction="never" />
+
+
+                <item
+                    android:id="@+id/apps_user_only"
+                    android:orderInCategory="100"
+                    android:title="User Apps"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/apps_system_only"
+                    android:orderInCategory="100"
+                    android:title="System Apps"
+                    app:showAsAction="never" />
+
+
+                <item
+                    android:id="@+id/apps_all"
+                    android:orderInCategory="100"
+                    android:title="All Installed"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/apps_uninstalled"
+                    android:orderInCategory="100"
+                    android:title="Data Only"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/apps_updated_system"
+                    android:orderInCategory="100"
+                    android:title="Updated System"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/app_running"
+                    android:orderInCategory="100"
+                    android:title="Running Apps"
+                    android:visible="false"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/app_stopped"
+                    android:orderInCategory="100"
+                    android:title="Stopped Apps"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/app_suspended"
+                    android:orderInCategory="100"
+                    android:title="Apps Suspended"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/app_external_storage"
+                    android:orderInCategory="100"
+                    android:title="Apps on ExternalSD"
+                    app:showAsAction="never" />
+
+
+            </group>
+
+        </menu>
+
+    </item>
+
+    <item
+        android:orderInCategory="105"
+        android:title="Apps Categories"
+        app:showAsAction="never">
+
+        <menu>
+
+            <group
+                android:checkableBehavior="single"
+                android:menuCategory="secondary"
+                android:title="Filter Apps">
+                >
+
+                <item
+                    android:id="@+id/apps_games"
+                    android:orderInCategory="100"
+                    android:title="Games"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/apps_videos"
+                    android:orderInCategory="100"
+                    android:title="Video Apps"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/apps_audio"
+                    android:orderInCategory="100"
+                    android:title="Audio Apps"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/apps_images"
+                    android:orderInCategory="100"
+                    android:title="Images Apps"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/apps_social"
+                    android:orderInCategory="100"
+                    android:title="Social Apps"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/apps_news"
+                    android:orderInCategory="100"
+                    android:title="News Apps"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/apps_productivity"
+                    android:orderInCategory="100"
+                    android:title="Productivity"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/app_maps"
+                    android:orderInCategory="100"
+                    android:title="Maps"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/app_undefined"
+                    android:orderInCategory="100"
+                    android:title="Undefined "
+                    app:showAsAction="never" />
+
+
+            </group>
+
+
+        </menu>
+
+
+    </item>
+
+
+    <item
+        android:icon="@drawable/ic_sort_black_24dp"
+        android:orderInCategory="101"
+        android:title="Sort Apps By">
+
+        <menu>
+
+            <group
+                android:checkableBehavior="single"
+                android:menuCategory="secondary"
+                android:title="Order Apps By">
                 <item
                     android:id="@+id/menuitem_sortappsby_name"
-                    android:orderInCategory="100"
                     android:checked="true"
-                    android:title="Sort By Name"
                     android:icon="@drawable/ic_sort_by_alpha_black_24dp"
+                    android:orderInCategory="100"
+                    android:title="Sort By Name"
                     app:showAsAction="never" />
 
                 <item
                     android:id="@+id/menuitem_sortappsby_installtime"
+                    android:icon="@drawable/ic_date_range_black_24dp"
                     android:orderInCategory="101"
                     android:title="Sort By Install Time"
-                    android:icon="@drawable/ic_date_range_black_24dp"
                     app:showAsAction="never" />
 
                 <item
                     android:id="@+id/menuitem_sortappsby_updatetime"
+                    android:icon="@drawable/ic_date_range_black_24dp"
                     android:orderInCategory="101"
                     android:title="Sort By Update Time"
-                    android:icon="@drawable/ic_date_range_black_24dp"
                     app:showAsAction="never" />
 
                 <item
                     android:id="@+id/menuitem_sortappsby_size"
+                    android:icon="@drawable/ic_sort_black_24dp"
                     android:orderInCategory="101"
                     android:title="Sort By Size"
-                    android:icon="@drawable/ic_sort_black_24dp"
                     app:showAsAction="never" />
             </group>
 
 
             <group
-                android:title="Order Apps By"
                 android:checkableBehavior="single"
-                android:menuCategory="secondary">
+                android:menuCategory="secondary"
+                android:title="Order Apps By">
                 <item
                     android:id="@+id/menuitem_apps_increasing"
+                    android:icon="@drawable/ic_vertical_align_top_black_24dp"
                     android:orderInCategory="101"
                     android:title="Increasing Order"
-                    android:icon="@drawable/ic_vertical_align_top_black_24dp"
                     app:showAsAction="never" />
 
                 <item
                     android:id="@+id/menuitem_apps_decreasing"
+                    android:icon="@drawable/ic_vertical_align_bottom_black_24dp"
                     android:orderInCategory="101"
                     android:title="Decreasing Order "
-                    android:icon="@drawable/ic_vertical_align_bottom_black_24dp"
                     app:showAsAction="never" />
 
             </group>
@@ -85,4 +243,6 @@
         </menu>
 
     </item>
+
+
 </menu>

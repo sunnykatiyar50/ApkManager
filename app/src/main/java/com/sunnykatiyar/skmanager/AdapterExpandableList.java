@@ -15,6 +15,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,7 @@ class AdapterExpandableList extends BaseExpandableListAdapter {
     ClassSetAppDetails appDetails;
     final String TAG = "MYAPP : EXLIST_ADAPTER : ";
     AdapterExpandableList adapter = this;
-
+    PackageManager pkgMgr;
     public AdapterExpandableList(Context c,List<String> headers, HashMap<String,List<String>> list, PackageInfo pkg, ClassSetAppDetails appDetails)
     {
         this.context=c;
@@ -37,6 +38,7 @@ class AdapterExpandableList extends BaseExpandableListAdapter {
         this.list = list;
         this.headers = headers;
         this.appDetails = appDetails;
+        pkgMgr = c.getPackageManager();
         component.add("Receivers");
         component.add("Activities");
         component.add("Providers");
@@ -44,13 +46,14 @@ class AdapterExpandableList extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
+    public View getGroupView(final int i, boolean b, View view, ViewGroup viewGroup) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        String property_name= (String) getGroup(i);
+        final String property_name= (String) getGroup(i);
+        TextView group_view =null;
         if(view==null){
             view=inflater.inflate(R.layout.listitem_expandable_list_header,null);
         }
-        TextView group_view= view.findViewById(R.id.ex_list_item_header);
+        group_view= view.findViewById(R.id.ex_list_item_header);
         group_view.setText(property_name);
 
         return view;
@@ -181,5 +184,39 @@ class AdapterExpandableList extends BaseExpandableListAdapter {
                 }
         }
     }
+
+    public List<String> grantedPermissions(){
+        List<String> perms =new ArrayList<>();
+
+        try {
+            PackageInfo pkg1 = pkgMgr.getPackageInfo(pkg.packageName, PackageManager.GET_PERMISSIONS);
+            String[] permArray  = pkg1.requestedPermissions;
+            if(null!=permArray){
+                for(int k=0;k<permArray.length;k++){
+                    if(PackageManager.PERMISSION_GRANTED == pkgMgr.checkPermission(pkg.packageName,permArray[k])){
+                        perms.add(permArray[k]);
+                    }
+                }
+            }
+        }catch(PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return perms;
+    }
+
+    public List<String> requiredPermissions(){
+        List<String> perms =new ArrayList<>();
+
+        try {
+            PackageInfo pkg1 = pkgMgr.getPackageInfo(pkg.packageName, PackageManager.GET_PERMISSIONS);
+            perms  = Arrays.asList(pkg1.requestedPermissions);
+        }catch(PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return perms;
+    }
+
 
 }

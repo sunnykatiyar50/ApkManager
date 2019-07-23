@@ -8,8 +8,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,7 +53,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
     private static final long KB = 1024;
     private static final long GB = 1024 * 1024 * 1024;
     ActivityAppDetails activityAppDetails;
-
+    ColorStateList colorStateList ;
     static {
         Shell.Config.setFlags(Shell.FLAG_REDIRECT_STDERR);
         Shell.Config.verboseLogging(BuildConfig.DEBUG);
@@ -63,6 +65,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         this.activity = activity;
         this.myAppList = myAppList;
         this.rootAccess = ActivityMain.sharedPrefSettings.getBoolean(key_root_access,false);
+        colorStateList = activity.getColorStateList(R.color.color_state);
         //this.filteredAppList = myAppList;
     }
 
@@ -91,10 +94,18 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
 
         if(pkginfo.applicationInfo.sourceDir.startsWith("/system/")){
             vholder.app_type.setText("System App");
-            vholder.app_type.setTextColor(getContext().getColor(R.color.red));
+            vholder.app_type.setTextColor(getContext().getColor(R.color.light_red));
         }else{
             vholder.app_type.setText("User App");
             vholder.app_type.setTextColor(getContext().getColor(R.color.light_green));
+        }
+
+        int app_state = pm.getApplicationEnabledSetting(pkginfo.packageName);
+      //  Log.i(TAG,"APP STATE : "+app_state);
+        if(app_state==1 || app_state == 0){
+            vholder.itemView.setBackgroundColor(ContextCompat.getColor(activity,R.color.tint_item_unselected));
+        }else {
+            vholder.itemView.setBackgroundColor(ContextCompat.getColor(activity,R.color.tint_item_selected));
         }
 
         vholder.text_extra.setText(String.valueOf(pkginfo.versionCode));
@@ -122,15 +133,18 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
             PackageInfo p = myAppList.get(i);
             Log.i(TAG, " CLICKED PACKAGE: " + (clicked_pkg==null));
 
+
+//----------------------------------------------------SET  DISABLE MENU ITEM----------------------------------------------------
+            int appState = mainpm.getApplicationEnabledSetting(clicked_pkg.packageName);
+            if (appState==1) {
+                menu.findItem(R.id.disable_app_item).setTitle(R.string.disable_app);
+            }else if(appState==2){
+                menu.findItem(R.id.disable_app_item).setTitle(R.string.enable_app);
+            }
+
             menu.setHeaderTitle(clicked_pkg_label);
 
             if (clicked_pkg != null) {
-//----------------------------------------------------SET  DISABLE MENU ITEM----------------------------------------------------
-                if (clicked_pkg.applicationInfo.enabled) {
-                    menu.findItem(R.id.disable_app_item).setTitle(R.string.disable_app);
-                } else {
-                    menu.findItem(R.id.disable_app_item).setTitle(R.string.enable_app);
-                }
 
 //--------------------------------------------------------LAUNCH APP----------------------------------------------------
                 menu.findItem(R.id.launch_item).setOnMenuItemClickListener(item -> {
@@ -261,18 +275,6 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
                         }
                         Log.i(TAG, clicked_pkg_label + " permission revoked status : DONE " );
                     }
-
-
-
-//                    PermissionInfo[] allPerms = clicked_pkg.permissions;
-//
-//                    if(null!=allPerms){
-//                        for(PermissionInfo perm : allPerms){
-//                            String command =  "pm revoke " +clicked_pkg.packageName+" "+perm.name;
-//                            Log.i(TAG,"Command : " +command);
-//                            Shell.su(command).exec();
-//                        }
-//                    }
 
                 } catch (Exception ex) {
                     Log.e(TAG, "Revoke Permission :" + ex);
@@ -442,10 +444,12 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
     }
 
     private void disable_app(MenuItem item){
-        if (clicked_pkg.applicationInfo.enabled) {
 
+        int app_state = mainpm.getApplicationEnabledSetting(clicked_pkg.packageName);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        if (app_state==1||app_state==0) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
             builder.setTitle("Confirm to disable " + clicked_pkg_label);
             builder.setMessage("Click Yes to Continue...");
             builder.setCancelable(false);
@@ -457,7 +461,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
                     showMsg("Disabled App " + clicked_pkg_label);
                 } else {
                     try {
-                        String command = "pm disable-user " + clicked_pkg.packageName;
+                        String command = "pm disable " + clicked_pkg.packageName;
                         Shell.su(command).exec();
                         showMsg("Disabled App " + clicked_pkg_label);
                         item.setTitle(R.string.enable_app);
@@ -471,8 +475,8 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
             builder.show();
 
         }
-        else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        else if(app_state==2){
+            AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
             builder.setTitle("Confirm to Enable " + clicked_pkg_label);
             builder.setMessage("Click Yes to Continue...");
             builder.setCancelable(false);
@@ -485,7 +489,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
                 } else {
                     try {
                         String command = "pm enable " + clicked_pkg.packageName;
-                        Shell.su().exec();
+                        Shell.su(command).exec();
                         showMsg("Enabled App " + clicked_pkg_label);
                         item.setTitle(R.string.disable_app);
                     } catch (Exception ex) {

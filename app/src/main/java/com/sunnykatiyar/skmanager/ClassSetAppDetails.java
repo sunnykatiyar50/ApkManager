@@ -49,6 +49,17 @@ class ClassSetAppDetails {
     List<String> split_apks_names = new ArrayList<>();
     List<String> split_apks_path = new ArrayList<>();
 
+    private static final int CATEGORY_GAMES = ApplicationInfo.CATEGORY_GAME;
+    private static final int CATEGORY_AUDIO = ApplicationInfo.CATEGORY_AUDIO;
+    private static final int CATEGORY_VIDEO = ApplicationInfo.CATEGORY_VIDEO;
+    private static final int CATEGORY_MAPS = ApplicationInfo.CATEGORY_MAPS;
+    private static final int CATEGORY_IMAGE = ApplicationInfo.CATEGORY_IMAGE;
+    private static final int CATEGORY_SOCIAL = ApplicationInfo.CATEGORY_SOCIAL;
+    private static final int CATEGORY_PRODUCTIVITY = ApplicationInfo.CATEGORY_PRODUCTIVITY;
+    private static final int CATEGORY_NEWS = ApplicationInfo.CATEGORY_NEWS;
+    private static final int CATEGORY_UNDEFINED = ApplicationInfo.CATEGORY_UNDEFINED;
+
+
     public ClassSetAppDetails(PackageManager pm, PackageInfo pkg){
         this.packageManager = pm;
         this.pkg = pkg ;
@@ -70,9 +81,12 @@ class ClassSetAppDetails {
         version_code.add(pkg.versionName+"_"+ pkg.versionCode);
         expandable_list.put("Version ",version_code);
 
-//        //-----------------------ADD Category-----------------------------
-//        category.add(pkg.applicationInfo.category);
-//        expandable_list.put("Category ",category);
+        //-----------------------ADD Category-----------------------------
+//        if(pkg.applicationInfo.category){
+//
+//        }
+        category.add(getCategory(pkg));
+        expandable_list.put("Category ",category);
 
 
         // --------------------ADD INSTALL LOCATION-----------------------------------
@@ -127,8 +141,11 @@ class ClassSetAppDetails {
 
         // --------------------ADD INSTALLER SOURCE-----------------------------------
         String installer = packageManager.getInstallerPackageName(pkg.packageName);
-        if(null!=installer & !installer.isEmpty())
-        install_SourceApp.add(installer);
+        if(null!=installer){
+            if(!installer.isEmpty()){
+              install_SourceApp.add(installer);
+            }
+        }
         expandable_list.put("Installer Package", install_SourceApp);
 
         //-----------------------UID----------------------------------------------
@@ -269,7 +286,6 @@ class ClassSetAppDetails {
             String[] req_perms_array =  pkg1.requestedPermissions;
             if(req_perms_array!=null){
                 for (int i = 0; i < pkg1.requestedPermissions.length; i++) {
-                    all_permissions.add(pkg1.requestedPermissions[i]);
                     if((pkg1.requestedPermissionsFlags[i] & PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0){
                         permissions_granted.add(pkg1.requestedPermissions[i]);
                     }
@@ -288,7 +304,6 @@ class ClassSetAppDetails {
     }
 
     public List<String> getAllPermList(PackageInfo pkg){
-        List<String> permissions_granted=new ArrayList<>();
         List<String> permissions_all=new ArrayList<>();
 
         PackageInfo pkg1;
@@ -296,12 +311,7 @@ class ClassSetAppDetails {
             pkg1 = packageManager.getPackageInfo(pkg.packageName, PackageManager.GET_PERMISSIONS);
             String[] req_perms_array =  pkg1.requestedPermissions;
             if(req_perms_array!=null){
-                for (int i = 0; i < pkg1.requestedPermissions.length; i++) {
-                    permissions_all.add(pkg1.requestedPermissions[i]);
-                    if((pkg1.requestedPermissionsFlags[i] & PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0){
-                        permissions_granted.add(pkg1.requestedPermissions[i]);
-                    }
-                }
+                permissions_all = Arrays.asList(req_perms_array);
             }else{
 //                permissions_all.add("No Permission Required");
 //                permissions_granted.add("No Permission Granted");
@@ -326,7 +336,7 @@ class ClassSetAppDetails {
         }else if(loc==2){
             installLocation.add("INSTALL_LOCATION_PREFER_EXTERNAL");
         }else {
-           installLocation.add(String.valueOf(pkg.installLocation));
+          // installLocation.add(String.valueOf(pkg.installLocation));
         }
 
         return installLocation;
@@ -392,6 +402,49 @@ class ClassSetAppDetails {
 //            sharedLibs.add("Not Available");
         }
         return sharedLibs;
+    }
+
+    public String getCategory(PackageInfo pkg){
+
+        switch( pkg.applicationInfo.category){
+
+            case CATEGORY_AUDIO: {
+                return   "CATEGORY_AUDIO"  ;
+            }
+
+            case CATEGORY_GAMES: {
+                return   "CATEGORY_GAMES"  ;
+            }
+
+            case CATEGORY_VIDEO: {
+                return   "CATEGORY_VIDEO"  ;
+            }
+
+            case CATEGORY_MAPS: {
+                return   "CATEGORY_MAPS"  ;
+            }
+
+            case CATEGORY_SOCIAL: {
+                return   "CATEGORY_SOCIAL"  ;
+            }
+
+            case CATEGORY_IMAGE: {
+                return   "CATEGORY_IMAGE"  ;
+            }
+
+            case CATEGORY_PRODUCTIVITY: {
+                return   "CATEGORY_PRODUCTIVITY" ;
+            }
+
+            case CATEGORY_NEWS : {
+                return   "CATEGORY_NEWS"  ;
+            }
+
+            default : {
+                return "CATEGORY UNDEFINED"  ;
+            }
+
+        }
     }
 
 }

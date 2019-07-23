@@ -117,6 +117,8 @@
         android:layout_height="22dp"
         android:gravity="right|center_vertical|end"
         android:text="App Type"
+        android:textSize="16sp"
+        android:textStyle="bold|italic"
         app:layout_constraintBottom_toTopOf="@+id/label_extra"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

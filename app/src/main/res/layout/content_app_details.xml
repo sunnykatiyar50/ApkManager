@@ -19,11 +19,10 @@
 
     <TextView
         android:id="@+id/app_name"
-        android:layout_width="223dp"
-        android:layout_height="30dp"
+        android:layout_width="0dp"
+        android:layout_height="34dp"
         android:layout_margin="@dimen/size2"
         android:layout_marginStart="4dp"
-        android:layout_marginEnd="11dp"
         android:layout_toRightOf="@id/app_info_icon"
         android:autoSizeMaxTextSize="20sp"
         android:autoSizeMinTextSize="14sp"
@@ -32,7 +31,6 @@
         android:lines="2"
         android:maxLines="2"
         android:minLines="1"
-        android:paddingStart="4dp"
         android:text="App name Here"
         android:textColor="#58B1E9"
         android:textSize="16sp"
@@ -43,8 +41,8 @@
 
     <TextView
         android:id="@+id/version_num"
-        android:layout_width="108dp"
-        android:layout_height="27dp"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
         android:layout_alignParentRight="true"
         android:layout_toRightOf="@id/app_name"
         android:autoSizeMaxTextSize="20sp"
@@ -52,7 +50,6 @@
         android:autoSizeTextType="uniform"
         android:gravity="end"
         android:text="Version"
-        android:textAlignment="textEnd"
         android:textColor="#4FAEE9"
         android:textSize="@dimen/text_size_medium"
         android:textStyle="bold|italic"
@@ -63,7 +60,7 @@
     <TextView
         android:id="@+id/pkg_name"
         android:layout_width="224dp"
-        android:layout_height="27dp"
+        android:layout_height="30dp"
         android:layout_below="@id/app_name"
         android:layout_marginStart="4dp"
         android:layout_toRightOf="@id/app_info_icon"
@@ -80,8 +77,8 @@
 
     <TextView
         android:id="@+id/app_size"
-        android:layout_width="108dp"
-        android:layout_height="26dp"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
         android:layout_below="@id/pkg_name"
         android:layout_margin="@dimen/size2"
         android:layout_toRightOf="@id/app_info_icon"
@@ -96,7 +93,7 @@
     <TextView
         android:id="@+id/install_date"
         android:layout_width="0dp"
-        android:layout_height="27dp"
+        android:layout_height="30dp"
         android:layout_below="@id/pkg_name"
         android:layout_alignParentRight="true"
         android:layout_marginStart="4dp"
@@ -126,8 +123,8 @@
 
     <TextView
         android:id="@+id/details_app_type"
-        android:layout_width="106dp"
-        android:layout_height="30dp"
+        android:layout_width="111dp"
+        android:layout_height="34dp"
         android:gravity="right|center_vertical"
         android:text="App Type"
         android:textSize="18sp"

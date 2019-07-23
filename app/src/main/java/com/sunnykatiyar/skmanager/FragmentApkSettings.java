@@ -22,7 +22,7 @@ import java.util.List;
 import static com.sunnykatiyar.skmanager.ActivityMain.sharedPrefApkManager;
 
 
-class FragmentApkSettings extends Fragment implements
+public class FragmentApkSettings extends Fragment implements
         AdapterView.OnItemSelectedListener{
 
     private static final String ARG_PARAM1 = "param1";

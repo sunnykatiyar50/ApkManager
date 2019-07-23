@@ -1,12 +1,16 @@
 package com.sunnykatiyar.skmanager;
 
 import android.content.pm.ActivityInfo;
+import android.content.pm.ConfigurationInfo;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ServiceInfo;
 import android.content.pm.SharedLibraryInfo;
+import android.util.Log;
+
+import com.topjohnwu.superuser.Shell;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,40 +23,41 @@ class ClassSetAppDetails {
 
     private final PackageManager appInfo_pm;
     private final PackageInfo pkg;
+    final String TAG = " MYAPP : SETAPPDETAILS : ";
+    HashMap<String, List<String>> expandable_list = new HashMap<>();
+    public List<String> permissions_granted=new ArrayList<>();
+    List<String> all_permissions=new ArrayList<>();
+    List<String>  providers_list=new ArrayList<>();
+    List<String>  receivers_list=new ArrayList<>();
+    List<String>  activities_list=new ArrayList<>();
+    List<String> install_SourceApp= new ArrayList<>();
+    List<String> DataDirectory_Path= new ArrayList<>();
+    List<String> lastUpdate_Time= new ArrayList<>();
+    List<String> version_code=new ArrayList<>() ;
+    List<String> targetSdk = new ArrayList<>();
+    List<String> minSdk = new ArrayList<>();
+    List<String> configs = new ArrayList<>();
+    List<String> category = new ArrayList<>();
+    List<String> uids = new ArrayList<>();
+    List<String> processName = new ArrayList<>();
+    List<String> sharedLibs = new ArrayList<>();
+    List<String> installTime = new ArrayList<>();
+    List<String> installLocation = new ArrayList<>();
+    List<String> requested_features = new ArrayList<>();
+    public List<String> services_list = new ArrayList<>();
+    List<String> apkPath = new ArrayList<>();
+    List<String> split_apks_names = new ArrayList<>();
+    List<String> split_apks_path = new ArrayList<>();
 
     public ClassSetAppDetails(PackageManager appInfo_pm, PackageInfo pkg){
         this.appInfo_pm=appInfo_pm;
-        this.pkg=pkg;
+        this.pkg=pkg ;
+        expandable_list = setListData();
     }
 
     public HashMap<String, List<String>> setListData() {
 
-                    HashMap<String, List<String>> expandable_list = new HashMap<>();
-                             List<String> permissions_list=new ArrayList<>();
-                            List<String> req_permissions_list=new ArrayList<>();
-                            List<String>  providers_list=new ArrayList<>();
-                            List<String>  receivers_list=new ArrayList<>();
-                            List<String>  activities_list=new ArrayList<>();
-                            List<String> install_SourceApp= new ArrayList<>();
-                            List<String> DataDirectory_Path= new ArrayList<>();
-                            List<String> lastUpdate_Time= new ArrayList<>();
-                            List<String> version_code=new ArrayList<>() ;
-                            List<String> targetSdk = new ArrayList<>();
-                            List<String> minSdk = new ArrayList<>();
-                            List<String> configs = new ArrayList<>();
-                            List<String> category = new ArrayList<>();
-                            List<String> uids = new ArrayList<>();
-                            List<String> processName = new ArrayList<>();
-                            List<String> sharedLibs = new ArrayList<>();
-                            List<String> installTime = new ArrayList<>();
-                            List<String> installLocation = new ArrayList<>();
-                            List<String> requested_features = new ArrayList<>();
-                            List<String> services_list = new ArrayList<>();
-                            List<String> apkPath = new ArrayList<>();
-                            List<String> split_apks_names = new ArrayList<>();
-                            List<String> split_apks_path = new ArrayList<>();
-
-        PackageInfo pkg1;
+        PackageInfo pkg1 = pkg;
 
 
         // --------------------ADD SPLIT APKS LIST-----------------------------------
@@ -68,20 +73,25 @@ class ClassSetAppDetails {
 
 
         // --------------------ADD SERVICES INFO-----------------------------------
-        ServiceInfo[] servicesInfos = pkg.services;
-
-        if(servicesInfos!=null){
-            for(ServiceInfo ser : servicesInfos){
-                if(ser!=null){
-                    services_list.add(ser.name);
+        try {
+            pkg1=appInfo_pm.getPackageInfo(pkg.packageName,PackageManager.GET_SERVICES);
+            ServiceInfo[] servicesInfos = pkg1.services;
+            if(servicesInfos!=null){
+                for(ServiceInfo ser : servicesInfos){
+                    if(ser!=null){
+                        services_list.add(ser.name);
+                    }
                 }
-            }
-            if(services_list.size()==0){
+
+                if(services_list.size()==0){
+                    services_list.add("Not Available");
+                }
+            }else{
                 services_list.add("Not Available");
             }
-        }else{
-            services_list.add("Not Available");
-        }
+        } catch (PackageManager.NameNotFoundException e) {
+            services_list.add("Unable to Access"); }
+
         expandable_list.put("Services", services_list);
 
 
@@ -93,20 +103,6 @@ class ClassSetAppDetails {
 //        category.add(pkg.applicationInfo.category);
 //        expandable_list.put("Category ",category);
 
-
-        // --------------------ADD PERMISSIONS-----------------------------------
-//        PermissionInfo[] permissionInfos = pkg.permissions;
-//        try {
-//           // pkg1=appinfo_pm.getPackageInfo(pkg.packageName,PackageManager.PER);
-//            if(permissionInfos!=null) {
-//                for (PermissionInfo per : permissionInfos) {
-//                    permissions_list.add(per.name);
-//                }
-//            }else permissions_list.add("No Permissions");
-//        }catch(Exception ex) {
-//            providers_list.add("Unable To Access");
-//        }
-//        expandable_list.put("All Permissions", permissions_list);
 
         // --------------------ADD INSTALL LOCATION-----------------------------------
         int loc = pkg.installLocation;
@@ -178,19 +174,28 @@ class ClassSetAppDetails {
         expandable_list.put("Installer Package", install_SourceApp);
 
 
-        // -------------------REQUESTED PERMISSIONS LIST-------------------------
+        // -------------------PERMISSIONS REQUIRED LIST-------------------------
         try {
-            pkg1 = appInfo_pm.getPackageInfo(pkg.packageName,PackageManager.GET_PERMISSIONS);
-            String[] req_permissions_array=pkg1.requestedPermissions;
-            if(req_permissions_array!=null){
-                for (int temp = 0; temp < req_permissions_array.length; temp++) {
-                    req_permissions_list.add(req_permissions_array[temp]);
+            pkg1 = appInfo_pm.getPackageInfo(pkg.packageName, PackageManager.GET_PERMISSIONS);
+            String[] req_perms_array =  pkg1.requestedPermissions;
+            if(req_perms_array!=null){
+                for (int i = 0; i < pkg1.requestedPermissions.length; i++) {
+                    all_permissions.add(pkg1.requestedPermissions[i]);
+                    if((pkg1.requestedPermissionsFlags[i] & PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0){
+                        permissions_granted.add(pkg1.requestedPermissions[i]);
+                    }
                 }
-            }else  req_permissions_list.add("No Permission Requested");
-        } catch (PackageManager.NameNotFoundException e) {
-            req_permissions_list.add("Unable To Access");
+            }else{
+                all_permissions.add("No Permission Required");
+                permissions_granted.add("No Permission Granted");
+            }
+        }catch(Exception e) {
+            all_permissions.add("Unable To Access");
+            permissions_granted.add("Unable To Access");
+
         }
-        expandable_list.put("Permissions Requested", req_permissions_list);
+        expandable_list.put("Permissions Required", all_permissions);
+        expandable_list.put("Permissions Granted", permissions_granted);
 
 
         //--------------- ---------- GET ACTIVITIES--------------------------------------------
@@ -202,7 +207,7 @@ class ClassSetAppDetails {
                     activities_list.add(a.name);
                 }
                 }else activities_list.add("No Activities");
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch(Exception e) {
             activities_list.add("Unable To Access");
         }
         expandable_list.put("Activities", activities_list);
@@ -211,10 +216,15 @@ class ClassSetAppDetails {
         try {
             FeatureInfo[] feat = pkg.reqFeatures;
             if(feat!=null){
+                Log.i(TAG, "Featues list found : "+feat.length);
                 for (int temp = 0; temp<feat.length; temp++) {
                     requested_features.add(feat[temp].name);
-                }}
-            else requested_features.add("No Featues Requested");
+                }
+            }
+            else {
+                requested_features.add("No Featues Requested");
+                Log.i(TAG, "Featues Not found : ");
+            }
         } catch (Exception e) {
             requested_features.add("Unable To Access");
         }
@@ -261,15 +271,21 @@ class ClassSetAppDetails {
         expandable_list.put("UserID (uid) ", uids);
 
         //-----------------------CONFIG PREFERENCES----------------------------------------------
-//        ConfigurationInfo[] cons =  pkg.configPreferences;
-//        if(null!=cons){
-//            for(ConfigurationInfo info : cons){
-//                configs.add(info.);
-//            }
-//        }else{
-//           configs.add("No ConfigPreference") ;
-//        }
-//        expandable_list.put("Configuration Info", configs);
+        try {
+            pkg1 = appInfo_pm.getPackageInfo(pkg.packageName, PackageManager.GET_CONFIGURATIONS);
+            ConfigurationInfo[] cons =  pkg1.configPreferences;
+            if(null!=cons){
+                for(ConfigurationInfo info : cons){
+                    configs.add(info.toString());
+                }
+            }else{
+                configs.add("No ConfigPreference") ;
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            configs.add("Unable to Access");
+        }
+        expandable_list.put("Configuration Info", configs);
 
         //-----------------------Add Target SDK----------------------------------------------
 //        appInfo_pm.get

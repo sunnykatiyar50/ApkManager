@@ -50,7 +50,7 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
     private static final long MB = 1024 * 1024;
     private static final long KB = 1024;
     private static final long GB = 1024 * 1024 * 1024;
-
+    ActivityAppDetails activityAppDetails;
 
     static {
         Shell.Config.setFlags(Shell.FLAG_REDIRECT_STDERR);
@@ -89,23 +89,25 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         File f = new File(pkginfo.applicationInfo.sourceDir);
         vholder.app_size.setText(getSize(f.length()));
         vholder.text_extra.setText(String.valueOf(pkginfo.versionCode));
+        activityAppDetails = new ActivityAppDetails();
 
         vholder.itemView.setOnClickListener(v -> {
             clicked_pkg = myAppList.get(i);
             clicked_pkg_label = mainpm.getApplicationLabel(clicked_pkg.applicationInfo).toString();
             Log.i(TAG, "Item clicked :" + clicked_pkg_label);
-
             Toast.makeText(appContext, clicked_pkg_label, Toast.LENGTH_SHORT).show();
-            Intent appInfo = new Intent(activity, ActivityAppDetails.class);
+            Intent appInfo = new Intent(activity, activityAppDetails.getClass());
+            appInfo.putExtra("PACKAGE_NAME", clicked_pkg.packageName);
             activity.startActivity(appInfo);
         });
 
         vholder.itemView.setOnCreateContextMenuListener(null);
 
         vholder.itemView.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
-
             clicked_pkg = myAppList.get(i);
             clicked_pkg_label = mainpm.getApplicationLabel(clicked_pkg.applicationInfo).toString();
+            activityAppDetails.appDetails = new ClassSetAppDetails(pm, clicked_pkg);
+
             MenuInflater inflater = activity.getMenuInflater();
             inflater.inflate(R.menu.menu_app_details, menu);
             PackageInfo p = myAppList.get(i);
@@ -229,12 +231,33 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         builder.setTitle("Confirm Revoking permissions for "+clicked_pkg_label);
         builder.setMessage("Click Yes to Continue...");
         builder.setCancelable(false);
-
         builder.setPositiveButton("Yes", (dialog, which) -> {
                 try {
-                    showMsg("Revoke permission via terminal :" + Shell.rootAccess());
-                  //  Shell.sh("pm reset-permissions " + clicked_pkg.packageName).exec();
-                    Log.i(TAG, clicked_pkg.applicationInfo.loadLabel(mainpm).toString() + " permission revoked Successfully");
+                    showMsg("Revoking permission via terminal :" + Shell.rootAccess());
+                    List<String> list = activityAppDetails.appDetails.permissions_granted;
+                    if(null!=list){
+                        for(int i = 0; i< list.size(); i++){
+                            // if((clicked_pkg.requestedPermissionsFlags[i] & PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0){
+                            String command =  "pm revoke " +clicked_pkg.packageName+" "+list.get(i);
+                            Log.i(TAG,"Command : " +command);
+                            Shell.sh(command).exec();
+                            // }
+                        }
+                        Log.i(TAG, clicked_pkg_label + " permission revoked status : DONE " );
+                    }
+
+
+
+//                    PermissionInfo[] allPerms = clicked_pkg.permissions;
+//
+//                    if(null!=allPerms){
+//                        for(PermissionInfo perm : allPerms){
+//                            String command =  "pm revoke " +clicked_pkg.packageName+" "+perm.name;
+//                            Log.i(TAG,"Command : " +command);
+//                            Shell.su(command).exec();
+//                        }
+//                    }
+
                 } catch (Exception ex) {
                     Log.e(TAG, "Revoke Permission :" + ex);
                 }

@@ -3,6 +3,8 @@ package com.sunnykatiyar.skmanager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.graphics.Typeface;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.sunnykatiyar.skmanager.FragmentAppManager.clipboardManager;
+import static com.sunnykatiyar.skmanager.FragmentAppManager.mainpm;
 
 public class AdapterApkList extends RecyclerView.Adapter<ViewHolderApkList> {
 
@@ -49,11 +52,10 @@ public class AdapterApkList extends RecyclerView.Adapter<ViewHolderApkList> {
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderApkList cst, final int i) {
-
-       temp = list.get(i);
-        int position = i;
-         String ver_apk;
-         String ver_app;
+       // temp=null;
+        temp = list.get(i);
+        String ver_apk;
+        String ver_app;
 
     if(temp.apk_pkg_info != null) {
 
@@ -102,24 +104,48 @@ public class AdapterApkList extends RecyclerView.Adapter<ViewHolderApkList> {
         cst.apk_version.setTooltipText("Apk Version : " + temp.apk_version_name);
         cst.app_version.setTooltipText("App Version : " + temp.app_version_name);
         cst.text_time.setTooltipText("Last Update Time : " + temp.str_app_update_time);
-        cst.app_name.setTooltipText(temp.pkg_name);
+        cst.app_name.setTooltipText("AppName : "+temp.app_name);
         cst.file_name.setTooltipText("File Path : " + temp.file.getAbsolutePath());
+
+        cst.apk_version.setOnClickListener(null);
+        cst.file_name.setOnClickListener(null);
+        cst.text_pkg_name.setOnClickListener(null);
+        cst.app_name.setOnClickListener(null);
+
+        cst.itemView.setOnClickListener(null);
 
         cst.apk_version.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                copyToClipboard("Apk Version", cst.apk_version.getText().toString());
+                launchAppDetails(list.get(i));
+                //copyToClipboard("Apk Version", cst.apk_version.getText().toString());
             }
         });
 
-        cst.app_name.setOnClickListener(new View.OnClickListener(){
+        cst.app_name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                copyToClipboard("App Name", cst.app_name.getText().toString());
-                Toast.makeText(context, "Copied to Clipboard\n "+cst.app_name.getText().toString(), Toast.LENGTH_SHORT).show();
+                  launchAppDetails(list.get(i));
             }
         });
 
+//        cst.app_name.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                if(temp.isInstalled){
+//
+//                    Toast.makeText(context, "Launching App "+cst.app_name.getText().toString(), Toast.LENGTH_SHORT).show();
+//                    context.startActivity(context.getPackageManager().getLaunchIntentForPackage(temp.pkg_name));
+//                }else{
+//                    Toast.makeText(context, "Cannot Launch App "+cst.app_name.getText().toString()+"\n Not installed", Toast.LENGTH_SHORT).show();
+//                }
+//
+////                copyToClipboard("App Name", cst.app_name.getText().toString());
+////                Toast.makeText(context, "Copied to Clipboard\n "+cst.app_name.getText().toString(), Toast.LENGTH_SHORT).show();
+//
+//                return true;
+//            }
+//        });
         cst.file_name.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -131,13 +157,10 @@ public class AdapterApkList extends RecyclerView.Adapter<ViewHolderApkList> {
         cst.text_pkg_name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                copyToClipboard("Package Name", cst.text_pkg_name.getText().toString());
-                Toast.makeText(context, "Copied to Clipboard\n "+cst.text_pkg_name.getText().toString(), Toast.LENGTH_SHORT).show();
-
+                launchAppDetails(list.get(i));
             }
         });
 
-        cst.app_name.setTooltipText(temp.app_name);
         //  Log.i(TAG , "On view Binder");
 
         cst.itemView.setOnClickListener(v -> {
@@ -180,6 +203,14 @@ public class AdapterApkList extends RecyclerView.Adapter<ViewHolderApkList> {
         }
 
         return selected_items_list;
+    }
+
+    public void launchAppDetails(ObjectApkFile pkgInfo){
+        if(pkgInfo.isInstalled){
+            Intent appInfo = new Intent(context, ActivityAppDetails.class);
+            appInfo.putExtra("PACKAGE_NAME", pkgInfo.pkg_name);
+            context.startActivity(appInfo);
+        }
     }
 
     public void SelectUpdatable(){

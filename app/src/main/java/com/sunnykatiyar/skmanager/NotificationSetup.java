@@ -131,6 +131,7 @@ public class NotificationSetup extends Notification {
                 .setPriority(NotificationCompat.PRIORITY_MIN)
                 .setContentTitle(title)
                 .setContentText(content)
+                .setOngoing(false)
                 .setContentIntent(pdi)
                 .setProgress(100, progress, false)
                 .setAutoCancel(false)

@@ -103,13 +103,13 @@ class ClassApkOperation {
             int part5 = ActivityMain.sharedPrefApkManager.getInt(name_part_5, 3);
             Log.i(TAG, "Part 5 :" + part5);
 
-            String part6 = "";//ActivityMain.sharedPrefApkManager.getString(name_part_6, "");
+            String part6 = ActivityMain.sharedPrefApkManager.getString(name_part_6, "");
             Log.i(TAG, "Part 6 :" + part6);
 
-            int part7 = 0;//ActivityMain.sharedPrefApkManager.getInt(name_part_7, 0);
+            int part7 = ActivityMain.sharedPrefApkManager.getInt(name_part_7, 0);
             Log.i(TAG, "Part 7 :" + part7);
 
-            String part8 = "";//ActivityMain.sharedPrefApkManager.getString(name_part_8, "");
+            String part8 = ActivityMain.sharedPrefApkManager.getString(name_part_8, "");
             Log.i(TAG, "Part 8 :" + part8);
 
             this.apk_formatted_name = getNameFromApkFile(apkItem, part1) + part2
@@ -201,7 +201,41 @@ class ClassApkOperation {
 
     private void setNameFormatFromApp() {
 
-//        if (ActivityMain.sharedPrefApkManager.contains(name_format_data_saved)) {
+//      if (ActivityMain.sharedPrefApkManager.contains(name_format_data_saved)) {
+
+        int part1 = ActivityMain.sharedPrefApkManager.getInt(name_part_1, 1);
+        Log.i(TAG, "Part 1 :" + part1);
+
+        String part2 = ActivityMain.sharedPrefApkManager.getString(name_part_2, "_v");
+        Log.i(TAG, "Part 2 :" + part2);
+
+        int part3 = ActivityMain.sharedPrefApkManager.getInt(name_part_3, 2);
+        Log.i(TAG, "Part 3 :" + part3);
+
+        String part4 = ActivityMain.sharedPrefApkManager.getString(name_part_4, "_");
+        Log.i(TAG, "Part 4 :" + part4);
+
+        int part5 = ActivityMain.sharedPrefApkManager.getInt(name_part_5, 3);
+        Log.i(TAG, "Part 5 :" + part5);
+
+        String part6 = ActivityMain.sharedPrefApkManager.getString("", "");
+        Log.i(TAG, "Part 6 :" + part6);
+
+        int part7 = ActivityMain.sharedPrefApkManager.getInt("", 0);
+        Log.i(TAG, "Part 7 :" + part7);
+
+        String part8 = ActivityMain.sharedPrefApkManager.getString("", "");
+        Log.i(TAG, "Part 8 :" + part8);
+
+        this.app_formatted_name = getNameFromApp(appItem, part1) + part2 + getNameFromApp(appItem, part3)
+                + part4 + getNameFromApp(appItem, part5) + part6 + getNameFromApp(appItem, part7) + part8 + ".apk";
+    //}
+        Log.i(TAG," APP Formatted Name : "+this.app_formatted_name);
+    }
+
+    private void setNameForExtractedFromApp() {
+
+//      if (ActivityMain.sharedPrefApkManager.contains(name_format_data_saved)) {
 
         int part1 = ActivityMain.sharedPrefApkManager.getInt(name_part_1, 1);
         Log.i(TAG, "Part 1 :" + part1);
@@ -221,7 +255,7 @@ class ClassApkOperation {
         String part6 = "";//ActivityMain.sharedPrefApkManager.getString("", "");
         Log.i(TAG, "Part 6 :" + part6);
 
-        int part7 = 0;ActivityMain.sharedPrefApkManager.getInt("", 0);
+        int part7 = 0;//ActivityMain.sharedPrefApkManager.getInt("", 0);
         Log.i(TAG, "Part 7 :" + part7);
 
         String part8 = "";//ActivityMain.sharedPrefApkManager.getString("", "");
@@ -229,9 +263,10 @@ class ClassApkOperation {
 
         this.app_formatted_name = getNameFromApp(appItem, part1) + part2 + getNameFromApp(appItem, part3)
                 + part4 + getNameFromApp(appItem, part5) + part6 + getNameFromApp(appItem, part7) + part8 + ".apk";
-    //}
+        //}
         Log.i(TAG," APP Formatted Name : "+this.app_formatted_name);
     }
+
 
     private String getNameFromApp(ObjectAppPackageName ld, int i) {
         switch (i) {
@@ -268,12 +303,12 @@ class ClassApkOperation {
         if(null!=appItem.insaller_pkg){
             Log.i(TAG," APP INSTALLER "+appItem.insaller_pkg);
             if(appItem.insaller_pkg.equals(playstore_installer)){
-                setNameFormatFromApp();
+                setNameForExtractedFromApp();
                 source_file = this.appItem.apk_file;
                 Log.i(TAG," EXTRACTING APK "+appItem.app_name);
                 new ExtractTask().execute();
             }else if(!appItem.insaller_pkg.equals(offline_installer)){
-                setNameFormatFromApp();
+                setNameForExtractedFromApp();
                 source_file = this.appItem.apk_file;
                 Log.i(TAG," EXTRACTING APK "+appItem.app_name);
                 new ExtractTask().execute();
@@ -298,20 +333,10 @@ class ClassApkOperation {
         }
 
         private void extractApkOf(){
-//            String parent = ActivityMain.sharedPrefSettings.getString(key_repository_folder,path_not_set);
-//
-//            Log.i(TAG, "\nParent value from preference : " + parent);
-//
-//            parent_folder = new File(parent);
-//            //DocumentFile parent_doc = DocumentFile.fromTreeUri(context, parent_uri);
-//
-//            if(!parent_folder.exists() || !parent_folder.isDirectory()){
-//                publishProgress("\nParent value not exists : " + parent_folder);
-//                parent_folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-//            }
+
+            //--------------------------------EXTRACT APK WITHOUT ROOT-----------------------------------
+
             Uri parent_uri;
-//--------------------------------EXTRACT APK WITHOUT ROOT-----------------------------------
-//
             parent_uri = Uri.parse(ActivityMain.sharedPrefSettings.getString(key_export_apk_uri,path_not_set));
 
             if(parent_uri.toString().equals(path_not_set)){

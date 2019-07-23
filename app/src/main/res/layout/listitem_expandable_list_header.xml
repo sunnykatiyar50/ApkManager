@@ -10,7 +10,7 @@
         android:id="@+id/group_item"
         android:layout_width="391dp"
         android:layout_height="35dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="24dp"
         android:background="@color/black"
         android:padding="@dimen/padding_medium"
         android:text="Click to Expand"

@@ -49,7 +49,7 @@ import static com.sunnykatiyar.skmanager.ActivityMain.prefEditRepository;
 import static com.sunnykatiyar.skmanager.ActivityMain.sharedPrefSettings;
 import static com.sunnykatiyar.skmanager.ActivityMain.sharedPrefRepository;
 
-class FragmentApkFiles extends Fragment {
+public class FragmentApkFiles extends Fragment {
 
 
     private static final int PERMISSION_REQUEST_CODE = 100;
@@ -97,8 +97,8 @@ class FragmentApkFiles extends Fragment {
     private final String sort_apks_by_date = "SORT_BY_DATE";
     private final String sort_apks_by_size = "SORT_BY_SIZE";
 
-    private final String order_apks_decreasing = "ORDER_INCREASING";
-    private final String order_apks_increasing = "ORDER_DECREASING";
+    private final String order_apks_decreasing = "ORDER_DECREASING";
+    private final String order_apks_increasing = "ORDER_INCREASING";
 
     private String sort_apks_by;
     private String order_apks_by;
@@ -434,7 +434,7 @@ class FragmentApkFiles extends Fragment {
             Log.i(TAG,"Found Repository PAth : "+ sharedPrefSettings.getString(key_repository_folder, path_not_set));
 
             builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Confirm Refreshing Repository Apks.\n This May take some time. ");
+            builder.setTitle("Confirm Rebuilding Repository Apks.\n This May take some time. ");
             builder.setMessage("Click Yes to Continue...");
             builder.setCancelable(false);
 
@@ -456,7 +456,7 @@ class FragmentApkFiles extends Fragment {
             }
 
             builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Confirm Moving " + selected_files_list.size() + " Files To Repository Folder");
+            builder.setTitle("Confirm Moving " + selected_files_list.size() + " files to selected folder");
             builder.setMessage("Click Yes to Continue...");
             builder.setCancelable(false);
 
@@ -490,7 +490,7 @@ class FragmentApkFiles extends Fragment {
         }
 
 
-        //----------------------------MOVE MANUALLY------------------------------------------
+        //----------------------------Copy MANUALLY------------------------------------------
         if(id == R.id.menuitem_copy_files){
 
             if (cla != null) {
@@ -546,7 +546,7 @@ class FragmentApkFiles extends Fragment {
                     if(checkPermission()) {
                         String path = Environment.getExternalStorageDirectory().toString();
                         builder = new AlertDialog.Builder(getContext());
-                        builder.setTitle("Confirm Moving " + selected_files_list.size() + " Files To Repository Folder");
+                        builder.setTitle("Confirm AutoMoving " + selected_files_list.size() + " Files To Repository Folder");
                         builder.setMessage("Click Yes to Continue...");
                         builder.setCancelable(false);
 
@@ -1124,7 +1124,7 @@ class FragmentApkFiles extends Fragment {
                         if (ldm.apk_pkg_info != null) {
                             apklist.add(ldm);
                             count_apkfilesList++;
-                            publishProgress(textview_msg,count_apkfilesList+" - Adding "+ldm.file_name,false);
+                          //  publishProgress(textview_msg,count_apkfilesList+" - Adding "+ldm.file_name,false);
                         }
                         //Log.i(TAG,"File : "+source_apk.getNamePartsFromApkItem());
                     }else if (f1.isDirectory()) {
@@ -1162,10 +1162,10 @@ class FragmentApkFiles extends Fragment {
             ActivityOperations.operationsHashMapList.put(126, objop);
             for(i=1;i<=files_list.size();i++) {
                 ObjectApkFile file = files_list.get(i-1);
+                objop.showNotification(i+"/"+files_list.size()+ " Installing "+file.app_name,i,(i*100)/files_list.size());
                 try{
                     apk_size = file.file.length();
                     command = "cat \"" + file.file.getPath() + "\"|pm install -S " + apk_size;
-                    objop.showNotification(i+"/"+files_list.size()+ " Installing "+file.app_name,i,(i*100)/files_list.size());
                     //  Log.i(TAG, "COMMAND :"+ command);
                     Shell.su(command).exec();
                     count_success++;
@@ -1194,10 +1194,10 @@ class FragmentApkFiles extends Fragment {
             i.setType("application/vnd.android.package-archive");
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Log.i(TAG, "Root Access " + rootAccess);
             ObjectOperation objop = new ObjectOperation(context, 127, " Installing Apps (No Root) ", files_list.size());
             ActivityOperations.operationsHashMapList.put(127, objop);
-            Log.i(TAG, "Root Access " + rootAccess);
-             int k =0;
+            int k =0;
             for(k=1;k<= files_list.size();k++)
             {
                 ObjectApkFile file = files_list.get(k-1);
@@ -1297,14 +1297,13 @@ class FragmentApkFiles extends Fragment {
             int count_not_moved = 0;
             int count_cannot_move = 0;
 
-            boolean status;
-            ObjectOperation objop = new ObjectOperation(context, 137, " Auto Moving Apps (Root) ", list.size());
+            ObjectOperation objop = new ObjectOperation(context, 137, " Auto Moving Apks to Repo (Root) ", list.size());
             ActivityOperations.operationsHashMapList.put(137, objop);
             int k=0;
             for( k=1;k<list.size();k++)
             {
                 ObjectApkFile aldi = list.get(k-1);
-                objop.showNotification(k+"/"+list.size()+ " Uninstalling "+aldi.app_name,k,(k*100)/list.size());
+                objop.showNotification(k+"/"+list.size()+ " Moving "+aldi.app_name,k,(k*100)/list.size());
                 value_parent_folder = sharedPrefRepository.getString(aldi.pkg_name, path_not_set);
                 
                 if (value_parent_folder.equals(path_not_set)) {
@@ -1336,7 +1335,7 @@ class FragmentApkFiles extends Fragment {
             int count_not_moved = 0;
             int count_cannot_move = 0;
             boolean status;
-            ObjectOperation objop = new ObjectOperation(context, 139, "Auto Moving Apps (No Root) ", list.size());
+            ObjectOperation objop = new ObjectOperation(context, 139, "Auto Moving Apks to Repo(No Root) ", list.size());
             ActivityOperations.operationsHashMapList.put(139, objop);
             int k=0;
             for( k=1;k<list.size();k++)
@@ -1500,8 +1499,13 @@ class FragmentApkFiles extends Fragment {
             boolean isDeleted;
             int count_deleted=0;
             String command;
-
-            for (ObjectApkFile file : files_list) {
+            ObjectOperation objop = new ObjectOperation(context, 127, " Deleting Apks (No Root) ", files_list.size());
+            ActivityOperations.operationsHashMapList.put(127, objop);
+            int k =0;
+            for(k=1;k<= files_list.size();k++)
+            {
+                ObjectApkFile file = files_list.get(k-1);
+                objop.showNotification(k+"/"+files_list.size()+ " Deleting "+file.app_name,k,(k*100)/files_list.size());
                 isDeleted = file.file.delete();
                 apkFilesList.remove(file);
                 if(isDeleted){
@@ -1510,7 +1514,7 @@ class FragmentApkFiles extends Fragment {
                 Log.i(TAG, "Deletion of " + file.file_name + " : " + isDeleted);
                 publishProgress(textview_msg,"Deletion of " + file.file_name + " : " + isDeleted,false);
             }
-
+            objop.cancelNotification();
             publishProgress(textview_msg,"Total Files  : "+files_list.size()+"\nDelteted Succesfully "+count_deleted ,false);
 
         }
@@ -1519,7 +1523,13 @@ class FragmentApkFiles extends Fragment {
             boolean isDeleted;
             int count_deleted=0;
             String command;
-            for (ObjectApkFile file : files_list) {
+            ObjectOperation objop = new ObjectOperation(context, 127, " Deleting Apps (Root) ", files_list.size());
+            ActivityOperations.operationsHashMapList.put(127, objop);
+            int k =0;
+            for(k=1;k<= files_list.size();k++)
+            {
+                ObjectApkFile file = files_list.get(k-1);
+                objop.showNotification(k+"/"+files_list.size()+ " Deleting "+file.app_name,k,(k*100)/files_list.size());
                 try{
                     command = "rm -f \""+file.file.getAbsolutePath()+"\"";
                     Shell.sh(command).exec();
@@ -1530,6 +1540,7 @@ class FragmentApkFiles extends Fragment {
                     Log.i(TAG, "Deletion Failed " + file.file_name + " Error : "+ex );
                 }
             }
+            objop.cancelNotification();
             publishProgress(textview_msg,"Total Files to Delete "+files_list.size()+"\tDeleted Successfully "+count_deleted,false);
         }
 
@@ -1539,14 +1550,18 @@ class FragmentApkFiles extends Fragment {
 
             int count_rename_passed=0;
             int count_rename_failed=0;
-
-            for(ObjectApkFile f : files_list)
+            ObjectOperation objop = new ObjectOperation(context, 127, "Renaming Apps (No Root) ", files_list.size());
+            ActivityOperations.operationsHashMapList.put(127, objop);
+            int k =0;
+            for(k=1;k<= files_list.size();k++)
             {
-                ClassApkOperation classApkOperationObject = new ClassApkOperation(f,getContext());
+                ObjectApkFile file = files_list.get(k-1);
+                objop.showNotification(k+"/"+files_list.size()+ " Renaming "+file.app_name,k,(k*100)/files_list.size());
+                ClassApkOperation classApkOperationObject = new ClassApkOperation(file,getContext());
                 classApkOperationObject.RenameThisApk();
                 if(classApkOperationObject.result){
                     count_rename_passed++;
-                    apkFilesList.remove(f);
+                    apkFilesList.remove(file);
                     apkFilesList.add(new ObjectApkFile(classApkOperationObject.dest_file,context));
                     publishProgress(textview_msg, count_rename_passed+" : "+ classApkOperationObject.apk_formatted_name+" renamed successfully.");
                 }else if(!false){
@@ -1554,7 +1569,7 @@ class FragmentApkFiles extends Fragment {
                     publishProgress(textview_msg, classApkOperationObject.apk_formatted_name+" renaming failed.");
                 }
             }
-
+            objop.cancelNotification();
             searchApks(new File(ActivityMain.sharedPrefApkManager.getString(key_local_path,path_not_set)));
 
             publishProgress(textview_msg,"Total Selected to Rename : "
@@ -1574,10 +1589,10 @@ class FragmentApkFiles extends Fragment {
 
         Log.i(TAG, " In SortRootFileList : sort by = " + sort_apks_by + " ApkFilesList Count: " + apkFilesList.size());
 
-        switch (sort_apks_by) {
+        switch(sort_apks_by) {
             case sort_apks_by_name: {
                 Collections.sort(to_sort_list, file_name_comparator);
-                if (order_apks_by.equals(order_apks_decreasing)) {
+                if(order_apks_by.equals(order_apks_decreasing)) {
                     Collections.reverse(apkFilesList);
                 }
                 Log.i(TAG, "in sort_apks_by_name");

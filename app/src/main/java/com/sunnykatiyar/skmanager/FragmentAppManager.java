@@ -115,8 +115,6 @@ public class FragmentAppManager extends Fragment {
             myAsyncTask = new MyAsyncTask(getActivity(), search_query);
             myAsyncTask.execute();
             adapter = new AdapterAppList(mainpm, launchable_apps_list, getActivity());
-         //   app_listview.setNewObjectFilesList(adapter);
-        //    adapter.notifyDataSetChanged();
             showMsg(log_msg,"Launching asynctask : query = "+search_query,false);
         }else{
             showMsg(log_msg,"Using old aynctask for applist : query = "+search_query,false);

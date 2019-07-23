@@ -417,7 +417,7 @@ public class ClassNoRootUtils {
                     myOperationObject.showNotification(k+"/"+list.size()+" - Deleting "+obj.file_name,k,(k*100)/list.size());
                     DocumentsContract.deleteDocument(context.getContentResolver(),obj.uri);
                     publishProgress(textview_msg,"Deleted successfully "+obj.file_name);
-                }catch (FileNotFoundException e) {
+                }catch(Exception e) {
                     showMsg(log_msg,"Unable to delete "+obj.file_name+". Error : "+e);
                 }
                 if(isCancelled()){

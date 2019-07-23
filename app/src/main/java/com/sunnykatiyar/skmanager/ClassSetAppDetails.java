@@ -1,6 +1,7 @@
 package com.sunnykatiyar.skmanager;
 
 import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.ConfigurationInfo;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageInfo;
@@ -9,8 +10,6 @@ import android.content.pm.ProviderInfo;
 import android.content.pm.ServiceInfo;
 import android.content.pm.SharedLibraryInfo;
 import android.util.Log;
-
-import com.topjohnwu.superuser.Shell;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,11 +20,12 @@ import java.util.List;
 
 class ClassSetAppDetails {
 
-    private final PackageManager appInfo_pm;
+    private final PackageManager packageManager;
     private final PackageInfo pkg;
     final String TAG = " MYAPP : SETAPPDETAILS : ";
     HashMap<String, List<String>> expandable_list = new HashMap<>();
-    public List<String> permissions_granted=new ArrayList<>();
+
+    List<String> permissions_granted=new ArrayList<>();
     List<String> all_permissions=new ArrayList<>();
     List<String>  providers_list=new ArrayList<>();
     List<String>  receivers_list=new ArrayList<>();
@@ -44,55 +44,26 @@ class ClassSetAppDetails {
     List<String> installTime = new ArrayList<>();
     List<String> installLocation = new ArrayList<>();
     List<String> requested_features = new ArrayList<>();
-    public List<String> services_list = new ArrayList<>();
+    List<String> services_list = new ArrayList<>();
     List<String> apkPath = new ArrayList<>();
     List<String> split_apks_names = new ArrayList<>();
     List<String> split_apks_path = new ArrayList<>();
 
-    public ClassSetAppDetails(PackageManager appInfo_pm, PackageInfo pkg){
-        this.appInfo_pm=appInfo_pm;
-        this.pkg=pkg ;
+    public ClassSetAppDetails(PackageManager pm, PackageInfo pkg){
+        this.packageManager = pm;
+        this.pkg = pkg ;
         expandable_list = setListData();
     }
 
     public HashMap<String, List<String>> setListData() {
 
-        PackageInfo pkg1 = pkg;
-
-
         // --------------------ADD SPLIT APKS LIST-----------------------------------
-
-            // pkg1=appinfo_pm.getPackageInfo(pkg.packageName,PackageManager.PER);
-            if(pkg.splitNames!=null) {
+         if(pkg.splitNames!=null) {
                 split_apks_names = Arrays.asList(pkg.splitNames);
             }else{
-                split_apks_names.add("No Split APKs");
-            }
-
-        expandable_list.put("Split Apk Names", split_apks_names);
-
-
-        // --------------------ADD SERVICES INFO-----------------------------------
-        try {
-            pkg1=appInfo_pm.getPackageInfo(pkg.packageName,PackageManager.GET_SERVICES);
-            ServiceInfo[] servicesInfos = pkg1.services;
-            if(servicesInfos!=null){
-                for(ServiceInfo ser : servicesInfos){
-                    if(ser!=null){
-                        services_list.add(ser.name);
-                    }
-                }
-
-                if(services_list.size()==0){
-                    services_list.add("Not Available");
-                }
-            }else{
-                services_list.add("Not Available");
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            services_list.add("Unable to Access"); }
-
-        expandable_list.put("Services", services_list);
+              //  split_apks_names.add("No Split APKs");
+         }
+         expandable_list.put("Split Apk Names", split_apks_names);
 
 
         //-----------------------ADD VERSION-----------------------------
@@ -105,16 +76,7 @@ class ClassSetAppDetails {
 
 
         // --------------------ADD INSTALL LOCATION-----------------------------------
-        int loc = pkg.installLocation;
-        if(loc==0){
-            installLocation.add(" INSTALL_LOCATION_AUTO");
-        }else if(loc==1){
-            installLocation.add("INSTALL_LOCATION_INTERNAL_ONLY");
-        }else if(loc==2){
-            installLocation.add("INSTALL_LOCATION_PREFER_EXTERNAL");
-        }else {
-            installLocation.add("<Unknown>");
-        }
+        installLocation = getInstalledLocation(pkg);
         expandable_list.put("Install Location", installLocation);
 
 
@@ -142,12 +104,8 @@ class ClassSetAppDetails {
         apkPath.add(pkg.applicationInfo.sourceDir);
         expandable_list.put("Base Apk Path ",apkPath);
 
-
         //-----------------------USER ID------------------------------------------------
-        List<SharedLibraryInfo> shlibs = appInfo_pm.getSharedLibraries(0);
-        for(SharedLibraryInfo sh :shlibs){
-            sharedLibs.add(sh.getName()+" - "+sh.getType());
-        }
+        sharedLibs = getSharedLibs(pkg);
         expandable_list.put("Shared Libraries",sharedLibs);
 
 
@@ -155,10 +113,9 @@ class ClassSetAppDetails {
         if(pkg.applicationInfo.splitSourceDirs != null){
            split_apks_path =Arrays.asList(pkg.applicationInfo.splitSourceDirs);
         }else{
-            split_apks_path.add("No Split APK Paths ");
+            //split_apks_path.add("No Split APK Paths ");
         }
         expandable_list.put("Split APK Paths",split_apks_path );
-
 
         //-----------------------Add Target SDK----------------------------------------------
         targetSdk.add(String.valueOf(pkg.applicationInfo.targetSdkVersion));
@@ -168,15 +125,147 @@ class ClassSetAppDetails {
         minSdk.add(String.valueOf(pkg.applicationInfo.minSdkVersion));
         expandable_list.put("Minimum SDK Version",minSdk);
 
-
         // --------------------ADD INSTALLER SOURCE-----------------------------------
-        install_SourceApp.add(appInfo_pm.getInstallerPackageName(pkg.packageName));
+        String installer = packageManager.getInstallerPackageName(pkg.packageName);
+        if(null!=installer & !installer.isEmpty())
+        install_SourceApp.add(installer);
         expandable_list.put("Installer Package", install_SourceApp);
 
+        //-----------------------UID----------------------------------------------
+        try {
+            int uid = packageManager.getPackageUid(pkg.packageName, 0);
+            uids.add(String.valueOf(uid));
+        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+          //  uids.add("Not available");
+        }
+        expandable_list.put("UserID (uid) ", uids);
 
         // -------------------PERMISSIONS REQUIRED LIST-------------------------
+        all_permissions = getAllPermList(pkg);
+        expandable_list.put("Permissions Required", all_permissions);
+
+        permissions_granted = getGrantedPermList(pkg);
+        expandable_list.put("Permissions Granted", permissions_granted);
+
+        // --------------------------ADD SERVICES INFO-----------------------------------
+        services_list = getServicesList(pkg) ;
+        expandable_list.put("Services", services_list);
+
+//      --------------------------GET ACTIVITIES--------------------------------------------
+        activities_list = getActivitiesList(pkg);
+        expandable_list.put("Activities", activities_list);
+
+        //---------------------------GET FEATURES-----------------------------------------------
+        requested_features =  getReqFeatures(pkg);
+        expandable_list.put("Features Requested", requested_features);
+
+
+        // --------------------------GET PROVIDERS-----------------------------------------------
+        providers_list = getProvidersList(pkg);
+        expandable_list.put("Providers", providers_list);
+
+
+        //--------------------------GET RECEIVERS --------------------------------------------
+        receivers_list = getReceiversList(pkg);
+        expandable_list.put("Receivers", receivers_list);
+
+        //-----------------------CONFIG PREFERENCES----------------------------------------------
+        configs = getConfigs(pkg);
+        expandable_list.put("Configuration Info", configs);
+
+        return expandable_list;
+    }
+
+
+    public List<String> getServicesList(PackageInfo pkg){
+        List<String> services_list = new ArrayList<>();
+        PackageInfo pkg1;
         try {
-            pkg1 = appInfo_pm.getPackageInfo(pkg.packageName, PackageManager.GET_PERMISSIONS);
+            pkg1= packageManager.getPackageInfo(pkg.packageName,PackageManager.GET_SERVICES|PackageManager.MATCH_DISABLED_COMPONENTS);
+            ServiceInfo[] servicesInfos = pkg1.services;
+            if(servicesInfos!=null){
+                for(ServiceInfo ser : servicesInfos){
+                    if(ser!=null){
+                        services_list.add(ser.name);
+                    }
+                }
+
+                if(services_list.size()==0){
+//                    services_list.add("Not Available");
+                }
+            }else{
+//                services_list.add("Not Available");
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+//            services_list.add("Unable to Access");
+        }
+        return  services_list;
+    }
+
+    public List<String> getReceiversList(PackageInfo pkg){
+        List<String> receivers_list = new ArrayList<>();
+        PackageInfo pkg1;
+
+        try {
+            pkg1= packageManager.getPackageInfo(pkg.packageName,PackageManager.GET_RECEIVERS|PackageManager.MATCH_DISABLED_COMPONENTS);
+            ActivityInfo[] receiver_array=pkg1.receivers;
+            if(receiver_array!=null){
+                for (int temp = 0; temp < receiver_array.length; temp++) {
+                    receivers_list.add(receiver_array[temp].name);
+                }
+            }
+//          else receivers_list.add("No Receivers");
+        } catch (PackageManager.NameNotFoundException e) {
+//            receivers_list.add("Unable To Access");
+        }
+
+        return receivers_list;
+    }
+
+    public List<String> getActivitiesList(PackageInfo pkg){
+        List<String> activities_list = new ArrayList<>();
+        PackageInfo pkg1;
+        try {
+            pkg1= packageManager.getPackageInfo(pkg.packageName,PackageManager.GET_ACTIVITIES|PackageManager.MATCH_DISABLED_COMPONENTS);
+            ActivityInfo[] activity_array = pkg1.activities;
+            if(activity_array!=null){
+                for(ActivityInfo a:activity_array){
+                    activities_list.add(a.name);
+                }
+            }
+//            else activities_list.add("No Activities");
+        } catch(Exception e) {
+//            activities_list.add("Unable To Access");
+        }
+
+        return activities_list;
+    }
+
+    public List<String> getProvidersList(PackageInfo pkg){
+        List<String> providers_list = new ArrayList<>();
+        PackageInfo pkg1;
+        try {
+            pkg1= packageManager.getPackageInfo(pkg.packageName,PackageManager.GET_PROVIDERS|PackageManager.MATCH_DISABLED_COMPONENTS);
+            ProviderInfo[] provider_array=pkg1.providers;
+            if(provider_array!=null){
+                for (int temp = 0; temp<provider_array.length; temp++) {
+                    providers_list.add(provider_array[temp].name);
+                }}
+//            else providers_list.add("No Providers");
+        } catch (PackageManager.NameNotFoundException e) {
+//            providers_list.add("Unable To Access");
+        }
+        return providers_list;
+    }
+
+    public List<String> getGrantedPermList(PackageInfo pkg){
+        List<String> permissions_granted=new ArrayList<>();
+        List<String> all_permissions=new ArrayList<>();
+
+        PackageInfo pkg1;
+        try {
+            pkg1 = packageManager.getPackageInfo(pkg.packageName, PackageManager.GET_PERMISSIONS);
             String[] req_perms_array =  pkg1.requestedPermissions;
             if(req_perms_array!=null){
                 for (int i = 0; i < pkg1.requestedPermissions.length; i++) {
@@ -186,33 +275,86 @@ class ClassSetAppDetails {
                     }
                 }
             }else{
-                all_permissions.add("No Permission Required");
-                permissions_granted.add("No Permission Granted");
+//                all_permissions.add("No Permission Required");
+//                permissions_granted.add("No Permission Granted");
             }
         }catch(Exception e) {
-            all_permissions.add("Unable To Access");
-            permissions_granted.add("Unable To Access");
+//            all_permissions.add("Unable To Access");
+//            permissions_granted.add("Unable To Access");
 
         }
-        expandable_list.put("Permissions Required", all_permissions);
-        expandable_list.put("Permissions Granted", permissions_granted);
 
+        return permissions_granted;
+    }
 
-        //--------------- ---------- GET ACTIVITIES--------------------------------------------
+    public List<String> getAllPermList(PackageInfo pkg){
+        List<String> permissions_granted=new ArrayList<>();
+        List<String> permissions_all=new ArrayList<>();
+
+        PackageInfo pkg1;
         try {
-            pkg1= appInfo_pm.getPackageInfo(pkg.packageName,PackageManager.GET_ACTIVITIES);
-            ActivityInfo[] activity_array = pkg1.activities;
-            if(activity_array!=null){
-                for(ActivityInfo a:activity_array){
-                    activities_list.add(a.name);
+            pkg1 = packageManager.getPackageInfo(pkg.packageName, PackageManager.GET_PERMISSIONS);
+            String[] req_perms_array =  pkg1.requestedPermissions;
+            if(req_perms_array!=null){
+                for (int i = 0; i < pkg1.requestedPermissions.length; i++) {
+                    permissions_all.add(pkg1.requestedPermissions[i]);
+                    if((pkg1.requestedPermissionsFlags[i] & PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0){
+                        permissions_granted.add(pkg1.requestedPermissions[i]);
+                    }
                 }
-                }else activities_list.add("No Activities");
-        } catch(Exception e) {
-            activities_list.add("Unable To Access");
-        }
-        expandable_list.put("Activities", activities_list);
+            }else{
+//                permissions_all.add("No Permission Required");
+//                permissions_granted.add("No Permission Granted");
+            }
+        }catch(Exception e) {
+//            permissions_all.add("Unable To Access");
+//            permissions_granted.add("Unable To Access");
 
-        // ----------------------------------GET FEATURES-----------------------------------------------
+        }
+
+        return permissions_all;
+    }
+
+    public List<String> getInstalledLocation(PackageInfo pkg){
+        List<String> installLocation = new ArrayList<>();
+        int loc = pkg.installLocation;
+        
+        if(loc==0){
+            installLocation.add("INSTALL_LOCATION_AUTO");
+        }else if(loc==1){
+            installLocation.add("INSTALL_LOCATION_INTERNAL_ONLY");
+        }else if(loc==2){
+            installLocation.add("INSTALL_LOCATION_PREFER_EXTERNAL");
+        }else {
+           installLocation.add(String.valueOf(pkg.installLocation));
+        }
+
+        return installLocation;
+    }
+
+    public List<String> getConfigs(PackageInfo pkg) {
+        List<String> configs = new ArrayList<>();
+        PackageInfo pkg1;
+        try {
+            pkg1 = packageManager.getPackageInfo(pkg.packageName, PackageManager.GET_CONFIGURATIONS);
+            ConfigurationInfo[] cons =  pkg1.configPreferences;
+            if(null!=cons){
+                for(ConfigurationInfo info : cons){
+                    configs.add(info.toString());
+                }
+            }else{
+//                configs.add("No ConfigPreference") ;
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//            configs.add("Unable to Access");
+        }
+
+        return configs;
+    }
+
+    public List<String> getReqFeatures(PackageInfo pkg) {
+        List<String> requested_features = new ArrayList<>();
         try {
             FeatureInfo[] feat = pkg.reqFeatures;
             if(feat!=null){
@@ -222,75 +364,34 @@ class ClassSetAppDetails {
                 }
             }
             else {
-                requested_features.add("No Featues Requested");
-                Log.i(TAG, "Featues Not found : ");
+//                requested_features.add("No Featues Requested");
+                //Log.i(TAG, "Featues Not found : ");
             }
         } catch (Exception e) {
-            requested_features.add("Unable To Access");
+//            requested_features.add("Unable To Access");
         }
-        expandable_list.put("Features Requested", requested_features);
 
+        return requested_features;
+    }
 
-        // ----------------------------------GET PROVIDERS-----------------------------------------------
+    public List<String> getSharedLibs(PackageInfo pkg) {
+
+        String[] sharedLibsArr ;
+        List<String> sharedLibs = new ArrayList<>();
         try {
-            pkg1=appInfo_pm.getPackageInfo(pkg.packageName,PackageManager.GET_PROVIDERS);
-            ProviderInfo[] provider_array=pkg1.providers;
-            if(provider_array!=null){
-                for (int temp = 0; temp<provider_array.length; temp++) {
-                    providers_list.add(provider_array[temp].name);
-                }}
-            else providers_list.add("No Providers");
-        } catch (PackageManager.NameNotFoundException e) {
-            providers_list.add("Unable To Access");
-        }
-        expandable_list.put("Providers", providers_list);
-
-
-        // -------------------------------GET RECEIVERS --------------------------------------------
-        try {
-             pkg1=appInfo_pm.getPackageInfo(pkg.packageName,PackageManager.GET_RECEIVERS);
-            ActivityInfo[] receiver_array=pkg1.receivers;
-             if(receiver_array!=null){
-                for (int temp = 0; temp < receiver_array.length; temp++) {
-                    receivers_list.add(receiver_array[temp].name);
-                }}
-             else receivers_list.add("No Receivers");
-        } catch (PackageManager.NameNotFoundException e) {
-            receivers_list.add("Unable To Access");
-        }
-        expandable_list.put("Receivers", receivers_list);
-
-        //-----------------------UID----------------------------------------------
-        try {
-            int uid = appInfo_pm.getPackageUid(pkg.packageName, 0);
-            uids.add(String.valueOf(uid));
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            uids.add("Not available");
-        }
-        expandable_list.put("UserID (uid) ", uids);
-
-        //-----------------------CONFIG PREFERENCES----------------------------------------------
-        try {
-            pkg1 = appInfo_pm.getPackageInfo(pkg.packageName, PackageManager.GET_CONFIGURATIONS);
-            ConfigurationInfo[] cons =  pkg1.configPreferences;
-            if(null!=cons){
-                for(ConfigurationInfo info : cons){
-                    configs.add(info.toString());
+            ApplicationInfo appinfo = packageManager.getApplicationInfo(pkg.packageName, PackageManager.GET_SHARED_LIBRARY_FILES);
+            sharedLibsArr = appinfo.sharedLibraryFiles;
+            if(sharedLibsArr!=null){
+                for(String str:sharedLibsArr){
+                    sharedLibs.add(str);
                 }
             }else{
-                configs.add("No ConfigPreference") ;
+//                sharedLibs.add("No Features");
             }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            configs.add("Unable to Access");
+        }catch(Exception e) {
+//            sharedLibs.add("Not Available");
         }
-        expandable_list.put("Configuration Info", configs);
-
-        //-----------------------Add Target SDK----------------------------------------------
-//        appInfo_pm.get
-
-        return expandable_list;
+        return sharedLibs;
     }
 
 }

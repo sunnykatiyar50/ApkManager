@@ -5,8 +5,8 @@ import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ComponentInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -18,9 +18,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.provider.Settings;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.Intent.createChooser;
 import static com.topjohnwu.superuser.internal.InternalUtils.getContext;
@@ -47,7 +48,7 @@ public class ActivityAppDetails extends AppCompatActivity {
   
     private ExpandableListView expandableListView;
     private List<String> headers;
-    private ExpandableListAdapter exp_adapter;
+    private AdapterExpandableList exp_adapter;
     String clickedPackageLabel;
   //String clickedPackageName;
     private PackageManager packageManager ;
@@ -60,8 +61,8 @@ public class ActivityAppDetails extends AppCompatActivity {
     private static final String key_root_access = FragmentSettings.key_root_access;
     final String path_not_set = "PATH NOT SET";
     private PackageManager pm;
-
-    ClassApkOperation classApkOperationObject;
+    public ClassSetAppDetails appDetails;
+    HashMap<String, List<String>> expListMap;
 
     static {
         Shell.Config.setFlags(Shell.FLAG_REDIRECT_STDERR);
@@ -73,10 +74,8 @@ public class ActivityAppDetails extends AppCompatActivity {
     private static final long MB = 1024 * 1024;
     private static final long KB = 1024;
     private static final long GB = 1024 * 1024 * 1024;
+    public List<Integer> expandedPosList = new ArrayList<>();
 
-    public ClassSetAppDetails appDetails;
-    HashMap<String, List<String>> detailed_Exp_List;
-    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +87,7 @@ public class ActivityAppDetails extends AppCompatActivity {
         packageManager = getPackageManager();
         clipboardManager = (ClipboardManager) this.getSystemService(CLIPBOARD_SERVICE);
         String clickedPackage = received_intent.getStringExtra("PACKAGE_NAME");
+
         try {
             clickedPackageInfo =  packageManager.getPackageInfo(clickedPackage, 0);
             clickedPackageLabel = (String) clickedPackageInfo.applicationInfo.loadLabel(packageManager);
@@ -109,6 +109,7 @@ public class ActivityAppDetails extends AppCompatActivity {
         TextView app_version = findViewById(R.id.version_num);
         TextView appinfo_pkgname = findViewById(R.id.pkg_name);
         TextView install_date = findViewById(R.id.install_date);
+        TextView app_type = findViewById(R.id.details_app_type);
         TextView app_size = findViewById(R.id.app_size);
         rootAccess = ActivityMain.sharedPrefSettings.getBoolean(key_root_access,false);
         pm = this.getPackageManager();
@@ -116,61 +117,179 @@ public class ActivityAppDetails extends AppCompatActivity {
         install_date.setText(new SimpleDateFormat().format(clickedPackageInfo.firstInstallTime));
         appinfo_pkgname.setText(clickedPackageInfo.packageName);
         app_version.setText(clickedPackageInfo.versionName);
+        
+        if(clickedPackageInfo.applicationInfo.sourceDir.startsWith("/system/")){
+            app_type.setText("System");
+            app_type.setTextColor(getContext().getColor(R.color.red));
+        }else{
+            app_type.setText("User");
+            app_type.setTextColor(getContext().getColor(R.color.light_green));
+        }
         appinfo_icon.setImageDrawable(packageManager.getApplicationIcon(clickedPackageInfo.applicationInfo));
         appinfo_appname.setText(packageManager.getApplicationLabel(clickedPackageInfo.applicationInfo));
         app_size.setText(getSize(new File(clickedPackageInfo.applicationInfo.sourceDir)));
 
-        appDetails = new ClassSetAppDetails(packageManager, clickedPackageInfo);
         expandableListView = findViewById(R.id.expandable_list);
-        detailed_Exp_List = appDetails.expandable_list;
-        headers = new ArrayList<>(detailed_Exp_List.keySet());
+
+        appDetails = new ClassSetAppDetails(packageManager, clickedPackageInfo);
+        expListMap = appDetails.expandable_list;
+        headers = new ArrayList<>(expListMap.keySet());
 
         Collections.sort(headers, (s, t1) -> s.compareToIgnoreCase(t1));
 
-        exp_adapter = new AdapterExpandableList(this, headers, detailed_Exp_List);
+        exp_adapter = new AdapterExpandableList(this, headers, expListMap,clickedPackageInfo,appDetails);
+
+
         expandableListView.setAdapter(exp_adapter);
+
+        expandedPosList.clear();
+
+        for(int i=0;i<headers.size();i++)
+        {
+            if(expListMap.get(headers.get(i)).size()==1){
+               // expandedPosList.add(i);
+                expandableListView.expandGroup(i);
+            }
+        }
+
 
         expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
             Intent activityIntent = new Intent();
-            Log.e("in Appdetails","i can detect a childclick");
-            //Toast.makeText(v.getContext(),"i can detect a childclick", Toast.LENGTH_SHORT).show();
+            Log.e("in Appdetails","click child item");
 
+            v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
 
+            //-------------------------------ACTIVITIES CLICK------------------------------------------------
             if(exp_adapter.getGroup(groupPosition).toString().equals("Activities"))
             {
                 String clicked_activity = exp_adapter.getChild(groupPosition,childPosition).toString();
                 activityIntent.setComponent(new ComponentName(clickedPackageInfo.packageName,clicked_activity) );
                 Toast.makeText(v.getContext(), clicked_activity, Toast.LENGTH_SHORT).show();
-                startActivity(activityIntent);
+                try{
+                    startActivity(activityIntent);
+                }catch(SecurityException s){
+                    showMsg(clickedPackageLabel+" developer has not allowed to launch activity from outside app.");
+                }
+            }
+
+
+            //-------------------------------RECEIVER CLICK------------------------------------------------
+            if(exp_adapter.getGroup(groupPosition).toString().contains("Receiver"))
+            {
+                String receiverName = exp_adapter.getChild(groupPosition, childPosition).toString();
+                Log.i(TAG,"clicked : "+receiverName);
+                toggleComponent(packageManager, clickedPackageInfo.packageName, receiverName);
+
 
             }
 
-            if(exp_adapter.getGroup(groupPosition).toString().equals("Permissions- Requested"))
+            //-------------------------------SERVICE CLICK------------------------------------------------
+            if(exp_adapter.getGroup(groupPosition).toString().contains("Service"))
+            {
+                String serviceName = exp_adapter.getChild(groupPosition, childPosition).toString();
+                Log.i(TAG,"clicked : "+serviceName);
+                toggleComponent(packageManager, clickedPackageInfo.packageName, serviceName);
+
+            }
+
+            //-------------------------------PROVIDER CLICK------------------------------------------------
+            if(exp_adapter.getGroup(groupPosition).toString().contains("Provider")){
+                String providername = exp_adapter.getChild(groupPosition, childPosition).toString();
+                Log.i(TAG,"clicked : "+providername);
+                toggleComponent(packageManager, clickedPackageInfo.packageName, providername);
+            }
+
+            //-------------------------------PERMISSIONS CLICK------------------------------------------------
+            if(exp_adapter.getGroup(groupPosition).toString().contains("Permissions"))
             {
                 String clicked_perm= exp_adapter.getChild(groupPosition,childPosition).toString();
                 Toast.makeText(v.getContext(),clicked_perm , Toast.LENGTH_SHORT).show();
-
-               // if(ActivityMain.)
-
+                try{
+                    if(appDetails.permissions_granted.contains(clicked_perm)){
+                        Toast.makeText(v.getContext(),"Permission Revoked"+clicked_perm , Toast.LENGTH_SHORT).show();
+                        String command =  "pm revoke " +clickedPackageInfo.packageName+" "+clicked_perm;
+                        Log.i(TAG,"Command : " +command);
+                        Shell.su(command).exec();
+                    }
+                    else{
+                        Toast.makeText(v.getContext(),"Permission Granted "+clicked_perm, Toast.LENGTH_SHORT).show();
+                        String command =  "pm grant " +clickedPackageInfo.packageName+" "+clicked_perm;
+                        Log.i(TAG,"Command : " +command);
+                        Shell.su(command).exec();
+                    }
+                    setNewAdapter();
+                }catch(Exception ex){
+                Log.e(TAG, "Error Changing Component State : " + ex);
+            }
             }
 
-
+            Log.i(TAG,"View Updated.");
+            
             return true;
         });
-
+        
         expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             int LastExpandedGroup = -1;
             @Override
             public void onGroupExpand(int position) {
-                if (LastExpandedGroup != -1 && position != LastExpandedGroup && exp_adapter.getChildrenCount(LastExpandedGroup) >= 2) {
+                if (LastExpandedGroup != -1 && position != LastExpandedGroup && exp_adapter.getChildrenCount(LastExpandedGroup) >= 6) {
                     expandableListView.collapseGroup(LastExpandedGroup);
                 }
                 LastExpandedGroup = position;
                 Toast.makeText(getApplicationContext(), headers.get(position), Toast.LENGTH_SHORT);
+                if(!expandedPosList.contains(position)){
+                    expandedPosList.add(position);
+                }
             }
+
         });
 
-        expandableListView.setOnGroupCollapseListener(position -> Toast.makeText(getApplication(), headers.get(position), Toast.LENGTH_SHORT));
+        expandableListView.setOnGroupCollapseListener(position -> {
+            Toast.makeText(getApplication(), headers.get(position), Toast.LENGTH_SHORT) ;
+            
+            try{
+                if(expandedPosList.contains(position)){
+                    expandedPosList.remove(position);
+                }
+            }catch(Exception ex){
+                Log.i(TAG," Error removing index "+ex);
+            }
+
+
+        });
+
+    }
+
+    private void setNewAdapter(){
+
+        Log.e(TAG,"before appdetails") ;
+
+        appDetails = new ClassSetAppDetails(packageManager, clickedPackageInfo);
+        Log.e(TAG,"before explistmap") ;
+
+        expListMap = appDetails.expandable_list;
+        Log.e(TAG,"headers") ;
+
+        headers = new ArrayList<>(expListMap.keySet());
+        Log.e(TAG,"sorting") ;
+
+        Collections.sort(headers, (s, t1) -> s.compareToIgnoreCase(t1));
+        Log.e(TAG,"before adapter") ;
+
+        exp_adapter = new AdapterExpandableList(this, headers, expListMap, clickedPackageInfo, appDetails);
+        Log.e(TAG,"setting adapter") ;
+
+        expandableListView.setAdapter(exp_adapter);
+        Log.e(TAG,"before loop ") ;
+        int k;
+
+        List<Integer> list = new ArrayList<>(expandedPosList);
+
+        for(int i=0; i < list.size(); i++){
+            Log.e(TAG,"expanding header : "+list.get(i)) ;
+            expandableListView.expandGroup(list.get(i));
+        }
+
     }
 
     @Override
@@ -286,8 +405,13 @@ public class ActivityAppDetails extends AppCompatActivity {
                 break;
             }
 
-            case R.id.reset_perm_item:{
+            case R.id.revoke_perm_item:{
                 revokePermission();
+                break;
+            }
+
+            case R.id.grant_all_perm:{
+                grantAllPermissions();
                 break;
             }
 
@@ -304,6 +428,104 @@ public class ActivityAppDetails extends AppCompatActivity {
         return true;
     }
 
+    private void toggleComponent(PackageManager pm, String pkgname, String componentString){
+        ComponentName componentName = new ComponentName(pkgname,componentString);
+        showMsg("Component : "+componentName);
+        int result = isComponentEnabled(pm, pkgname, componentString);
+        Log.i(TAG,"Component State received : "+result);
+
+        try{
+//            if(result == 0){
+//                String command = "pm enable "+pkgname+"/"+componentString;
+//                showMsg(command);
+//                Shell.sh(command).exec();
+//                showMsg(" Component Toggled to : "+pm.getComponentEnabledSetting(componentName));
+//
+//            }
+            //else
+
+            if(result == 1){
+                showMsg(" Component will be Disabled : "+0);
+                String command = "pm disable "+pkgname+"/"+componentString;
+                showMsg(command);
+                Shell.sh(command).exec();
+                showMsg(" Component Toggled to : "+pm.getComponentEnabledSetting(componentName));
+
+            }else if(result == 2){
+                showMsg(" Component Enabled : "+componentString);
+                String command = "pm enable "+pkgname+"/"+componentString;
+                showMsg(command);
+                Shell.sh(command).exec();
+                showMsg(" Component Toggled to: "+pm.getComponentEnabledSetting(componentName));
+
+            }else {
+                showMsg(" Unexpected Component Status. ");
+            }
+
+//          packageManager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_, 0);
+
+        }catch(Exception e){
+            Log.e(TAG,"Error Changing Component State") ;
+        }
+
+        setNewAdapter();
+    }
+
+    public static int isComponentEnabled(PackageManager pm, String pkgName, String clsName) {
+
+        ComponentName componentName = new ComponentName(pkgName, clsName);
+        int componentEnabledSetting = pm.getComponentEnabledSetting(componentName);
+        Log.i(TAG,"Component Value from PACKAGE_MANAGER : "+componentEnabledSetting);
+
+        switch (componentEnabledSetting) {
+
+            case PackageManager.COMPONENT_ENABLED_STATE_DISABLED:
+                return 2;
+            case PackageManager.COMPONENT_ENABLED_STATE_ENABLED:
+                return 1;
+            case PackageManager.COMPONENT_ENABLED_STATE_DEFAULT:
+
+            default:
+                // We need to get the application info to get the component's default state
+                try {
+                    PackageInfo packageInfo = pm.getPackageInfo(pkgName,
+                            PackageManager.GET_ACTIVITIES
+                            | PackageManager.GET_RECEIVERS
+                            | PackageManager.GET_SERVICES
+                            | PackageManager.GET_PROVIDERS
+                            | PackageManager.GET_DISABLED_COMPONENTS);
+
+                    List<ComponentInfo> components = new ArrayList<>();
+                    if (packageInfo.activities != null) Collections.addAll(components, packageInfo.activities);
+                    if (packageInfo.services != null) Collections.addAll(components, packageInfo.services);
+                    if (packageInfo.providers != null) Collections.addAll(components, packageInfo.providers);
+
+                    Log.i(TAG," Component List Size "+ components.size());
+                    
+                    for (ComponentInfo componentInfo : components) {
+                        if (componentInfo.name.contains(clsName)){
+                            Log.i(TAG,"Component Info Name : "+componentInfo.name);
+                            
+                            if(componentInfo.isEnabled()){
+                                return 1;
+                            }else
+                                return 2;
+                           // return componentInfo.enabled;
+                            //This is the default value (set in AndroidManifest.xml)
+                            //return componentInfo.isEnabled(); //Whole package dependant
+                        }
+                    }
+
+                    //the component is not declared in the AndroidManifest
+                    return 1;
+                }catch(PackageManager.NameNotFoundException e) {
+                    // the package isn't installed on the device
+                    Log.e(TAG,"NameNot Found Exception : "+e);
+                    return 2;
+            }
+        }
+    }
+
     private void revokePermission(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Confirm Revoking permissions for "+clickedPackageInfo.packageName);
@@ -312,14 +534,6 @@ public class ActivityAppDetails extends AppCompatActivity {
 
         builder.setPositiveButton("Yes", (dialog, which) -> {
             try {
-
-//                showMsg("Revoke permission via terminal :" + Shell.rootAccess());
-//                String[] reqPerms = clickedPackageInfo.requestedPermissions;
-//                for(String perm : reqPerms){
-//                    String command =  "pm revoke " +clickedPackageInfo.packageName+" "+perm;
-//                    Log.i(TAG,"Command : " +command);
-//                    Shell.sh(command).exec();
-//                }
 
                 List<String> list = appDetails.permissions_granted;
                 if(null!=list){
@@ -333,8 +547,44 @@ public class ActivityAppDetails extends AppCompatActivity {
                     Log.i(TAG, clickedPackageLabel + " permission revoked status : DONE " );
                 }
                 Log.i(TAG, clickedPackageLabel + " permission revoked Successfully");
+                appDetails = new ClassSetAppDetails(packageManager, clickedPackageInfo);
+                exp_adapter = new AdapterExpandableList(this, headers, expListMap,clickedPackageInfo,appDetails);
+                expandableListView.setAdapter(exp_adapter);
             }catch(Exception ex) {
                 Log.e(TAG, "Revoke Permission :" + ex);
+            }
+        });
+
+        builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+        builder.show();
+
+    }
+
+    private void grantAllPermissions(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirm Granting All permissions to "+clickedPackageInfo.packageName);
+        builder.setMessage("Click Yes to Continue...");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            try {
+                List<String> list = appDetails.all_permissions;
+                if(null!=list){
+                    for(int i = 0; i< list.size(); i++){
+                        // if((clicked_pkg.requestedPermissionsFlags[i] & PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0){
+                        String command =  "pm grant " +clickedPackageInfo.packageName+" "+list.get(i);
+                        Log.i(TAG,"Command : " +command);
+                        Shell.sh(command).exec();
+                        // }
+                    }
+                    Log.i(TAG, clickedPackageLabel + " permission granted status : DONE " );
+                }
+                appDetails = new ClassSetAppDetails(packageManager, clickedPackageInfo);
+                exp_adapter = new AdapterExpandableList(this, headers, expListMap,clickedPackageInfo,appDetails);
+                expandableListView.setAdapter(exp_adapter);
+                Log.i(TAG, clickedPackageLabel + " permissions granted Successfully");
+            }catch(Exception ex) {
+                Log.e(TAG, "Grant Permisiion status : " + ex);
             }
         });
 
@@ -530,5 +780,6 @@ public class ActivityAppDetails extends AppCompatActivity {
 
         return format.format(length) + "Bytes";
     }
+    
 
 }

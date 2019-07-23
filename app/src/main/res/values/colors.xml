@@ -9,6 +9,20 @@
 
     <color name="black">#000000</color>
     <color name="dark_grey">#333333</color>
+
+    <color name="red">#CE0808</color>
+    <color name="light_red">#C55252</color>
+    <color name="dark_red">#770303</color>
+
+    <color name="green">#13AA02</color>
+    <color name="light_green">#7ACF54</color>
+    <color name="dark_green">#145C05</color>
+
+    <color name="yellow">#F7C906</color>
+
+    <color name="orange">#FB8200</color>
+
+
     <color name="white">#FFFFFF</color>
     <color name="cream_white">#FAC3E6</color>
 

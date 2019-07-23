@@ -37,7 +37,7 @@
 
     <TextView
         android:id="@+id/version_num"
-        android:layout_width="119dp"
+        android:layout_width="0dp"
         android:layout_height="26dp"
         android:layout_gravity="end"
         android:layout_marginTop="2dp"
@@ -47,10 +47,11 @@
         android:autoSizeTextType="uniform"
         android:padding="1dp"
         android:paddingEnd="2dp"
-        android:text="version"
+        android:text="Version Name"
         android:textAlignment="viewEnd"
         android:textColor="#50B4F1"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.818"
         app:layout_constraintStart_toEndOf="@+id/app_name"
@@ -59,16 +60,16 @@
 
     <TextView
         android:id="@+id/pkg_name"
-        android:layout_width="346dp"
+        android:layout_width="229dp"
         android:layout_height="22dp"
         android:layout_margin="@dimen/size2"
-        android:layout_marginStart="8dp"
         android:layout_toRightOf="@id/app_icon"
         android:autoSizeMaxTextSize="16sp"
         android:autoSizeMinTextSize="12sp"
         android:autoSizeTextType="uniform"
         android:text="Package name Here"
         android:textAlignment="textStart"
+        android:textColor="#FDD835"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/app_icon"
         app:layout_constraintTop_toBottomOf="@+id/app_name" />
@@ -81,36 +82,45 @@
         android:autoSizeMinTextSize="12sp"
         android:autoSizeTextType="uniform"
         android:text="Install Time"
-        app:layout_constraintEnd_toStartOf="@+id/label_extra"
         app:layout_constraintStart_toStartOf="@+id/pkg_name"
         app:layout_constraintTop_toBottomOf="@+id/pkg_name" />
 
     <TextView
         android:id="@+id/label_app_size"
-        android:layout_width="85dp"
-        android:layout_height="22dp"
-        android:layout_marginEnd="2dp"
+        android:layout_width="100dp"
+        android:layout_height="21dp"
         android:autoSizeMaxTextSize="16sp"
         android:autoSizeMinTextSize="12sp"
         android:autoSizeTextType="uniform"
+        android:gravity="center"
         android:text="@string/apk_size"
-        android:textAlignment="textEnd"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/label_extra"
+        app:layout_constraintStart_toEndOf="@+id/label_install_time"
         app:layout_constraintTop_toBottomOf="@+id/pkg_name" />
 
     <TextView
         android:id="@+id/label_extra"
-        android:layout_width="131dp"
-        android:layout_height="22dp"
+        android:layout_width="0dp"
+        android:layout_height="21dp"
         android:autoSizeMaxTextSize="16sp"
         android:autoSizeMinTextSize="12sp"
         android:autoSizeTextType="uniform"
-        android:text="extra info here"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toStartOf="@+id/label_app_size"
+        android:gravity="right|center_vertical|end"
+        android:text="Version Code"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/label_app_size"
+        app:layout_constraintTop_toBottomOf="@+id/app_type" />
+
+    <TextView
+        android:id="@+id/app_type"
+        android:layout_width="0dp"
+        android:layout_height="22dp"
+        android:gravity="right|center_vertical|end"
+        android:text="App Type"
+        app:layout_constraintBottom_toTopOf="@+id/label_extra"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/label_install_time"
-        app:layout_constraintTop_toBottomOf="@+id/pkg_name" />
+        app:layout_constraintStart_toEndOf="@+id/pkg_name"
+        app:layout_constraintTop_toBottomOf="@+id/version_num" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,12 +8,12 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/item_value"
+        android:id="@+id/ex_list_item_item"
         android:layout_width="0dp"
-        android:layout_height="30dp"
+        android:layout_height="36dp"
         android:layout_marginStart="32dp"
         android:autoSizeMaxTextSize="18sp"
-        android:autoSizeMinTextSize="12sp"
+        android:autoSizeMinTextSize="14sp"
         android:autoSizeTextType="uniform"
         android:background="@color/dark_grey"
         android:clickable="false"
@@ -25,7 +25,7 @@
         android:padding="@dimen/padding_least"
         android:text="This is a ListItem "
         android:textAlignment="gravity"
-        android:textColor="#06AA0E"
+        android:textColor="@color/light_green"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

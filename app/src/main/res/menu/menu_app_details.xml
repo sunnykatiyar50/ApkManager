@@ -54,9 +54,15 @@
               app:showAsAction="never" />
 
           <item
-              android:id="@+id/reset_perm_item"
+              android:id="@+id/revoke_perm_item"
               android:orderInCategory="100"
               android:title="@string/revoke_perm"
+              app:showAsAction="never" />
+
+          <item
+              android:id="@+id/grant_all_perm"
+              android:orderInCategory="100"
+              android:title="Grant AllPermissions"
               app:showAsAction="never" />
 
           <item

@@ -78,9 +78,9 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolderAppList vholder, int i) {
+    public void onBindViewHolder(@NonNull final ViewHolderAppList vholder, final int i) {
 
-        PackageInfo pkginfo = this.myAppList.get(i);
+        final PackageInfo pkginfo = this.myAppList.get(i);
         vholder.pkgname.setText(pkginfo.packageName);
         vholder.version.setText("v" + pkginfo.versionName);
         vholder.appname.setText(pm.getApplicationLabel(pkginfo.applicationInfo).toString());
@@ -88,9 +88,19 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         vholder.install_date.setText(getTime(pkginfo.lastUpdateTime));
         File f = new File(pkginfo.applicationInfo.sourceDir);
         vholder.app_size.setText(getSize(f.length()));
+
+        if(pkginfo.applicationInfo.sourceDir.startsWith("/system/")){
+            vholder.app_type.setText("System App");
+            vholder.app_type.setTextColor(getContext().getColor(R.color.red));
+        }else{
+            vholder.app_type.setText("User App");
+            vholder.app_type.setTextColor(getContext().getColor(R.color.light_green));
+        }
+
         vholder.text_extra.setText(String.valueOf(pkginfo.versionCode));
         activityAppDetails = new ActivityAppDetails();
 
+        vholder.itemView.setOnClickListener(null);
         vholder.itemView.setOnClickListener(v -> {
             clicked_pkg = myAppList.get(i);
             clicked_pkg_label = mainpm.getApplicationLabel(clicked_pkg.applicationInfo).toString();
@@ -102,7 +112,6 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
         });
 
         vholder.itemView.setOnCreateContextMenuListener(null);
-
         vholder.itemView.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
             clicked_pkg = myAppList.get(i);
             clicked_pkg_label = mainpm.getApplicationLabel(clicked_pkg.applicationInfo).toString();
@@ -214,9 +223,16 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
                     return true;
                 });
 
-                menu.findItem(R.id.reset_perm_item).setOnMenuItemClickListener(item -> {
+//--------------------------------REVOKING PERMISSIONS----------------------------------------------------
+                menu.findItem(R.id.revoke_perm_item).setOnMenuItemClickListener(item -> {
                     revokePermission();
-                    return false;
+                    return true;
+                });
+
+//--------------------------------------------GRANTING PERMISIIONS---------------------------------------------------
+                menu.findItem(R.id.grant_all_perm).setOnMenuItemClickListener(item -> {
+                    grantAllPermissions();
+                    return true;
                 });
             }
             else {
@@ -261,6 +277,36 @@ public class AdapterAppList extends RecyclerView.Adapter<ViewHolderAppList>{
                 } catch (Exception ex) {
                     Log.e(TAG, "Revoke Permission :" + ex);
                 }
+        });
+
+        builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+        builder.show();
+
+    }
+
+    private void grantAllPermissions(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(appContext);
+        builder.setTitle("Confirm Granting All permissions to "+clicked_pkg.packageName);
+        builder.setMessage("Click Yes to Continue...");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            try {
+                List<String> list = activityAppDetails.appDetails.all_permissions;
+                if(null!=list){
+                    for(int i = 0; i< list.size(); i++){
+                        // if((clicked_pkg.requestedPermissionsFlags[i] & PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0){
+                        String command =  "pm grant " +clicked_pkg.packageName+" "+list.get(i);
+                        Log.i(TAG,"Command : " +command);
+                        Shell.sh(command).exec();
+                        // }
+                    }
+                    Log.i(TAG, clicked_pkg_label + " permission granted status : DONE " );
+                }
+                Log.i(TAG, clicked_pkg_label + " permissions granted Successfully");
+            }catch(Exception ex) {
+                Log.e(TAG, "Grant Permisiion status : " + ex);
+            }
         });
 
         builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());

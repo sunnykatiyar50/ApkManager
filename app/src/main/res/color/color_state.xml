@@ -9,4 +9,10 @@
         android:alpha="0"
         android:color="@color/white"/>
 
+    <item android:color="@color/light_red"
+          android:state_selected="false" />
+
+    <item android:color="@color/light_green"
+          android:state_selected="true" />
+
 </selector>

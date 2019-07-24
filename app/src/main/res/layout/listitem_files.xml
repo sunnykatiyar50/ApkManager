@@ -68,7 +68,7 @@
         android:layout_width="180dp"
         android:layout_height="18dp"
         android:layout_marginStart="4dp"
-        android:text="File Permissions"
+        android:text="Permissions Flags bits (See Help)"
         android:textColor="#00FF48"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"

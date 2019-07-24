@@ -103,7 +103,7 @@
         android:layout_width="141dp"
         android:layout_height="20dp"
         android:layout_marginStart="4dp"
-        android:text="inode"
+        android:text="  inode no."
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/root_browser_textview_owner"

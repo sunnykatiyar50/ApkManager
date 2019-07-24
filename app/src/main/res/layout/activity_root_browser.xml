@@ -23,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:background="?attr/colorPrimaryDark"
+            android:visibility="gone"
             app:tabIndicator="@color/colorAccent"
             app:tabRippleColor="#68AD20"
             app:tabSelectedTextColor="#FB8C00"

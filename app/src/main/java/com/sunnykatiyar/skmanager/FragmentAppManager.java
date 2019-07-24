@@ -743,11 +743,12 @@ public class FragmentAppManager extends Fragment {
 
                 case DATA_ONLY_APPS: {
 
-                    appInfoList = mainpm.getInstalledApplications(PackageManager.MATCH_UNINSTALLED_PACKAGES);
+                    flags = PackageManager.MATCH_UNINSTALLED_PACKAGES| PackageManager.GET_META_DATA;
+                    appInfoList = mainpm.getInstalledApplications(flags);
                     int i = 0;
                     String name;
                     for (ApplicationInfo info : appInfoList) {
-                        if ((info.flags & (ApplicationInfo.FLAG_IS_DATA_ONLY)) != 0) {
+                        if((info.flags & ApplicationInfo.FLAG_IS_DATA_ONLY) != 0) {
                             name = info.loadLabel(mainpm).toString();
                             if (name.toLowerCase().contains(str.toLowerCase())) {
                                 try {

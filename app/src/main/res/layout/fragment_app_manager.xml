@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sunnykatiyar.skmanager.ActivityMain"
-    >
+    tools:context="com.sunnykatiyar.skmanager.ActivityMain">
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -54,7 +52,7 @@
 
     <TextView
         android:id="@+id/label_applist_msgbox"
-        android:layout_width="401dp"
+        android:layout_width="0dp"
         android:layout_height="28dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
@@ -63,12 +61,11 @@
         android:autoSizeMaxTextSize="15sp"
         android:autoSizeMinTextSize="9sp"
         android:autoSizeTextType="uniform"
-        android:background="#C31F1F20"
+        android:gravity="center"
         android:lines="2"
         android:maxLines="2"
         android:minLines="1"
         android:text="Messages Here"
-        android:textAlignment="center"
         android:textColor="#FFB300"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"

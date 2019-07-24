@@ -102,7 +102,7 @@
     </item>
 
     <item
-        android:orderInCategory="105"
+        android:orderInCategory="100"
         android:title="Apps Categories"
         app:showAsAction="never">
 

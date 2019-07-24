@@ -14,18 +14,25 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <supports-screens>
+        android:resizeable="true"
+        android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:xlargeScreens="true"
+        android:anyDensity="true"
+    </supports-screens>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_android_24dp"
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_android_24dp"
-        android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
         <activity
             android:name="com.sunnykatiyar.skmanager.ActivityMain"
-            android:label="SK Manager"
-            android:theme="@style/FilePickerTheme">
+            android:label="SK Manager">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,23 +47,22 @@
         
         <activity  android:name="com.sunnykatiyar.skmanager.ActivityRootBrowser"
             android:label="@string/title_activity_root_browser"
-            android:parentActivityName="com.sunnykatiyar.skmanager.ActivityMain"
-            android:theme="@style/FilePickerTheme">
+            android:parentActivityName="com.sunnykatiyar.skmanager.ActivityMain">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sunnykatiyar.skmanager.ActivityMain" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
 
         <activity   android:name="com.sunnykatiyar.skmanager.ActivityOperations"
             android:label="@string/title_activity_operation"
-            android:parentActivityName="com.sunnykatiyar.skmanager.ActivityMain"
-            android:theme="@style/FilePickerTheme">
+            android:parentActivityName="com.sunnykatiyar.skmanager.ActivityMain">
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sunnykatiyar.skmanager.ActivityMain" />
@@ -71,8 +77,7 @@
         <activity
             android:name="com.sunnykatiyar.skmanager.ActivityAppDetails"
             android:label="@string/title_activity_app_details_"
-            android:parentActivityName="com.sunnykatiyar.skmanager.ActivityMain"
-            android:theme="@style/FilePickerTheme">
+            android:parentActivityName="com.sunnykatiyar.skmanager.ActivityMain">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.sunnykatiyar.skmanager.ActivityMain" />

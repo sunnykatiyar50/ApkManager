@@ -79,7 +79,6 @@ class AdapterExpandableList extends BaseExpandableListAdapter {
           //  Log.i(TAG,"Drawing Components");
             if(isComponentEnabled(context.getPackageManager(), pkg.packageName, property_fetched)){
                 propertyView.setTextColor(context.getColor(R.color.light_green));
-                propertyView.setPaintFlags(Paint.FAKE_BOLD_TEXT_FLAG);
 
             }else{
                 propertyView.setTextColor(context.getColor(R.color.light_red));

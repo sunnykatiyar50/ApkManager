@@ -27,12 +27,12 @@
         <item
             android:id="@+id/nav_apk_rename_format"
             android:icon="@drawable/ic_sort_by_alpha_black_24dp"
-            android:title="Apk Renaming Settings" />
+            android:title="Apk Renaming" />
 
         <item
             android:id="@+id/nav_app_settings"
             android:icon="@drawable/ic_menu_manage"
-            android:title="General Settings" />
+            android:title="Settings" />
 
         <item
             android:id="@+id/nav_file_rename_format"
@@ -43,7 +43,7 @@
         <item
             android:id="@+id/nav_operations"
             android:icon="@drawable/ic_perm_device_information_black_24dp"
-            android:title="Task Details" />
+            android:title="Recent Tasks" />
 
     </group>
 

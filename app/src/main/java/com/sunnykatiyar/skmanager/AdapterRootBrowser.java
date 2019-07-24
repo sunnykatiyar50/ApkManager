@@ -71,7 +71,7 @@ public class AdapterRootBrowser extends RecyclerView.Adapter<ViewHolderRootBrows
         holder.root_browser_item_perm.setText(objectFile.perm);
         holder.root_browser_owner.setText(objectFile.user_name);
         holder.root_browser_inode.setText(objectFile.inode);
-
+        holder.root_browser_inode.setText(objectFile.inode);
         if(objectFile.isSelected){
             holder.itemView.setBackgroundResource(R.color.tint_item_selected);
 

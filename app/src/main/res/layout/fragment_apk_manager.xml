@@ -49,7 +49,7 @@
 
     <EditText
         android:id="@+id/edit_search_folder"
-        android:layout_width="307dp"
+        android:layout_width="0dp"
         android:layout_height="52dp"
 
         android:autoSizeMaxTextSize="16sp"
@@ -76,9 +76,8 @@
         android:autoSizeMaxTextSize="14dp"
         android:autoSizeMinTextSize="10dp"
         android:autoSizeTextType="uniform"
-        android:background="#D8161515"
+        android:gravity="center"
         android:text="Realtime Messages will appear here"
-        android:textAlignment="center"
         android:textColor="#FFB300"
         android:textSize="12sp"
         android:textStyle="bold"

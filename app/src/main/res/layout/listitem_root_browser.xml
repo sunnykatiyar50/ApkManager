@@ -38,8 +38,8 @@
         android:id="@+id/root_browser_item_time"
         android:layout_width="0dp"
         android:layout_height="18dp"
+        android:gravity="center|right"
         android:text="File Creation Date here"
-        android:textAlignment="textEnd"
         android:textColor="#FDD835"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -50,8 +50,8 @@
 
     <TextView
         android:id="@+id/root_browser_item_type"
-        android:layout_width="95dp"
-        android:layout_height="18dp"
+        android:layout_width="138dp"
+        android:layout_height="22dp"
         android:layout_marginStart="4dp"
         android:text="File Extension"
         android:textAlignment="textStart"
@@ -62,8 +62,9 @@
 
     <TextView
         android:id="@+id/root_browser_item_perm"
-        android:layout_width="133dp"
-        android:layout_height="18dp"
+        android:layout_width="0dp"
+        android:layout_height="22dp"
+        android:gravity="center"
         android:text="File Permissions"
         android:textAlignment="center"
         android:textColor="#00FF48"
@@ -77,8 +78,8 @@
         android:id="@+id/root_browser_item_size"
         android:layout_width="126dp"
         android:layout_height="18dp"
+        android:gravity="center|right"
         android:text="Size Here"
-        android:textAlignment="textEnd"
         android:textColor="#7CB342"
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/root_browser_item_time"
@@ -99,18 +100,21 @@
 
     <TextView
         android:id="@+id/root_browser_textview_inode"
-        android:layout_width="93dp"
+        android:layout_width="141dp"
         android:layout_height="20dp"
         android:layout_marginStart="4dp"
         android:text="inode"
         android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/root_browser_textview_owner"
         app:layout_constraintStart_toEndOf="@+id/root_browser_item_thumbnails"
         app:layout_constraintTop_toBottomOf="@+id/root_browser_item_type" />
 
     <TextView
         android:id="@+id/root_browser_textview_owner"
-        android:layout_width="132dp"
+        android:layout_width="0dp"
         android:layout_height="20dp"
+        android:gravity="center"
         android:text="Owner"
         android:textAlignment="center"
         android:textSize="12sp"

@@ -31,7 +31,7 @@ public class ObjectFile {
     public String user_name="";
     public String size="";
     public long long_size;
-    public final String inode="";
+    public String inode="";
     public String file_type="";
     public int drawableIcon;
     public boolean isSelected = false;
@@ -70,7 +70,7 @@ public class ObjectFile {
 
         path = Paths.get(path).toString();
 
-        command = "stat -c '%A~%U~%h~%.19y~%n~%s' \""+path+"\"";
+        command = "stat -c '%A~%U~%h~%.19y~%n~%s~%i' \""+path+"\"";
      //   Log.i(TAG,"STAT COMMAND : "+command);
 
         try{
@@ -89,7 +89,7 @@ public class ObjectFile {
 //          Log.i(TAG,"NEW FILE Name at CREATED TIME: "+name);
             this.size = convertSizeToFormat(Long.parseLong(stats[5]));
             this.long_size = Long.parseLong(stats[5]);
-
+            this.inode = stats[6];
             if(perm.startsWith("d")){
                 isDirecrtory = true;
                 this.size = hard_links;

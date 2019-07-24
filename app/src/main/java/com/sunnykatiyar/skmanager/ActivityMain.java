@@ -2,6 +2,7 @@ package com.sunnykatiyar.skmanager;
 
 import android.app.Activity;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -89,7 +90,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
         toolbar_main = findViewById(R.id.toolbar_applist);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-
+       // ConstraintLayout drawer  = findViewById(R.id.drawer_layout);
         setSupportActionBar(toolbar_main);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
